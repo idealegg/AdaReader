@@ -1,0 +1,162 @@
+--$HIST
+--$PCR Base xxx dd/mm/yy Comment
+--$ECP xxx dd/mm/yy Comment
+--$ER AAA-BBB-xxxdd/mm/yy Comment
+--$HIST
+-- @(#) TAAATS PROGRAM FILE iac_flight_plan_types_b.a Release 1.1 3/6/98 06:09:12 ~
+package body IAC_FLIGHT_PLAN_TYPES is
+
+-- 10/01/96 creation of the function IS_ELIGIBLE_FOR_POSITION_REPORT
+
+body_ident : constant STRING := " @(#) TAAATS PROGRAM FILE iac_flight_plan_types_b.a Release 1.1 3/6/98 06:09:12 ~";
+
+--$PROC
+--
+-----------------------------------------------------------------------
+--
+--  PROCEDURE OR FUNCTION NAME :  IS_ELIGIBLE_FOR_POSITION_REPORT
+--
+--  FUNCTION : For an input point type, this function returns whether the point
+--             is eligible for a position report.
+--
+--  IN ARGUMENTS DESCRIPTION     : The point kind that is to be queried as to
+--                                 whether it is eligible for a position report.
+--
+--  IN-OUT ARGUMENTS DESCRIPTION : N/A
+--
+--  OUT ARGUMENTS DESCRIPTION    : N/A
+--
+--  EXCEPTIONS : N/A
+--
+-----------------------------------------------------------------------
+--
+--$PROC
+
+function IS_ELIGIBLE_FOR_POSITION_REPORT ( FIX_KIND : in POINT_KIND_T) return BOOLEAN is
+
+  begin
+    case FIX_KIND is
+
+      when RP =>
+        return TRUE;
+      when CP =>
+        return FALSE;
+      when GP =>
+        return TRUE;
+      when UPR =>
+        return TRUE;
+      when EOC_POINT =>
+        return FALSE;
+      when EXT_POINT =>
+        return TRUE;
+      when ENT_POINT =>
+        return TRUE;
+      when TRANS_POINT =>
+        return TRUE;
+      when AIRPORT =>
+        return TRUE;
+      when HLD_POINT =>
+        return TRUE;
+      when FPSA_ENT =>
+        return TRUE;
+      when FPSA_EXT =>
+        return TRUE;
+      -- JDLP 31/07/96
+      when APR_FIX =>
+      -- PPeran 09/10/96
+--      return TRUE;
+        return FALSE;
+      -- mjp TAAATS7 PCR 1211 24/09/2001
+      when PCFL_TAS_FIX =>
+        return TRUE;
+-- dm ECR-TAAATS8_16 27/03/03 begin
+      when DPE_POINT =>
+        return FALSE;
+      when METEO_POINT =>
+        return FALSE;
+      when CALIBRATED_POINT =>
+        return FALSE;
+      when EOA_POINT =>
+        return FALSE;
+-- dm ECR-TAAATS8_16 27/03/03 end
+
+   end case;
+
+end IS_ELIGIBLE_FOR_POSITION_REPORT;
+
+--$PROC
+--
+-----------------------------------------------------------------------
+--
+--  PROCEDURE OR FUNCTION NAME :  IS_ELIGIBLE_AS_RAM_POINT
+--
+--  FUNCTION : for each kind of fix, determine if it is eligible
+--             as a route point for RAM processing.
+--             In fact all the points inserted by FDP are not RAM points
+--             WARNING : do not include "when others" in the case statement
+--                       of the function. It prevents the adding of a new fix
+--                       kind to be forgotten in this function.
+--
+--  IN ARGUMENTS DESCRIPTION     :
+--
+--  IN-OUT ARGUMENTS DESCRIPTION :
+--
+--  OUT ARGUMENTS DESCRIPTION    :
+--
+--  EXCEPTIONS :
+--
+-----------------------------------------------------------------------
+--
+--$PROC
+
+function IS_ELIGIBLE_AS_RAM_POINT ( FIX_KIND : in POINT_KIND_T) return BOOLEAN is
+
+  begin
+    case FIX_KIND is
+      when RP =>
+        return TRUE;
+      when CP =>
+        return FALSE;
+      when GP =>
+        return TRUE;
+      when UPR =>
+        return FALSE;
+      when EOC_POINT =>
+        return FALSE;
+      when EXT_POINT =>
+        return TRUE;
+      when ENT_POINT =>
+        return TRUE;
+      when TRANS_POINT =>
+        return FALSE;
+      when AIRPORT =>
+        return TRUE;
+      when HLD_POINT =>
+        return FALSE;
+      when FPSA_ENT =>
+        return FALSE;
+      when FPSA_EXT =>
+        return FALSE;
+      when APR_FIX =>
+        return FALSE;
+      -- mjp TAAATS7 PCR 1211 24/09/2001
+      when PCFL_TAS_FIX =>
+        return FALSE;
+-- dm ECR-TAAATS8_16 27/03/03 begin
+      when DPE_POINT =>
+        return FALSE;
+-- dm ECR-TAAATS8_16 27/03/03 end
+      when METEO_POINT =>
+        return FALSE;
+      when CALIBRATED_POINT =>
+        return FALSE;
+      when EOA_POINT =>
+        return FALSE;
+   end case;
+
+end IS_ELIGIBLE_AS_RAM_POINT;
+
+
+end IAC_FLIGHT_PLAN_TYPES;
+
+-- SCCS MARKERS HAVE BEEN INSERTED

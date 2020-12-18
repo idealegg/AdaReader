@@ -1,0 +1,3 @@
+while read key; do perl -pe "{\$a='$key';\$b=uc(substr(\$a, 0,1)).substr(\$a, 1);s/\b\$a\b/\$b/g;s/'\$b'/'\$a'/g;}"  -i ADA95.g4; done < keywords
+
+while read key; do perl -pe "{\$a='$key';\$b=uc(substr(\$a, 0,1)).substr(\$a, 1);s/\b\$a\b/\$b/g;s/'\$b'/'\$a'/g;}"  -i template; done < keywords

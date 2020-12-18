@@ -1,0 +1,49 @@
+subtype_mark:  subtype_name;
+
+subtype_name: name;
+
+
+name:  
+  direct_name | name '.' All
+//     direct_name | explicit_dereference
+   | name '(' expression (',' expression)* ')' | name '(' discrete_range ')'
+   | name '.' selector_name | name '\'' attribute_designator
+   | type_conversion | function_call
+   | Character_literal;
+   
+ function_call:  
+    function_name actual_parameter_part?;
+  
+function_name: name;
+
+type_conversion:  
+    subtype_mark '(' expression ')'
+  | subtype_mark '(' name ')';
+  
+  
+  
+  
+derived_type_definition:  Abstract? New subtype_indication record_extension_part?;
+
+
+derived_type_definition::= [abstract] new parent_subtype_indication [record_extension_part]
+
+subtype_indication::= subtype_mark [constraint]
+
+subtype_mark::= subtype_name
+
+subtype_indication:   subtype_mark constraint?;
+
+constraint:  scalar_constraint | composite_constraint;
+
+scalar_constraint:  
+     range_constraint | digits_constraint | delta_constraint;
+     
+range_constraint:   Range range_state;
+
+range_state:   range_attribute_reference
+   | simple_expression '..' simple_expression;
+   
+range_attribute_reference:  name '\'' range_attribute_designator;
+
+simple_expression:  unary_adding_operator? term (binary_adding_operator term)*;

@@ -1,0 +1,2106 @@
+-- @(#) TAAATS PROGRAM FILE iac_flight_plan_types.a Release 1.5 8/10/98 07:42:59 ~
+--
+-----------------------------------------------------------------------
+--
+--  LIBRARY UNIT NAME : IAC_FLIGHT_PLAN_TYPES
+--
+--  SOURCE FILENAME   : iac_flight_plan_types.a
+--
+--  FUNCTION : Package defining the ADA type of the record of the CDC
+--             FLIGHT_PLAN. Each record contains the published subset
+--             of information for a flight plan
+--
+--  INTERNAL PROCEDURES OR PACKAGES :
+--
+--  SEPARATE UNITS : NONE
+--
+--  DESIGNER : J. EDELINE
+--
+--  CREATION : 26/07/93
+--
+--  COMMENTS : For typing, preference is given to FPL_DATA_TYPES.
+--             New types are taken from IAC* when they exist, otherwise
+--             are created locally here.
+--
+-----------------------------------------------------------------------
+--
+--$FILE
+--$HIST
+--
+-----------------------------------------------------------------------
+--
+--$ECP 528      18/10/95 JDLP
+--              . Use of lat/long coordinates for cdc flight plan.
+--
+--              02/11/95 3.10 JDLP
+--              . Replace ETO and PIL_ETO by displayed and ref. ETOs
+--              . suppress ALLOCATED field for coord. infos.
+--              . suppress HOLD_LEAVING_TIME, HANDED_OVER_TO_SEC 2 and 3
+--              . add NEXT sector for JTRF.
+--              . replace in POINT_KIND_T BP (not used) by UPR, new
+--              . kind of fix added via UPR function.
+--
+--              22/11/95 3.12 JDLP
+--              . Replace HOLD_ON_POSITION by INIT_HOLD for holding statuses.
+--              . Add point_kind HLD_POINT.
+--              . ADD OTHER_INFO_LABEL
+--              . Modify OTHER_INFO to OTHER_INFO_STRIP
+--
+--              13/12/95 3.16 JDLP
+--              . Add point kinds FPSA_ENT and FPSA_EXT.
+--
+--$ECP 680      10/04/96 XL
+--              . Add CDP_PARTITION_INFO used by CDP to know to which partition
+--                it has to  send postings
+--
+--              12/06/96 IBB 4.14 PMT 122 PDel
+--              . Inhibition status. Add Inhibition time
+--
+--$ECP 724      12/06/96 XL
+--              . Add PREVIOUS_SECTOR which contains the value of the
+--                previous controlling sector. This value is used by
+--                MMI for the post_juridiction.
+--
+--              31/07/96 IBB 4.23 JDLP
+--              . Add new fix kind APR_FIX for the current fix obtained after a cyclic APR.
+--
+--              26/06/96 XL
+--              . Add FIRST_PROPOSAL_SECTOR which contains the value of the sector
+--                to which the first handoff has been made. This field is used by
+--                MMI for eligibility purpose in case of an uncontrolled flight
+--
+--              14/08/96 PDEL
+--              . Add HOLDING_POINT_NAME because for some cases of hold we don't have
+--                an index in the fix list
+--
+--              11/09/96 XL
+--              . Extend the length of the fixes list from seventy to ninety
+--
+--              13/11/96 IBB 4.3 XL
+--              . Add the strip info in the CDC to ensure consistency
+--                between the strips displayed and the data in the CDC.
+--                Indeed in case of a big load on the network, some strip
+--                problems appeared due to the fact that the message sent to MMI
+--                arrived before the CDC update or vice versa
+--
+--$PCR 263      04/02/97 V+V4.2 GG
+--              . Add the status during inhibition (type Status_T): read by RDP
+--                to accept or refuse coupling on an inhibited flight
+--
+--$ECP 798      06/02/97 Brenton Spear
+--              . Changed sizes of FLIGHT_PLAN_T structure from 3816 to
+--                3858 bytes
+--
+--$ECP 972      10/07/97 Feedback of received coord message. YC
+--              . Add new field FORCED_INBOUND_DISPLAY in record COORD_INFO_T
+--
+--$PCR-VV44-1742 20/10/97 Replace and pad unused fields with
+--
+--$PCR-VV44-1840 14/01/98 Add Strip window destination in posting info
+--               B.Anfry
+--
+--              15/04/99 GG
+--              . Added TFMS_ELIGIBLE (boolean) and TFMS_FEEDER (index of the
+--              feeder fix)
+--              29/03/99 Gilles Galzy
+--              . Added OLDI in EXIT_PROTOCOL_T
+--              . Added OLDI messages composition in EXIT_INFO_T
+-- NAP2-ECR11 FH 20/4/99 Add VIP status
+--
+--              11/08/99 GG
+--              . Added INSIDE_FDRG (boolean used by FLP/TFMS)
+-- NAP2-ECR11 FH 20/4/99 Add VIP status
+--
+-----------------------------------------------------------------------
+--
+--$HIST
+--
+-----------------------------------------------------------------------
+--
+
+--~---------------------------------------------------------------------------------------------------------------------------------
+
+with ARTTS;
+with FPL_DATA_TYPES;
+with AGDP_AGDLC_TYPES;
+with FPL_SYSTEM_CONF;
+with IAC_INPUT_LEVEL_TYPES;
+with KINEMATICS;
+with STANDARD_TYPES;
+with SYSTEM_CONF;
+with DPR_FORMAT_TYPES;
+with EXTERNAL_MESSAGE_TYPE;
+with PARTITION_ID;
+with DIPLOMATIC_CLEARANCE_RELATED_TYPES;
+with FPL_DATA_TYPES_EXTENDED_2012;
+use  STANDARD_TYPES;
+
+package IAC_FLIGHT_PLAN_TYPES is
+
+SPEC_IDENT : constant STRING := " @(#) TAAATS PROGRAM FILE iac_flight_plan_types.a Release 1.5 8/10/98 07:42:59 ~";
+
+  -- BW FPCF EE_TAP --> for EE FPCF compilation purpose
+  type EQUIP_STATUS_T is (EQ, NO, UN, EX);
+  EQUIP_STATUS_DEF : constant EQUIP_STATUS_T := NO;
+  -- end BW
+
+  type STATUS is
+      -- PG 08/02/01 CH_002 CAAC messages: add FUTURE status
+      (FUTURE,
+       -- end PG 08/02/01
+       INACTIVE,
+       PREACTIVATED,
+       SUSPENDED,
+       INHIBITED,
+       COORDINATED,
+       ACTIVE,
+       FINISHED,
+       CANCELLED);
+
+  STATUS_DEF : constant STATUS := INACTIVE;
+
+  type COORDINATION_PROMPT_T is
+       (NO_PROMPT,
+        PRE_C_PROMPT,
+        C_PROMPT,
+        C_AND_T_PROMPT,
+        T_PROMPT);
+
+  for COORDINATION_PROMPT_T use (NO_PROMPT      => 0,
+                                 PRE_C_PROMPT   => 1,
+                                 C_PROMPT       => 2,
+                                 C_AND_T_PROMPT => 3,
+                                 T_PROMPT       => 4);
+
+  COORDINATION_PROMPT_DEF : constant COORDINATION_PROMPT_T := NO_PROMPT;
+
+
+  type FLIGHT_DIRECTION_T is
+       ( BLANK,
+         SOUTH_WEST);
+
+  for FLIGHT_DIRECTION_T    use (BLANK            => 0,
+                                 SOUTH_WEST       => 1
+                                );
+
+  FLIGHT_DIRECTION_DEF : constant FLIGHT_DIRECTION_T := BLANK;
+
+
+  -- SH 21/12/2000: FLIGHT_PLAN_NUMBER_T is the flight plan CDC index plus a default value.
+  -- (Note: only live flight plans are stored in the CDC.)
+  type FLIGHT_PLAN_NUMBER_T is new
+    STANDARD_TYPES.NATURAL_16 range SYSTEM_CONF.MIN_FLIGHT_PLAN_NUMBER - 1
+    .. SYSTEM_CONF.MAX_LIVE_FLIGHT_PLAN_NUMBER;
+  -- end SH
+  FLIGHT_PLAN_NUMBER_DEF : constant FLIGHT_PLAN_NUMBER_T := FLIGHT_PLAN_NUMBER_T'FIRST;
+
+  -- FLIGHT_PLAN_NUMBER_INDEX_T is a subtype of FLIGHT_PLAN_NUMBER_T that only includes the non-default
+  -- flight plan numbers and can therfore be used to index the FPL CDC.
+  subtype FLIGHT_PLAN_NUMBER_INDEX_T is FLIGHT_PLAN_NUMBER_T
+    range SYSTEM_CONF.MIN_FLIGHT_PLAN_NUMBER .. FLIGHT_PLAN_NUMBER_T'LAST;
+
+  FLIGHT_PLAN_NUMBER_INDEX_DEF : constant FLIGHT_PLAN_NUMBER_INDEX_T := FLIGHT_PLAN_NUMBER_INDEX_T'FIRST;
+
+  --
+  -- The types of the field are preferably taken from FPL_DATA_TYPES.
+  -- New types are locally defined hereunder:
+  -------------------------------------------------------------------
+  --
+  subtype SSR_CODE_T is INTEGER_16 range -1 .. 8#7_777#;
+  --INTEGER_16'pred(INTEGER_16(FPL_DATA_TYPES.SSR_CODES'first)) ..
+  --FPL_DATA_TYPES.SSR_CODES'last;
+  SSR_CODE_DEF : constant SSR_CODE_T := SSR_CODE_T'FIRST;
+
+  type COUPLING_MODE_T is
+      (PSSR_COUPLING,
+       ASSR_COUPLING,
+       NONE);
+  for COUPLING_MODE_T use (PSSR_COUPLING => 0,
+                           ASSR_COUPLING => 1,
+                           NONE          => 2);
+
+  COUPLING_MODE_DEF : constant COUPLING_MODE_T := NONE;
+
+  --cb ECR_NESACC-22 24/04/02 begin
+  --RAM radius and corridor values are within 1 to 30 Nm but will be stored as 25 hundredths of Nm.
+  --0 is the default value (means SNMAP will take the radius and corridor defined in RAM_PARAMETER)
+
+  -- BEGIN AJ ECR_SAAATS1-02 19/11/02 - RNP based routes.
+  --   RNP corridor width values are between 0.2 and 51.0 Nm but will be stored as half
+  --   the corridor width in tenths of Nm.
+  --     for example: A corridor width for RNP12.6 would be specified as 25.2 in the DPR file,
+  --                  but stored as 126 in the flight plan CDC.
+  --
+  --   RNP fix radius values are stored as quarters of Nm.
+  --
+  subtype FIX_RADIUS_T is KINEMATICS.DISTANCE_QUARTER_NM_T range 0 .. 255;
+  subtype FIX_CORRIDOR_T is KINEMATICS.DISTANCE_10TH_NM_T range 0 .. 255;
+  subtype FIX_UPDATE_RATE_T is NATURAL_8 range 1 .. 90;
+
+  FIX_RADIUS_DEF : constant FIX_RADIUS_T := 0;
+  FIX_CORRIDOR_DEF : constant FIX_CORRIDOR_T := 0;
+  FIX_UPDATE_RATE_DEF : constant FIX_UPDATE_RATE_T := 2;
+  --
+  -- END AJ ECR_SAAATS1-02 19/11/02 - RNP based routes.
+
+  --cb ECR_NESACC-22 24/04/02 end
+
+  --JA BEGIN ECR_FPCF-2_8 18/06/2003
+  type CODED_ROUTE_NUMBER_T is new INTEGER_16 range -1 .. INTEGER_16'LAST;
+
+  NO_CODED_ROUTE : constant CODED_ROUTE_NUMBER_T := -1;
+  --JA END ECR_FPCF-2_8 18/06/2003
+
+  --
+  -- Information on one fix of the route
+  --------------------------------------
+  --
+  type POINT_KIND_T is
+      (RP,
+       CP,
+       GP,
+       UPR,
+       EOC_POINT,
+       EXT_POINT,
+       ENT_POINT,
+       TRANS_POINT,
+       AIRPORT,
+       HLD_POINT,
+       FPSA_ENT,
+       FPSA_EXT,
+       APR_FIX,
+       PCFL_TAS_FIX,
+       DPE_POINT,
+       METEO_POINT,
+       CALIBRATED_POINT,
+       EOA_POINT);        
+
+  POINT_KIND_DEF : constant POINT_KIND_T := RP;
+  FIX_OVERFLIGHT_SPEED_DEF : INTEGER_16 := 0;
+
+  type FIX_T is
+    record
+      GEO_POSITION  : KINEMATICS.GEOGRAPHIC_POSITION_T;
+      FIX_KIND      : POINT_KIND_T;
+      FIX_NAME      : FPL_DATA_TYPES.EXT_ITEMS;
+      DISPLAYED_ETO : ARTTS.ARTTS_TIME.TC_SMALL_UNIVERSAL;
+      REFERENCE_ETO : ARTTS.ARTTS_TIME.TC_SMALL_UNIVERSAL;
+      DELAY_MINUTES : INTEGER_16;
+      AFL           : KINEMATICS.INT_FLIGHT_LEVEL_T;
+      PCFL          : KINEMATICS.INT_FLIGHT_LEVEL_T;
+      PIL_ETO_CONF  : BOOLEAN;                            -- The pilot ETO has been confirmed
+      COMPULS_RP    : BOOLEAN;                            -- Compulsory reporting point
+      RELEVANT_FIX  : BOOLEAN;
+      MPR_CONF      : BOOLEAN;                            -- Added for MMI (DB: 26-07-95)
+      PIL_ETO_VALID : BOOLEAN;                            -- Added for MMI degraded modes (26/06/97, JDLP)
+      DISPLAY_ASSOCIATED_AIRPORT : BOOLEAN;
+      PCFL_AVERAGE_CBL : BOOLEAN;                         -- MAUR-2 FH 21/12/99
+      PIL_ETO_ALERT     : BOOLEAN;                            
+      FIX_RAM_RADIUS    : FIX_RADIUS_T;
+      FIX_ARCW_RADIUS   : FIX_RADIUS_T;
+      FIX_RAM_CORRIDOR  : FIX_CORRIDOR_T;
+      FIX_ARCW_CORRIDOR : FIX_CORRIDOR_T;
+      FIX_UPDATE_RATE   : FIX_UPDATE_RATE_T;
+      CODED_ROUTE_NUMBER :CODED_ROUTE_NUMBER_T;
+      SECTOR_INDEX      : INTEGER_16;
+      FLIGHT_RULE       : FPL_DATA_TYPES.FLIGHT_RULES;
+      OVERFLIGHT_SPEED  : INTEGER_16;                     -- Added fof fpcf to know speed at fix points (CDowd 04Feb2010)
+      OCCURENCE         : STANDARD_TYPES.NATURAL_8;
+    end record;
+
+  for FIX_T use
+    record
+      GEO_POSITION  at 0  range 0 .. 63;
+      FIX_NAME      at 8  range 0 .. 87;
+      FIX_KIND      at 19 range 0 .. 7;
+      AFL           at 20 range 0 .. 15;
+      PCFL          at 22 range 0 .. 15;
+      DISPLAYED_ETO at 24 range 0 .. 31;
+      REFERENCE_ETO at 28 range 0 .. 31;
+      DELAY_MINUTES at 32 range 0 .. 15;
+      PIL_ETO_CONF  at 34 range 0 .. 0;
+      COMPULS_RP    at 34 range 1 .. 1;
+      RELEVANT_FIX  at 34 range 2 .. 2;
+      MPR_CONF      at 34 range 3 .. 3;
+      PIL_ETO_VALID at 34 range 4 .. 4;
+      DISPLAY_ASSOCIATED_AIRPORT at 34 range 5 .. 5;
+      PCFL_AVERAGE_CBL at 34 range 6 .. 6;
+      PIL_ETO_ALERT    at 34 range 7 .. 7;
+      FIX_RAM_RADIUS    at 35 range 0 .. 7;
+      FIX_ARCW_RADIUS   at 36 range 0 .. 7;
+      FIX_RAM_CORRIDOR  at 37 range 0 .. 7;
+      FIX_ARCW_CORRIDOR at 38 range 0 .. 7;
+      FIX_UPDATE_RATE   at 39 range 0 .. 7;
+      CODED_ROUTE_NUMBER at 40 range 0 .. 15;
+      SECTOR_INDEX      at 40 range 16 .. 31;
+      FLIGHT_RULE       at 44 range 0 .. 2;
+      OVERFLIGHT_SPEED  at 46 range 0 .. 15;
+      OCCURENCE         at 48 range 0 .. 63;
+  end record;
+
+  for FIX_T'SIZE use 56 * STANDARD_TYPES.OCTET;
+
+  FIX_DEF : constant FIX_T :=
+          (GEO_POSITION  => KINEMATICS.GEOGRAPHICAL_POSITION_DEF,
+           FIX_KIND      => POINT_KIND_DEF,
+           FIX_NAME      => FPL_DATA_TYPES.EXT_ITEM_DEF,
+           DISPLAYED_ETO => ARTTS.ARTTS_TIME.TC_INIT_SMALL_UNIVERSAL,
+           REFERENCE_ETO => ARTTS.ARTTS_TIME.TC_INIT_SMALL_UNIVERSAL,
+           DELAY_MINUTES => 0,
+           AFL           => KINEMATICS.INT_FLIGHT_LEVEL_DEF,
+           PCFL          => KINEMATICS.INT_FLIGHT_LEVEL_DEF,
+           PIL_ETO_CONF  => TRUE,
+           COMPULS_RP    => FALSE,
+           RELEVANT_FIX  => FALSE,
+           MPR_CONF      => FALSE,
+           PIL_ETO_VALID => FALSE,
+           DISPLAY_ASSOCIATED_AIRPORT => FALSE,
+           FIX_RAM_RADIUS    => FIX_RADIUS_DEF,
+           FIX_ARCW_RADIUS   => FIX_RADIUS_DEF,
+           FIX_RAM_CORRIDOR  => FIX_CORRIDOR_DEF,
+           FIX_ARCW_CORRIDOR => FIX_CORRIDOR_DEF,
+           FIX_UPDATE_RATE   => FIX_UPDATE_RATE_DEF,
+           PCFL_AVERAGE_CBL => FALSE,
+           PIL_ETO_ALERT  => FALSE,
+           CODED_ROUTE_NUMBER => NO_CODED_ROUTE,
+           SECTOR_INDEX => 0,
+           FLIGHT_RULE  => FPL_DATA_TYPES.FLIGHT_RULE_DEF,
+           OVERFLIGHT_SPEED => FIX_OVERFLIGHT_SPEED_DEF,
+           OCCURENCE    => 0);
+
+  MAX_FIX_TABLE_LENGTH : constant INTEGER_8 := 90;
+
+  subtype FIX_LIST_LENGTH_T is INTEGER_8 range 0 .. MAX_FIX_TABLE_LENGTH;
+  FIX_LIST_LENGTH_DEF : constant FIX_LIST_LENGTH_T := FIX_LIST_LENGTH_T'FIRST;
+
+  type FIX_TABLE_T is array (1 .. FIX_LIST_LENGTH_T'LAST) of FIX_T;
+  FIX_TABLE_DEF : constant FIX_TABLE_T := (others => FIX_DEF);
+
+  -- PJH ECR_TAREP_044 08/03/04 add BLOCK_LEVEL to COORD_INFO_T.
+  -- When BLOCK_LEVEL = FALSE then the cleared level is a single level
+  -- given by LEVEL. If a supplementary level exists then this will be
+  -- stored in SUP_LEVEL. (Existing behaviour)
+  -- When BLOCK_LEVEL = TRUE, then the cleared level is a block level
+  -- where LEVEL is the lower flight level and SUP_LEVEL is the upper
+  -- flight level of the cleared block level. (New behaviour)
+  -- It is not possible to specify both a block level AND a
+  -- supplementary level since the ICAO standard only provides for
+  -- two level values in field 14.
+  type COORD_INFO_T is
+    record
+      FIX                    : FPL_DATA_TYPES.EXT_ITEMS;
+      TIME                   : ARTTS.ARTTS_TIME.TC_SMALL_UNIVERSAL;
+      LEVEL_UNITY            : IAC_INPUT_LEVEL_TYPES.LEVEL_TYPE_T;
+      LEVEL                  : KINEMATICS.INT_FLIGHT_LEVEL_T;
+      SUP_UNITY              : IAC_INPUT_LEVEL_TYPES.LEVEL_TYPE_T;
+      SUP_LEVEL              : KINEMATICS.INT_FLIGHT_LEVEL_T;
+      CROSS_MODE             : FPL_DATA_TYPES.CROSSING_MODES;
+      FORCED_INBOUND_DISPLAY : BOOLEAN;
+      BLOCK_LEVEL            : BOOLEAN; -- TAREP_044 (new)
+    end record;
+
+  for COORD_INFO_T use
+    record
+      FIX        at 0  range 0 .. 87;
+      CROSS_MODE at 11 range 0 .. 1;
+      FORCED_INBOUND_DISPLAY
+                 at 11 range 2 .. 2;
+      TIME       at 12 range 0 .. 31;
+      LEVEL      at 16 range 0 .. 15;
+      SUP_LEVEL  at 18 range 0 .. 15;
+      LEVEL_UNITY at 20 range 0 .. 2;
+      SUP_UNITY   at 20 range 3 .. 5;
+      BLOCK_LEVEL at 20 range 6 .. 6; -- TAREP_044 (new)
+   end record;
+
+  for COORD_INFO_T'SIZE use 21 * STANDARD_TYPES.OCTET;
+
+  COORD_INFO_DEF : constant COORD_INFO_T :=
+          (FIX        => FPL_DATA_TYPES.EXT_ITEM_DEF,
+           TIME       => ARTTS.ARTTS_TIME.TC_INIT_SMALL_UNIVERSAL,
+           LEVEL      => KINEMATICS.INT_FLIGHT_LEVEL_DEF,
+           SUP_LEVEL  => KINEMATICS.INT_FLIGHT_LEVEL_DEF,
+           CROSS_MODE => FPL_DATA_TYPES.CROSSING_MODE_DEF,
+           FORCED_INBOUND_DISPLAY => FALSE,
+           LEVEL_UNITY => IAC_INPUT_LEVEL_TYPES.LEVEL_TYPE_T'first,
+           SUP_UNITY   =>  IAC_INPUT_LEVEL_TYPES.LEVEL_TYPE_T'first,
+           BLOCK_LEVEL => FALSE); -- TAREP_044 (new)
+
+  type EXIT_DATA_STATUS_T is
+      (NO_ADJACENT_FIR,
+       EST_PAC_SENT,
+       ACP_RECEIVED,
+       NO_LAM_RECEIVED,
+       NO_ACP_RECEIVED,
+       MSG_NOT_YET_SENT);
+
+  for EXIT_DATA_STATUS_T use
+      (NO_ADJACENT_FIR  => 0,
+       EST_PAC_SENT     => 1,
+       ACP_RECEIVED     => 2,
+       NO_LAM_RECEIVED  => 3,
+       NO_ACP_RECEIVED  => 4,
+       MSG_NOT_YET_SENT => 5);
+
+  EXIT_DATA_STATUS_DEF : constant EXIT_DATA_STATUS_T := NO_ADJACENT_FIR;
+
+  type EXIT_PROTOCOL_T is
+      (NONE,
+       AIDC,
+       ICAO,
+       OLDI,
+       ADEXP,
+       FDECM); --ECR-Li_01 ADEXP Message processing, 30/07/04.
+  for EXIT_PROTOCOL_T use
+      (NONE  => 0,
+       AIDC  => 1,
+       ICAO  => 2,
+       OLDI  => 3,
+       ADEXP => 4,
+       FDECM => 5);
+
+  for EXIT_PROTOCOL_T'SIZE use STANDARD_TYPES.WORD;
+  EXIT_PROTOCOL_DEF : constant EXIT_PROTOCOL_T := NONE;
+
+  type OLDI_MSG_COMPOSITION_T is
+    record
+      FIELD8      : BOOLEAN;
+      FIELD10     : BOOLEAN;
+      FIELD15     : BOOLEAN;
+      FIELD18     : BOOLEAN;
+    end record;
+
+  for OLDI_MSG_COMPOSITION_T use
+    record
+      FIELD8  at 0 range 0 .. 0;
+      FIELD10 at 0 range 1 .. 1;
+      FIELD15 at 0 range 2 .. 2;
+      FIELD18 at 0 range 3 .. 3;
+  end record;
+  for OLDI_MSG_COMPOSITION_T'SIZE use 1 * STANDARD_TYPES.OCTET;
+
+  OLDI_MSG_COMPOSITION_DEF : constant OLDI_MSG_COMPOSITION_T := (others => FALSE);
+-- end GG 12/04/99
+
+  -- TAAATS V1.20 (JDLP) : replace PFL (V0+) by XFL, exit coordinated flight level
+  --------------------------------------------------------------------------------
+
+  -- PJH ECR_TAREP_044 08/03/04 add BLOCK_LEVEL to EXIT_INFO_T.
+  -- When BLOCK_LEVEL = FALSE then the exit level is a single level
+  -- given by XFL. If a supplementary level exists then this will be
+  -- stored in SUP_LEVEL. (Existing behaviour)
+  -- When BLOCK_LEVEL = TRUE, then the exit level is a block level
+  -- where XFL is the lower flight level and SUP_LEVEL is the upper
+  -- flight level of the exit block level. (New behaviour)
+  -- It is not possible to specify both a block level AND a
+  -- supplementary level since the ICAO standard only provides for
+  -- two level values in field 14.
+  type EXIT_INFO_T is
+    record
+      FIX                  : FPL_DATA_TYPES.EXT_ITEMS;
+      TIME                 : ARTTS.ARTTS_TIME.TC_SMALL_UNIVERSAL;
+      XFL                  : KINEMATICS.INT_FLIGHT_LEVEL_T;
+      SUP_LEVEL            : KINEMATICS.INT_FLIGHT_LEVEL_T;
+      CROSS_MODE           : FPL_DATA_TYPES.CROSSING_MODES;
+      EXIT_DATA_STATUS     : EXIT_DATA_STATUS_T;
+      EXIT_PROTOCOL        : EXIT_PROTOCOL_T;
+      OLDI_MSG_COMPOSITION : OLDI_MSG_COMPOSITION_T;
+      EXIT_SUP_UNITY       : IAC_INPUT_LEVEL_TYPES.LEVEL_TYPE_T; -- mda ch001
+      XFL_UNITY            : IAC_INPUT_LEVEL_TYPES.LEVEL_TYPE_T; -- mda ch001
+      BLOCK_LEVEL          : BOOLEAN; -- TAREP_044 (new)
+     end record;
+
+  for EXIT_INFO_T use
+    record
+      FIX                  at 0  range 0 .. 87;
+      CROSS_MODE           at 11 range 0 .. 1;
+      EXIT_DATA_STATUS     at 11 range 2 .. 4;
+      EXIT_PROTOCOL        at 11 range 5 .. 7; --ECR-Li_01 ADEXP Messages - previously 5..6
+      TIME                 at 12 range 0 .. 31;
+      XFL                  at 16 range 0 .. 15;
+      SUP_LEVEL            at 18 range 0 .. 15;
+      OLDI_MSG_COMPOSITION at 20 range 0 .. 7;
+      EXIT_SUP_UNITY       at 21 range 0 .. 2;   -- mda ch001
+      XFL_UNITY            at 21 range 3 .. 5;   -- mda ch001
+      BLOCK_LEVEL          at 21 range 6 .. 6; -- TAREP_044 (new)
+  end record;
+
+  for EXIT_INFO_T'SIZE use 22 * STANDARD_TYPES.OCTET; -- mda ch01
+
+  EXIT_INFO_DEF : constant EXIT_INFO_T :=
+          (FIX                  => FPL_DATA_TYPES.EXT_ITEM_DEF,
+           TIME                 => ARTTS.ARTTS_TIME.TC_INIT_SMALL_UNIVERSAL,
+           XFL                  => KINEMATICS.INT_FLIGHT_LEVEL_DEF,
+           SUP_LEVEL            => KINEMATICS.INT_FLIGHT_LEVEL_DEF,
+           CROSS_MODE           => FPL_DATA_TYPES.CROSSING_MODE_DEF,
+           EXIT_DATA_STATUS     => EXIT_DATA_STATUS_DEF,
+           EXIT_PROTOCOL        => EXIT_PROTOCOL_DEF,
+           OLDI_MSG_COMPOSITION => OLDI_MSG_COMPOSITION_DEF,
+           EXIT_SUP_UNITY       => IAC_INPUT_LEVEL_TYPES.LEVEL_TYPE_DEF, -- mda ch001
+           XFL_UNITY            => IAC_INPUT_LEVEL_TYPES.LEVEL_TYPE_DEF, -- mda ch001
+           BLOCK_LEVEL          => FALSE); -- TAREP_044 (new)
+
+  --  type PAC_ABI_STATUS_T is
+  --      (STATUS_IS,
+  ----       STATUS_IN,
+  --       STATUS_ISR,
+  --       STATUS_ISN,
+  --       STATUS_PS,
+  --       STATUS_PN,
+  --       STATUS_PSR,
+  --       STATUS_PSN,
+  --       NONE);
+  --  PAC_ABI_STATUS_DEF : constant PAC_ABI_STATUS_T := NONE;
+
+  --  type PAC_ABI_INFO_T is
+  --    record
+  --      DESTINATION_FIR : STRING (1 .. 4);
+  --      FIX             : FPL_DATA_TYPES.EXT_ITEMS;
+  --      TIME            : ARTTS.ARTTS_TIME.TC_SMALL_UNIVERSAL;
+  --      CFL             : KINEMATICS.INT_FLIGHT_LEVEL_T;
+  --      PAC_ABI_STATUS  : PAC_ABI_STATUS_T;
+  --    end record;
+
+  --  for PAC_ABI_INFO_T use
+  --    record
+  --      DESTINATION_FIR at 0  range 0 .. 31;
+  --      FIX             at 4  range 0 .. 87;
+  --      TIME            at 16 range 0 .. 31;
+  --      CFL             at 20 range 0 .. 15;
+  --      PAC_ABI_STATUS  at 15 range 0 .. 3;
+  --  end record;
+  --  for PAC_ABI_INFO_T'SIZE use 22 * STANDARD_TYPES.OCTET;
+
+  --  PAC_ABI_INFO_DEF : constant PAC_ABI_INFO_T :=
+  --          (DESTINATION_FIR => (others => ' '),
+  --           FIX             => FPL_DATA_TYPES.EXT_ITEM_DEF,
+  --           TIME            => ARTTS.ARTTS_TIME.TC_INIT_SMALL_UNIVERSAL,
+  --           CFL             => KINEMATICS.INT_FLIGHT_LEVEL_DEF,
+  --           PAC_ABI_STATUS  => PAC_ABI_STATUS_DEF);
+
+  FIR_NAME_LENGTH : constant NATURAL_32 := 4;
+
+  subtype FIR_NAME_T is STRING (1 .. FIR_NAME_LENGTH);
+
+  FIR_NAME_DEF : constant FIR_NAME_T := (others => ' ');
+
+  -- end
+
+  type FLIGHT_CATEGORY_T is
+      (OVERFLIGHT,
+       DOMESTIC,
+       OUTBOUND,
+       INBOUND);
+  FLIGHT_CATEGORY_DEF : constant FLIGHT_CATEGORY_T := DOMESTIC;
+
+  type HOLDING_STATUS_T is
+      (HOLD_ON_FIX,
+       INIT_HOLD,
+       NO_HOLD);
+
+  HOLDING_STATUS_DEF : constant HOLDING_STATUS_T := NO_HOLD;
+
+  type HOLDING_INFO_T is
+    record
+      HOLDING_STATUS     : HOLDING_STATUS_T;
+      HOLDING_POINT      : FIX_LIST_LENGTH_T;
+      HOLDING_ENTRY_TIME : ARTTS.ARTTS_TIME.TC_SMALL_UNIVERSAL;
+      -- GM 04/06/99
+      HOLDING_EXIT_TIME  : ARTTS.ARTTS_TIME.TC_SMALL_UNIVERSAL;
+      -- GM end
+    end record;
+
+  for HOLDING_INFO_T use
+    record
+      HOLDING_ENTRY_TIME at 0 range 0 .. 31;
+      -- GM 04/06/99
+      HOLDING_EXIT_TIME  at 4 range 0 .. 31;
+      -- GM end
+      HOLDING_POINT      at 8 range 0 .. 7;
+      HOLDING_STATUS     at 9 range 0 .. 7;
+  end record;
+
+  -- GM 04/06/99 change size from 6 -> 10
+  for HOLDING_INFO_T'SIZE use 10 * STANDARD_TYPES.OCTET;
+  -- GM end
+
+  HOLDING_INFO_DEF : constant HOLDING_INFO_T :=
+          (HOLDING_STATUS     => HOLDING_STATUS_DEF,
+           HOLDING_POINT      => FIX_LIST_LENGTH_DEF,
+           HOLDING_ENTRY_TIME => ARTTS.ARTTS_TIME.TC_INIT_SMALL_UNIVERSAL,
+  -- GM 04/06/99
+           HOLDING_EXIT_TIME  => ARTTS.ARTTS_TIME.TC_INIT_SMALL_UNIVERSAL);
+  -- GM end
+
+
+  -- IBB (1.23) new definition of hand-off
+  ----------------------------------------
+  MAX_NUMBER_OF_HANDED_OVER_TO_SECTORS : constant := 1;
+
+  subtype HANDED_OVER_SECTOR_NUMBER_T is INTEGER_8 range 1 .. MAX_NUMBER_OF_HANDED_OVER_TO_SECTORS;
+
+  type HANDED_OVER_TO_SECTORS_T is array (HANDED_OVER_SECTOR_NUMBER_T) of DPR_FORMAT_TYPES.FUNCTIONAL_SECTOR_NAME_T;
+
+  HANDED_OVER_TO_SECTORS_DEF : constant HANDED_OVER_TO_SECTORS_T := (others => DPR_FORMAT_TYPES.FUNCTIONAL_SECTOR_NAME_DEF);
+
+  type HAND_OFF_INFO_T is
+    record
+      HANDED_OVER_TO_SECTORS  : HANDED_OVER_TO_SECTORS_T;
+      NEXT_SECTOR             : DPR_FORMAT_TYPES.FUNCTIONAL_SECTOR_NAME_T;
+      HAND_OFF_INHIBIT_STATUS : BOOLEAN;
+      CROSSING_LABEL_FLAG     : BOOLEAN;
+      DELETE_ON_ACPT_REJ_FLAG : BOOLEAN;
+    end record;
+
+  for HAND_OFF_INFO_T use
+    record
+      HANDED_OVER_TO_SECTORS  at 0  range 0 .. 39;
+      NEXT_SECTOR             at 5  range 0 .. 39;
+      HAND_OFF_INHIBIT_STATUS at 10 range 0 .. 0;
+      CROSSING_LABEL_FLAG     at 10 range 1 .. 1;
+      DELETE_ON_ACPT_REJ_FLAG at 10 range 2 .. 2;
+  end record;
+
+  for HAND_OFF_INFO_T'SIZE use 11 * STANDARD_TYPES.OCTET;
+
+  HAND_OFF_INFO_DEF : constant HAND_OFF_INFO_T :=
+          (HANDED_OVER_TO_SECTORS  => HANDED_OVER_TO_SECTORS_DEF,
+           NEXT_SECTOR             => DPR_FORMAT_TYPES.FUNCTIONAL_SECTOR_NAME_DEF,
+           HAND_OFF_INHIBIT_STATUS => FALSE,
+           CROSSING_LABEL_FLAG     => FALSE,
+           DELETE_ON_ACPT_REJ_FLAG => FALSE);
+
+  -- end IBB1.23
+  --------------
+
+  type ROUTE_UPDATE_INDICATION_T is new STANDARD_TYPES.NATURAL_8;
+  ROUTE_UPDATE_INDICATION_DEF : constant ROUTE_UPDATE_INDICATION_T := 0;
+
+  -- JDLP 29/07/97 For ECP 140 V4.4
+  -- CPDLC needs a longer ROUTE.
+  --MAX_ROUTE_LENGTH : constant := 40;
+  MAX_ROUTE_LENGTH : constant := 156;
+  -- end JDLP 29/07/97
+
+  subtype ICAO_ROUTE_T is STRING (1 .. MAX_ROUTE_LENGTH);
+  ICAO_ROUTE_DEF : constant ICAO_ROUTE_T := (others => ' ');
+
+  MAX_FULL_ROUTE_LENGTH : constant := 750; 
+
+  subtype ICAO_FULL_ROUTE_T is STRING (1 .. MAX_FULL_ROUTE_LENGTH);
+  ICAO_FULL_ROUTE_DEF : constant ICAO_FULL_ROUTE_T := (others => ' ');
+
+  -- slot definition
+  -------------------
+  -- JDLP TAAATS V1.20, suppress SLOTS and RESTRICTIONS
+  -----------------------------------------------------
+
+  --
+  -- gate definition
+  ------------------
+  --
+  subtype GATES is STRING (1 .. FPL_SYSTEM_CONF.MAX_CHARACTER_IN_GATE);
+  GATE_DEF : constant GATES := (others => ' ');
+
+  NAME_LENGTH : constant NATURAL_32 := 11;
+  subtype NAMES is STRING (1 .. NAME_LENGTH);
+  NAMES_CLEAR : constant NAMES := "NAMES_CLEAR"; -- used to indicate that the external system wishes to clear the field
+
+  RUNWAY_NAME_LENGTH : constant NATURAL_32 := 3;
+  subtype RUNWAY_NAME_T is STRING (1 .. RUNWAY_NAME_LENGTH);
+  RUNWAY_NAME_DEF : constant RUNWAY_NAME_T := (others => ' ');
+  
+  MAESTRO_FIX_LENGTH : constant NATURAL_32 := 5;
+  subtype MAESTRO_FIX_T is STRING (1 .. MAESTRO_FIX_LENGTH);
+  MAESTRO_FIX_DEF : constant MAESTRO_FIX_T := (others => ' ');
+
+ 
+ --ROUTE TABLE INFORMATION
+ type ROUTE_T is
+  record
+   ROUTE_POINT : MAESTRO_FIX_T;
+   STO         : ARTTS.ARTTS_TIME.TC_SMALL_UNIVERSAL;
+  end record;
+
+ for ROUTE_T use
+  record
+   ROUTE_POINT at 0 range 0 .. 39;
+   STO         at 8 range 0 .. 31;
+  end record;
+
+ for ROUTE_T'SIZE use 12 * STANDARD_TYPES.OCTET;
+ 
+ ROUTE_DEF : constant ROUTE_T :=
+             (ROUTE_POINT => MAESTRO_FIX_DEF,
+              STO         => ARTTS.ARTTS_TIME.TC_INIT_SMALL_UNIVERSAL);
+
+ MAX_ROUTE_TABLE_LENGTH : constant INTEGER_32 := 50;
+
+ subtype ROUTE_LIST_LENGTH_T is INTEGER_32 range 0 .. MAX_ROUTE_TABLE_LENGTH;
+  ROUTE_LIST_LENGTH_DEF : constant ROUTE_LIST_LENGTH_T := ROUTE_LIST_LENGTH_T'FIRST;
+
+  type ROUTE_TABLE_T is array (1 .. ROUTE_LIST_LENGTH_T'LAST) of ROUTE_T;
+  ROUTE_TABLE_DEF : constant ROUTE_TABLE_T := (others => ROUTE_DEF);
+
+
+  type FLIGHT_ORIGIN_T is
+      (LPL,
+       RPL,
+       FPL,
+       -- PDEL IBB4.31 ECP 42 20/01/97
+       STE,
+       MAIN_ATC,
+       CFPL,
+       FIPS);
+
+  FLIGHT_ORIGIN_DEF : constant FLIGHT_ORIGIN_T := LPL;
+
+  -- TAAATS V1.20 (IBB 1.24)
+  --------------------------
+  MAX_NBR_OF_OTHER_INFO_CHARS : constant NATURAL_32 := 10;
+  subtype PART_OF_OTHER_INFO_T is STRING (1 .. MAX_NBR_OF_OTHER_INFO_CHARS);
+  PART_OF_OTHER_INFO_DEF : PART_OF_OTHER_INFO_T := (others => ' ');
+
+--$PCR-VV44-1742 20/10/97 Replace and pad unused fields DLPCC_STATUS_T and PREDEP_CLEARANCE with
+-- DATA_LINK_EQUIPEMENT
+  --
+  -- Status of the data link Pilot -> ADS
+  ---------------------------------------
+  --
+--  type DLPCC_STATUS_T is
+--      (NO_DLPCC,
+--       DLPCC_NOT_CONNECTED,
+--       DLPCC_CONNECTED,
+--       DLPCC_AVAILABLE);
+--  DLPCC_STATUS_DEF : constant DLPCC_STATUS_T := NO_DLPCC;
+
+  --
+  -- Rem : this will be used on strips by HMI as it follows:
+  -- NO_DLPCC --> ' ', DLPCC_NOT_CONNECTED --> '.', DLPCC_CONNECTED --> '-',
+  -- DLPCC_AVAILABLE --> '+'.
+  --------------------------------------------------------------------------
+  --
+
+  --
+  -- Pre Departure Clearance
+  -- SENT --> "->" and ACKNOWLEDGED --> "-"
+  -----------------------------------------
+  --
+--  type PREDEP_CLEARANCE_T is
+--      (SENT,
+--       NOT_SENT,
+--       ACKNOWLEDGED);
+--  PREDEP_CLEARANCE_DEF : constant PREDEP_CLEARANCE_T := NOT_SENT;
+
+--$PCR-VV44-1742 20/10/97 Replace and pad unused fields DLPCC_STATUS_T and PREDEP_CLEARANCE with
+-- DATA_LINK_EQUIPMENT End
+-- NAP2-ECR11 FH 20/4/99 Add VIP status
+  type VIP_STATUSES is (V, D, P, G, N);
+  VIP_STATUS_DEF : constant VIP_STATUSES := N;
+-- end FH
+  --
+  -- Global info definition
+  -------------------------
+  --
+  MAX_LENGTH_OF_GLOBAL_OPS_INFO_TEXT : constant NATURAL_32 := 15;
+  subtype GLOBAL_OPS_INFO_T is STRING (1 .. MAX_LENGTH_OF_GLOBAL_OPS_INFO_TEXT);
+  GLOBAL_OPS_INFO_DEF : GLOBAL_OPS_INFO_T := (others => ' ');
+
+  --
+  -- approach mode
+  -------------------
+  --
+  MAX_LENGTH_OF_APPROACH_MODE : constant NATURAL_32 := 4;
+  subtype APPROACH_MODE_T is STRING (1 .. MAX_LENGTH_OF_APPROACH_MODE);
+  APPROACH_MODE_DEF : APPROACH_MODE_T := (others => ' ');
+
+  --
+  -- Operational data
+  -------------------
+  --
+  MAX_OPDATA_LENGTH : constant NATURAL_32 := 20;
+  subtype OP_DATA_T is STRING (1 .. MAX_OPDATA_LENGTH);
+  OP_DATA_DEF : OP_DATA_T := (others => ' ');
+  OP_DATA_CLR : OP_DATA_T := "OPDATA_CLR          "; -- used to indicate that the external system wishes to clear the field
+
+  --
+  -- Data for MMI
+  ---------------
+  --
+  -- am ECR_NESACC-26 13/05/02 begin - Aural Alert Inhibition.
+  -- WARNING: "Inhibition" is not a correct name (but left here due to legacy
+  --          code). When one of the elements (eg: DUPE) is specified as ON, it
+  --          means that the Alert is Activated (Aural and Visual). If it is set
+  --          to OFF, it means that the Alert is Deactivated (Aural & Visual) and
+  --          if it is VISUAL, it means that the Alert is only visually Activated
+  type ALERT_INHIBITION_T is
+    record
+      DUPE : DPR_FORMAT_TYPES.ALERT_STATE_T;
+      STCA : DPR_FORMAT_TYPES.ALERT_STATE_T;
+      MSAW : DPR_FORMAT_TYPES.ALERT_STATE_T;
+      DAIW : DPR_FORMAT_TYPES.ALERT_STATE_T;
+      RAM  : DPR_FORMAT_TYPES.ALERT_STATE_T;
+      CLAM : DPR_FORMAT_TYPES.ALERT_STATE_T;
+      MPR  : DPR_FORMAT_TYPES.ALERT_STATE_T;
+      ARCW : DPR_FORMAT_TYPES.ALERT_STATE_T;
+      FPCP : DPR_FORMAT_TYPES.ALERT_STATE_T;
+      TDAW : DPR_FORMAT_TYPES.ALERT_STATE_T; --aj ECR_NESACC-23 26/06/02
+      SAR  : DPR_FORMAT_TYPES.ALERT_STATE_T;
+      SAP  : DPR_FORMAT_TYPES.ALERT_STATE_T; --KG PRODUCT ECR FPCF_2_1 26/06/2003
+      RAIW : DPR_FORMAT_TYPES.ALERT_STATE_T;
+      TCT  : DPR_FORMAT_TYPES.ALERT_STATE_T;
+      APMW : DPR_FORMAT_TYPES.ALERT_STATE_T;
+      RIW  : DPR_FORMAT_TYPES.ALERT_STATE_T;
+    end record;
+
+  for ALERT_INHIBITION_T use
+    record
+      DUPE at 0 range 0 .. 1;
+      STCA at 0 range 2 .. 3;
+      MSAW at 0 range 4 .. 5;
+      DAIW at 0 range 6 .. 7;
+      RAM  at 1 range 0 .. 1;
+      CLAM at 1 range 2 .. 3;
+      MPR  at 1 range 4 .. 5;
+      ARCW at 1 range 6 .. 7;
+      FPCP at 2 range 0 .. 1;
+      TDAW at 2 range 2 .. 3; --aj ECR_NESACC-23 26/06/02
+      SAR  at 2 range 4 .. 5;
+      SAP  at 2 range 6 .. 7; --KG PRODUCT ECR FPCF_2_1 26/06/2003.
+      RAIW at 3 range 0 .. 1;
+      TCT  at 3 range 2 .. 3;
+      APMW at 3 range 4 .. 5;
+      RIW  at 3 range 6 .. 7;
+  end record;
+
+  for ALERT_INHIBITION_T'SIZE use 4 * STANDARD_TYPES.OCTET;
+
+  ALERT_INHIBITION_DEF : constant ALERT_INHIBITION_T :=
+          (DUPE => DPR_FORMAT_TYPES.ALERT_STATE_DEF,
+           STCA => DPR_FORMAT_TYPES.ALERT_STATE_DEF,
+           MSAW => DPR_FORMAT_TYPES.ALERT_STATE_DEF,
+           DAIW => DPR_FORMAT_TYPES.ALERT_STATE_DEF,
+           RAM  => DPR_FORMAT_TYPES.ALERT_STATE_DEF,
+           CLAM => DPR_FORMAT_TYPES.ALERT_STATE_DEF,
+           MPR  => DPR_FORMAT_TYPES.ALERT_STATE_DEF,
+           ARCW => DPR_FORMAT_TYPES.ALERT_STATE_DEF,
+           FPCP => DPR_FORMAT_TYPES.ALERT_STATE_DEF,
+           TDAW => DPR_FORMAT_TYPES.ALERT_STATE_DEF, --aj ECR_NESACC-23 26/06/02
+           SAR  => DPR_FORMAT_TYPES.ALERT_STATE_DEF,
+           SAP  => DPR_FORMAT_TYPES.ALERT_STATE_DEF,  --KG PRODUCT ECR FPCF_2_1 26/06/2003
+           RAIW => DPR_FORMAT_TYPES.ALERT_STATE_DEF,
+           TCT  => DPR_FORMAT_TYPES.ALERT_STATE_DEF,
+           APMW => DPR_FORMAT_TYPES.ALERT_STATE_DEF,
+           RIW  => DPR_FORMAT_TYPES.ALERT_STATE_DEF
+           );
+  -- am ECR_NESACC-26 13/05/02 end.
+
+  --XL 10/01/97 The bitmap is now filled by partition in order to avoid any
+  --   recomputation for the reconfiguration or resectorization ECP 680
+  -------------------------------------------------------------------------
+  ----XL 10/04/96 Add a new field for the CDC used by CDP
+  --  MAX_NB_OF_MMI_NODES : constant NATURAL_32 := DPR_FORMAT_TYPES.MAX_NODE_PER_FDRG;
+  --
+  --  type CDP_BOOLEAN is new BOOLEAN;
+  --
+  --  for CDP_BOOLEAN'SIZE use 1;
+  --
+  --  type CDP_BIT_MAP_T is array (1 .. MAX_NB_OF_MMI_NODES) of CDP_BOOLEAN;
+  --
+  --  for CDP_BIT_MAP_T'SIZE use MAX_NB_OF_MMI_NODES;
+  --
+  --  CDP_BIT_MAP_DEF : constant CDP_BIT_MAP_T := (others => FALSE);
+
+  subtype PARTITION_NAME_T is STRING (1 .. PARTITION_ID.PARTITION_ID_STRING_LENGTH_C); --Length is 4
+
+  PARTITION_NAME_DEF : constant PARTITION_NAME_T := (others => ' ');
+
+  MAX_PARTITION_NUMBER : constant NATURAL_32 := DPR_FORMAT_TYPES.MAX_ON_LINE_PARTITIONS; --If this number changes, the size of the
+                                      --+    CDC must be consequently changed
+
+  subtype PARTITION_INDEX_T is NATURAL_32 range 1 .. MAX_PARTITION_NUMBER;
+
+  type CDP_PARTITION_INFO_T is array (PARTITION_INDEX_T) of PARTITION_NAME_T;
+
+  CDP_PARTITION_INFO_DEF : constant CDP_PARTITION_INFO_T := (others => PARTITION_NAME_DEF);
+
+  --end XL ECP 680
+
+  -------------------------------------------
+  --XL 13/11/96 Add the strip_info in the CDC
+  -------------------------------------------
+
+  type STRIP_KIND_T is
+      (FORCED,
+       NORMAL,
+       SUSPENDED,
+       INFORMED);
+
+  for STRIP_KIND_T use (FORCED    => 0,
+                        NORMAL    => 1,
+                        SUSPENDED => 2,
+                        INFORMED  => 3);
+
+  STRIP_KIND_DEF : constant STRIP_KIND_T := NORMAL;
+
+  type FLIGHT_DATA_TYPES is
+      (PREACTIVATED_INBOUND,
+       PREACTIVATED_DEPARTURE,
+       INBOUND_COORDINATION,
+       DEPARTURE_COORDINATION,
+       ACTIVE_LANDING,
+       ACTIVE_EXITING,
+       PRELIMINARY,
+       UNASSIGNED);
+
+  for FLIGHT_DATA_TYPES use (PREACTIVATED_INBOUND   => 0,
+                             PREACTIVATED_DEPARTURE => 1,
+                             INBOUND_COORDINATION   => 2,
+                             DEPARTURE_COORDINATION => 3,
+                             ACTIVE_LANDING         => 4,
+                             ACTIVE_EXITING         => 5,
+                             PRELIMINARY            => 6,
+                             UNASSIGNED             => 7);
+
+  FLIGHT_DATA_TYPES_DEF : constant FLIGHT_DATA_TYPES := UNASSIGNED;
+
+  type ORIENTATION_INDICATOR is
+      (GEO_DETERMINED,
+       UP,
+       DOWN,
+       RIGHT,
+       LEFT,
+       NO_ARROW);
+
+  for ORIENTATION_INDICATOR use (GEO_DETERMINED => 0,
+                                 UP             => 1,
+                                 DOWN           => 2,
+                                 RIGHT          => 3,
+                                 LEFT           => 4,
+                                 NO_ARROW       => 5);
+
+  ORIENTATION_INDICATOR_DEF : constant ORIENTATION_INDICATOR := GEO_DETERMINED;
+
+--$PCR-VV44-1840 14/01/98 Add Strip window destination in posting info Begin
+
+  subtype FORMAT_NUMBER_T is INTEGER_8 range 0 .. 32;
+  FORMAT_NUMBER_DEF : FORMAT_NUMBER_T := 0;
+
+  type DEST_WINDOW_T is
+      (NONE,
+       INFORMED,
+       ANNOUNCED);
+
+  for DEST_WINDOW_T use (NONE      => 0,
+                         INFORMED  => 1,
+                         ANNOUNCED => 2);
+
+  DEST_WINDOW_DEF : constant DEST_WINDOW_T := NONE;
+
+  -- end of TAAATS IBB 2.10
+  --
+
+  subtype PRIORITY_INDEX_T is INTEGER_16;
+  PRIORITY_INDEX_DEF : constant PRIORITY_INDEX_T := 0;
+
+  type STRIP_INFO_T is
+    record
+      FNC_SECTOR     : DPR_FORMAT_TYPES.FUNCTIONAL_SECTOR_NAME_T;
+      STRIP_KIND     : STRIP_KIND_T;
+      FDT            : FLIGHT_DATA_TYPES;
+      ORIENTATION    : ORIENTATION_INDICATOR;
+      FORMAT_NB      : FORMAT_NUMBER_T;
+      DEST_WINDOW    : DEST_WINDOW_T;
+      REF_FIX        : FIX_LIST_LENGTH_T;
+      PRIORITY_INDEX : PRIORITY_INDEX_T;
+    end record;
+
+  for STRIP_INFO_T use
+    record
+      FNC_SECTOR     at 0 range 0 .. 39;
+      STRIP_KIND     at 5 range 0 .. 1;
+      FDT            at 5 range 2 .. 4;
+      ORIENTATION    at 5 range 5 .. 7;
+      FORMAT_NB      at 6 range 0 .. 5;
+      DEST_WINDOW    at 6 range 6 .. 7;
+      REF_FIX        at 7 range 0 .. 7;
+      PRIORITY_INDEX at 8 range 0 .. 15;
+  end record;
+
+--$PCR-VV44-1840 14/01/98 Add Strip window destination in posting info End
+
+  for STRIP_INFO_T'SIZE use 10 * STANDARD_TYPES.OCTET;
+
+  STRIP_INFO_DEF : STRIP_INFO_T :=
+          (FNC_SECTOR     => DPR_FORMAT_TYPES.FUNCTIONAL_SECTOR_NAME_DEF,
+           STRIP_KIND     => STRIP_KIND_DEF,
+           FDT            => FLIGHT_DATA_TYPES_DEF,
+           ORIENTATION    => ORIENTATION_INDICATOR_DEF,
+           FORMAT_NB      => FORMAT_NUMBER_DEF,
+           DEST_WINDOW    => DEST_WINDOW_DEF,
+           REF_FIX        => FIX_LIST_LENGTH_DEF,
+           PRIORITY_INDEX => PRIORITY_INDEX_DEF);
+
+
+  MAX_NB_OF_STRIP : constant NATURAL_32 := 20; -- If this nb changes, the size of the CDC must be
+                                               --+    accordingly changed as well
+
+  type POSTING_DATA_T is array (1 .. MAX_NB_OF_STRIP) of STRIP_INFO_T;
+
+  POSTING_DATA_DEF : constant POSTING_DATA_T := (others => STRIP_INFO_DEF);
+
+  --end XL IBB 4.3
+
+  --GM 16/06/97 ECP952
+  type AOC_INFO_T is
+    record
+      AOC_RECEIVED : BOOLEAN;
+      FROM_CENTRE  : FIR_NAME_T;
+    end record;
+
+  for AOC_INFO_T use
+    record
+      AOC_RECEIVED at 0 range 0 .. 7;
+      FROM_CENTRE  at 1 range 0 .. 31;
+    end record;
+
+  for AOC_INFO_T'SIZE use 5 * STANDARD_TYPES.OCTET;
+
+  AOC_INFO_DEF : constant AOC_INFO_T :=
+          (AOC_RECEIVED => FALSE,
+           FROM_CENTRE  => FIR_NAME_DEF);
+  --GM end
+
+  -- NS 22/09/99
+  type NAVCAP_T is (
+    B,
+    G,
+    I,
+    N,
+    NONE
+    );
+
+  RNAVCAP_DEF             : constant NAVCAP_T := NONE;
+
+  type PBN_RULE_DESCRIPTORS_HEADER is (
+    A,
+    B,
+    C,
+    D,
+    L,
+    O,
+    S,
+    T,
+    NONE
+    );
+
+  type PBN_RULE_CHARACTER_T is array (1..FPL_DATA_TYPES_EXTENDED_2012.MAX_PBN_RULES) of FPL_DATA_TYPES_EXTENDED_2012.PBN_FIELD_ITEMS_WITH_NONE_T;
+  PBN_RULE_CHARACTER_DEF : constant PBN_RULE_CHARACTER_T := (others => FPL_DATA_TYPES_EXTENDED_2012.NONE);
+
+-- MDo 05Mar01 CH_10
+  subtype DOF_STR_T is STRING(1 .. 6);
+  DOF_STR_DEF : constant DOF_STR_T := (others => ' ');
+
+  subtype EET_STR_T is STRING(1 .. 4);
+  EET_STR_DEF : constant EET_STR_T := (others => ' ');
+
+  type RVSM_STATE_T is
+       (
+        RVSM_NOT_SUSPENDED,
+        RVSM_AUTO_SUSPENDED,
+        RVSM_MAN_SUSPENDED,
+        RVSM_NOT_EXEMPTED,
+        RVSM_AUTO_EXEMPTED,
+        RVSM_MAN_EXEMPTED);
+
+  for RVSM_STATE_T use
+      (
+       RVSM_NOT_SUSPENDED         => 0,  -- RVSM equiped and not suspended
+       RVSM_AUTO_SUSPENDED        => 1,  -- RVSM equiped but suspended due to RVSM area suspension
+       RVSM_MAN_SUSPENDED         => 2,  -- RVSM equiped but suspended due to manual action
+       RVSM_NOT_EXEMPTED          => 3,  -- not RVSM equiped
+       RVSM_AUTO_EXEMPTED         => 4,  -- not RVSM equiped but allowed to flight in RVSM airspace (i.e military aircraft) 
+       RVSM_MAN_EXEMPTED          => 5); -- not RVSM equiped but manually allowed to flight in RVSM airspace
+
+  RVSM_STATE_DEF : constant RVSM_STATE_T := RVSM_NOT_EXEMPTED;
+
+  subtype RVSM_APPROVED_T is RVSM_STATE_T 
+    range RVSM_NOT_SUSPENDED .. RVSM_MAN_SUSPENDED;
+  subtype RVSM_NOT_APPROVED_T is RVSM_STATE_T 
+    range RVSM_NOT_EXEMPTED .. RVSM_MAN_EXEMPTED;
+
+  --
+  -- MAX_NB_DPE_PTS :
+  --
+  -- CSP for maximum number of DPE points allowed per flight plan.
+  --
+  MAX_NB_DPE_PTS : constant NATURAL_8 := 8;
+
+  --
+  -- DPE_POINT_COUNTER_T :
+  --
+  -- Type defining valid range for number of DPE points per flight plan.
+  --
+  subtype DPE_POINT_COUNTER_T is NATURAL_8 range 0 .. MAX_NB_DPE_PTS;
+
+  --
+  -- DPE_POINT_INDEX_T :
+  --
+  -- Type defining index for searching through all DPE points defined for
+  -- a flight plan.
+  --
+  subtype DPE_POINT_INDEX_T is NATURAL_8 range 1 .. MAX_NB_DPE_PTS;
+
+  DPE_POINT_COUNTER_DEF : DPE_POINT_COUNTER_T := DPE_POINT_COUNTER_T'first;
+
+  --
+  -- MAX_NB_LOG_POS_PER_DPE_PTS :
+  --
+  -- CSP for maximum number of logical MMI positions able to request the
+  -- same DPE point at one time.
+  --
+  MAX_NB_LOG_POS_PER_DPE_PTS : constant NATURAL_8 := 4;
+
+  --
+  -- LOG_POS_PER_DPE_POINT_COUNTER_T :
+  --
+  -- Type defining valid range for number of logical MMI positions able
+  -- to request the same DPE point at one time.
+  --
+  subtype LOG_POS_PER_DPE_POINT_COUNTER_T is NATURAL_8 range 0 .. MAX_NB_LOG_POS_PER_DPE_PTS;
+
+  --
+  -- LOG_POS_PER_DPE_POINT_INDEX_T :
+  --
+  -- Type defining the index to search through logical positions associated to
+  -- a DPE point.
+  --
+  subtype LOG_POS_PER_DPE_POINT_INDEX_T is NATURAL_8 range 1 .. MAX_NB_LOG_POS_PER_DPE_PTS;
+
+  LOG_POS_PER_DPE_POINT_COUNTER_DEF : LOG_POS_PER_DPE_POINT_COUNTER_T :=
+                                              LOG_POS_PER_DPE_POINT_COUNTER_T'first;
+
+  --
+  -- LOG_POS_TABLE_T :
+  --
+  -- Table of logical MMI position ids associated to an active DPE point within
+  -- the flight plan route.
+  --
+  type LOG_POS_TABLE_T is array
+    (LOG_POS_PER_DPE_POINT_INDEX_T) of DPR_FORMAT_TYPES.LOG_POSITION_IDENT_T;
+
+  for LOG_POS_TABLE_T'size use (MAX_NB_LOG_POS_PER_DPE_PTS * 4) * STANDARD_TYPES.OCTET;
+
+  LOG_POS_TABLE_DEF : LOG_POS_TABLE_T := (others => DPR_FORMAT_TYPES.LOG_POSITION_IDENT_DEF);
+
+  --
+  -- DPE_POINT_ENTRY_T :
+  --
+  -- Data for a DPE point within the route of the flight plan.  The FIX ID is a
+  -- reference to the DPE_POINT FIX in the Flight Plan CDC.
+  --
+  type DPE_POINT_ENTRY_T is record
+    DPE_POINT_FIX_ID        : FIX_LIST_LENGTH_T;
+    LOGICAL_POSITIONS_TABLE : LOG_POS_TABLE_T;
+
+  end record; -- DPE_POINT_ENTRY_T
+
+  for DPE_POINT_ENTRY_T use record
+    DPE_POINT_FIX_ID        at 0 range 0 .. 7;
+    LOGICAL_POSITIONS_TABLE at 4 range 0 .. 127;
+
+  end record; -- DPE_POINT_ENTRY_T
+
+  for DPE_POINT_ENTRY_T'size use 20 * STANDARD_TYPES.OCTET;
+
+  DPE_POINT_ENTRY_DEF : DPE_POINT_ENTRY_T := (
+    DPE_POINT_FIX_ID        => FIX_LIST_LENGTH_DEF,
+    LOGICAL_POSITIONS_TABLE => LOG_POS_TABLE_DEF);
+
+  --
+  -- DPE_POINTS_TABLE_T :
+  --
+  -- Table containing logical MMI position names associated to all DPE points
+  -- defined for a flight plan up to a maximum of MAX_NB_DPE_PTS per flight
+  -- plan.
+  --
+  type DPE_POINTS_TABLE_T is array (DPE_POINT_INDEX_T) of DPE_POINT_ENTRY_T;
+
+  for DPE_POINTS_TABLE_T'size use 160 * STANDARD_TYPES.OCTET;
+
+  DPE_POINTS_TABLE_DEF : DPE_POINTS_TABLE_T := (others => DPE_POINT_ENTRY_DEF);
+
+  --ECR-Li_03 CFMU Slot Allocation Message Interface, begin 30/07/04.
+  -- New parameter to be saved for Slot Allocation called:
+  -- Calculated Time of Takeoff (CTOT).
+  -----------------------------------------------------------------
+  CTOT_LENGTH : constant NATURAL_32 := 4;
+
+  subtype CTOT_T is STRING (1 .. CTOT_LENGTH);
+
+  CTOT_DEF    : constant CTOT_T := (others => ' ');
+  --ECR-Li_03 end.
+
+  --BP ECR_LI-04 03/06/04 begin
+  type STATUS_OF_833_T is
+       (APPROVED,
+        EXEMPT,
+        NON_APPROVED);
+
+
+  -- Lithuania has requested that if a flight is not going to
+  -- enter the 8.33 kHz airspace, then nothing is to be
+  -- displayed on the electronic strip. Nothing is displayed
+  -- in the APPROVED state.
+  -----------------------------------------------------------
+  STATUS_OF_833_DEF : constant STATUS_OF_833_T := APPROVED;  
+
+  --BP ECR_LI-04 03/06/04 end
+
+  --am BANGKOK_ECR-25 TECOS Interface, 23/03/05.
+  -- New types required for TECOS Interface.
+  -----------------------------------------------
+  type AUTHORISATION_TYPES_T is
+    (RELEASE_REQUEST,
+     ACCEPTED,
+     RESTRICTED,
+     REJECTED,
+     NONE);
+
+  for AUTHORISATION_TYPES_T use
+    (RELEASE_REQUEST => 0,
+     ACCEPTED        => 1,
+     RESTRICTED      => 2,
+     REJECTED        => 3,
+     NONE            => 4);
+     
+  AUTHORISATION_TYPE_DEF : AUTHORISATION_TYPES_T := NONE;
+
+  type RELEASE_AUTHORISATION_T is
+    record
+      TECOS_ADDRESSEE    : EXTERNAL_MESSAGE_TYPE.ORIGINATOR_INDICATORS;
+      AUTHORISATION_TYPE : AUTHORISATION_TYPES_T;
+    end record;
+
+  for RELEASE_AUTHORISATION_T use
+    record
+      TECOS_ADDRESSEE    at 0 range 0 .. 8 * STANDARD_TYPES.OCTET - 1;
+      AUTHORISATION_TYPE at 8 range 0 .. 7; 
+    end record;
+
+  for RELEASE_AUTHORISATION_T'SIZE use 9 * STANDARD_TYPES.OCTET;
+
+  RELEASE_AUTHORISATION_DEF : constant RELEASE_AUTHORISATION_T :=
+    (TECOS_ADDRESSEE    => EXTERNAL_MESSAGE_TYPE.ORIGINATOR_INDICATOR_DEF,
+     AUTHORISATION_TYPE => AUTHORISATION_TYPE_DEF);
+
+  -- ORIGINAL KEY information.
+
+  -- This will be stored as a STRING, containing the Callsign, ADEP, EOBT, DOF & ADES.
+  -- EOBT is expressed as HHMM (refer EUROCAT-X/TECOS ICD for Field 23, identifier "KEY")
+  -- DOF  is expressed as MMDD (refer EUROCAT-X/TECOS ICD for Field 23, identifier "KEY")
+  ------------------------------------------------------------------------------
+  EOBT_STRING_LENGTH : constant INTEGER_32 := 4;
+  DOF_STRING_LENGTH  : constant INTEGER_32 := 4;
+  SPACE_LENGTH       : constant INTEGER_32 := 4;
+
+  ORIGINAL_KEY_MAX_LENGTH : constant INTEGER_32 :=
+    FPL_DATA_TYPES.TECOS_CALLSIGN_LENGTH +
+    FPL_DATA_TYPES.AIRPORT_FIELD_LENGTH  +
+    EOBT_STRING_LENGTH                   +
+    DOF_STRING_LENGTH                    +
+    FPL_DATA_TYPES.AIRPORT_FIELD_LENGTH  +
+    SPACE_LENGTH;
+
+  subtype ORIGINAL_KEY_LENGTH is INTEGER_32 range 1 .. ORIGINAL_KEY_MAX_LENGTH;
+
+  type ORIGINAL_KEY_T is
+    record
+      TXT    : STRING (1 .. ORIGINAL_KEY_MAX_LENGTH);
+      LENGTH : ORIGINAL_KEY_LENGTH;
+    end record;
+
+  for ORIGINAL_KEY_T use
+    record
+      TXT    at  0 range 0 .. ORIGINAL_KEY_MAX_LENGTH * STANDARD_TYPES.OCTET - 1;
+      LENGTH at 28 range 0 .. 31;
+    end record;
+
+  for ORIGINAL_KEY_T'SIZE use 32 * STANDARD_TYPES.OCTET;
+
+  ORIGINAL_KEY_DEF : constant ORIGINAL_KEY_T :=
+    (TXT    => (others => ' '),
+     LENGTH => ORIGINAL_KEY_LENGTH'FIRST); 
+
+  --am BANGKOK_ECR-25 end.
+
+  type MAESTRO_INFORMATION_T is
+    record
+      SEQUENCE_ID                       : INTEGER_32;
+      CREATION_TIME                     : STRING (1..10);
+      M_CALLSIGN                        : FPL_DATA_TYPES.CALLSIGNS;
+      M_RUNWAY                          : RUNWAY_NAME_T;
+      FEEDER_FIX                        : MAESTRO_FIX_T;
+      M_ATD                             : ARTTS.ARTTS_TIME.TC_SMALL_UNIVERSAL;
+      M_STA                             : ARTTS.ARTTS_TIME.TC_SMALL_UNIVERSAL;
+      RESEQUENCE_NOTIFICATION_TIME      : ARTTS.ARTTS_TIME.TC_TIME_UNIVERSAL_TIME;
+      ETD_NOTIFICATION_TIME             : ARTTS.ARTTS_TIME.TC_TIME_UNIVERSAL_TIME; 
+      ETD_NOTIFICATION                  : BOOLEAN;
+      RESEQUENCING_TIME                 : ARTTS.ARTTS_TIME.TC_TIME_UNIVERSAL_TIME;
+      ROUTE_TABLE                       : ROUTE_TABLE_T;
+    end record;
+
+  for MAESTRO_INFORMATION_T use
+    record
+      SEQUENCE_ID                       at 0 range 0 .. 31;
+      CREATION_TIME                     at 4 range 0 .. 79;
+      M_CALLSIGN                        at 16 range 0 .. 79;
+      M_RUNWAY                          at 28 range 0 .. 23;
+      FEEDER_FIX                        at 32 range 0 .. 39;
+      M_ATD                             at 40 range 0 .. 31;
+      M_STA                             at 44 range 0 .. 31;
+      RESEQUENCE_NOTIFICATION_TIME      at 48 range 0 .. 95;
+      ETD_NOTIFICATION_TIME             at 60 range 0 .. 95;
+      ETD_NOTIFICATION                  at 72 range 0 .. 7;
+      RESEQUENCING_TIME                 at 73 range 0 .. 95;
+      ROUTE_TABLE                       at 85 range 0 .. 600 * STANDARD_TYPES.OCTET - 1;
+    end record;
+  
+  for MAESTRO_INFORMATION_T'SIZE use 685 * STANDARD_TYPES.OCTET;
+  
+  MAESTRO_INFORMATION_DEF : constant MAESTRO_INFORMATION_T :=
+     (SEQUENCE_ID                       => 0,
+      CREATION_TIME                     =>  (others => ' '),
+      M_CALLSIGN                        => FPL_DATA_TYPES.CALLSIGN_DEF,
+      M_RUNWAY                          => RUNWAY_NAME_DEF,
+      FEEDER_FIX                        => MAESTRO_FIX_DEF,
+      M_ATD                             => ARTTS.ARTTS_TIME.TC_INIT_SMALL_UNIVERSAL,
+      M_STA                             => ARTTS.ARTTS_TIME.TC_INIT_SMALL_UNIVERSAL,
+      RESEQUENCE_NOTIFICATION_TIME      => ARTTS.ARTTS_TIME.TC_TIME_INIT_UNIVERSAL_TIME,
+      ETD_NOTIFICATION_TIME             => ARTTS.ARTTS_TIME.TC_TIME_INIT_UNIVERSAL_TIME,
+      ETD_NOTIFICATION                  => FALSE,
+      RESEQUENCING_TIME                 => ARTTS.ARTTS_TIME.TC_TIME_INIT_UNIVERSAL_TIME, 
+      ROUTE_TABLE                       => ROUTE_TABLE_DEF);
+
+
+ 
+   FNC_SECTOR_ID_CONTROLLING_DEF : constant := 0;
+
+   -- coordination warning with fdecm compliant centers
+   type FDECM_COORD_WARNING_KINDS is (NONE, COORD_FAILED, COORD_CANCELLED);
+   type UP_DOWN_STREAM_T is (UP, DOWN);
+   type FDECM_COORD_WARNING_T is
+     record
+       STATUS : FDECM_COORD_WARNING_KINDS;
+       STREAM : UP_DOWN_STREAM_T;
+       -- If local system is upstream, then
+       --   if flight enter last volumic sector, then
+       --     assign SECTOR with control sector;
+       -- else
+       --   set SECTOR as first sector
+       -- end if;
+       SECTOR : DPR_FORMAT_TYPES.FUNCTIONAL_SECTOR_NAME_T;
+     end record;
+   for FDECM_COORD_WARNING_T use
+     record
+       STATUS   at 0 range 0 .. 3;
+       STREAM   at 0 range 4 .. 7;
+       SECTOR   at 1 range 0 .. 39;
+     end record;
+   for FDECM_COORD_WARNING_T'SIZE use 6 * STANDARD_TYPES.OCTET;
+
+   FDECM_COORD_WARNING_DEF : constant FDECM_COORD_WARNING_T
+                           := (STATUS   => NONE,
+                               STREAM   => UP,
+                               SECTOR   => DPR_FORMAT_TYPES.FUNCTIONAL_SECTOR_NAME_DEF);
+
+   -- Padding types to be used in Flight Plan Data record when rounding internal
+   -- fields to 4 byte multiples and overall record to 8 byte multiples.
+   subtype PAD_BYTE is STANDARD_TYPES.INTEGER_8;
+   PAD_BYTE_DEF : constant PAD_BYTE := 0;
+
+   -- Type for padding field before FNC_SECTOR_ID_* fields.
+   FPL_PADDING_PRE_FNC_SECTOR_ID_SIZE_C : constant := 4;
+   type FPL_PADDING_PRE_FNC_SECTOR_ID_T is array (1 .. FPL_PADDING_PRE_FNC_SECTOR_ID_SIZE_C) of PAD_BYTE;
+   FPL_PADDING_PRE_FNC_SECTOR_ID_DEF    : constant FPL_PADDING_PRE_FNC_SECTOR_ID_T := (others => PAD_BYTE_DEF);
+
+   -- Type for padding entire FLIGHT_PLAN_T record to 8 bytes overall.
+   -- MUST alter FPL_PADDING_RECORD_SIZE_C when record is altered.
+   FPL_PADDING_RECORD_SIZE_C : constant := 4;
+   type FPL_PADDING_RECORD_T is array (1 .. FPL_PADDING_RECORD_SIZE_C) of PAD_BYTE;
+   FPL_PADDING_RECORD_DEF    : constant FPL_PADDING_RECORD_T := (others => PAD_BYTE_DEF);
+
+   subtype UNUSED_SLOT_PADDING_T is PAD_BYTE;
+   UNUSED_SLOT_PADDING_DEF : constant UNUSED_SLOT_PADDING_T := PAD_BYTE_DEF;
+
+   DELAY_DEF       : constant INTEGER_8  := -128;
+   MIN_DELAY_VALUE : constant INTEGER_8 := -99;
+   MAX_DELAY_VALUE : constant INTEGER_8 := 99;
+
+  -- The number of the flight plan is the same as
+  -- the number of the corresponding CDC record.
+  -----------------------------------------------
+  --
+  type FLIGHT_PLAN_T is
+    record
+      NUMBER                        : FLIGHT_PLAN_NUMBER_T;
+      VERSION_NUMBER                : NATURAL_8;
+      CREATION_TIME                 : ARTTS.ARTTS_TIME.TC_TIME_UNIVERSAL_TIME;
+      MODIFICATION_TIME             : ARTTS.ARTTS_TIME.TC_TIME_UNIVERSAL_TIME;
+      ETO_MODIF_TIME                : ARTTS.ARTTS_TIME.TC_TIME_UNIVERSAL_TIME;
+      CALLSIGN                      : FPL_DATA_TYPES.CALLSIGNS;
+      FLIGHT_ORIGIN                 : FLIGHT_ORIGIN_T;
+      CFL_UNITY                     : IAC_INPUT_LEVEL_TYPES.LEVEL_TYPE_T;
+      CFL                           : KINEMATICS.INT_FLIGHT_LEVEL_T;
+      UFL                           : KINEMATICS.INT_FLIGHT_LEVEL_T; -- TAREP_044
+      PSSR_MODE                     : FPL_DATA_TYPES.SSR_MODES;
+      ASSR_MODE                     : FPL_DATA_TYPES.SSR_MODES;
+      PSSR_CODE                     : SSR_CODE_T;
+      ASSR_CODE                     : SSR_CODE_T;
+      NBR_OF_AIRCRAFT               : NATURAL_8;
+      AIRCRAFT_TYPE                 : FPL_DATA_TYPES.AIRCRAFT_TYPES;
+      WTC                           : FPL_DATA_TYPES.WAKE_TURBULENCES;
+      RECAT                         : FPL_DATA_TYPES.RECAT_WAKE_TURBULENCES;
+      ADES                          : FPL_DATA_TYPES.AIRPORTS;
+      RFL_VALUE                     : KINEMATICS.INT_FLIGHT_LEVEL_T;
+      RFL_UNITY                     : IAC_INPUT_LEVEL_TYPES.LEVEL_TYPE_T;
+      FPL_STATUS                    : STATUS;
+      RNAV_EQUIP                    : BOOLEAN;   --Renamed, was RNAV_ADS_EQUIP (Malcolm Darroch PCR EXV3_FT_0.77 01/12/05)
+      FPL_STATUS_DURING_INHIBITION  : STATUS;
+      ADS_B_EQUIP                   : BOOLEAN;   --New (Malcolm Darroch PCR EXV3_FT_0.77 01/12/05)
+      ADS_C_EQUIP                   : BOOLEAN;   --New (Malcolm Darroch PCR EXV3_FT_0.77 01/12/05)
+      ADS_COUPLED                   : BOOLEAN;
+      VALIDATED_EXIT_TIME           : BOOLEAN;
+      ADEP                          : FPL_DATA_TYPES.AIRPORTS;
+      ETD                           : ARTTS.ARTTS_TIME.TC_SMALL_UNIVERSAL;
+      ATD                           : ARTTS.ARTTS_TIME.TC_SMALL_UNIVERSAL;
+      SID                           : NAMES;
+      STAR                          : NAMES;
+      DEPARTURE_RUNWAY              : RUNWAY_NAME_T;
+      ARRIVAL_RUNWAY                : RUNWAY_NAME_T;
+      FIX_LIST_LENGTH               : FIX_LIST_LENGTH_T;
+      FIXES                         : FIX_TABLE_T;
+      CURRENT_FIX                   : FIX_LIST_LENGTH_T;
+      FIX_BEFORE_CUR_TIME           : FIX_LIST_LENGTH_T;
+      ETDB                          : ARTTS.ARTTS_TIME.TC_SMALL_UNIVERSAL;
+      COORDINATION_INFO             : COORD_INFO_T;
+      EXIT_INFO                     : EXIT_INFO_T;
+      ETA                           : ARTTS.ARTTS_TIME.TC_SMALL_UNIVERSAL;
+      ATA                           : ARTTS.ARTTS_TIME.TC_SMALL_UNIVERSAL;
+      ADAR                          : FPL_DATA_TYPES.AIRPORTS;
+      FLIGHT_CATEGORY               : FLIGHT_CATEGORY_T;
+      HOLDING_INFO                  : HOLDING_INFO_T;
+      FLIGHT_RULES                  : FPL_DATA_TYPES.FLIGHT_RULES;
+      FLIGHT_TYPES                  : FPL_DATA_TYPES.FLIGHT_TYPES;
+      CONTROLLING_SECTOR            : DPR_FORMAT_TYPES.FUNCTIONAL_SECTOR_NAME_T;
+      HAND_OFF_INFO                 : HAND_OFF_INFO_T;
+      ROUTE_UPDATE_COUNTER          : ROUTE_UPDATE_INDICATION_T;
+      MANUAL_DEP_RWY                : BOOLEAN;
+      MANUAL_ARR_RWY                : BOOLEAN;
+      DEP_RWY_WARNING               : BOOLEAN;
+      DEP_RWY_HIGHLIGHT             : BOOLEAN;
+      ARR_RWY_WARNING               : BOOLEAN;
+      ARR_RWY_HIGHLIGHT             : BOOLEAN;
+      BLOCKED_STATUS                : BOOLEAN;
+      ROUTE_FIELD                   : ICAO_ROUTE_T;
+      PADDING1                      : STRING(1..4);-- move GATE_NAME to the end, replace by padding1
+      GATE_NAME                     : GATES;
+      FPL_COUPLED_BY_RDP_EN_ROUTE   : BOOLEAN;
+      COUPLED_TRACK_LOST_BY_RDP_ENR : BOOLEAN;
+      REMARK_PRESENCE               : BOOLEAN;
+      PRL_UNITY                     : IAC_INPUT_LEVEL_TYPES.LEVEL_TYPE_T;
+      PRL_VALUE                     : KINEMATICS.INT_FLIGHT_LEVEL_T;
+      SEQ_ASN                       : RUNWAY_NAME_T;
+      PADDING2                      : STRING(1.. 7); -- move OP_DATA to the end, replace by padding2
+      DESTINATION_FIR               : FIR_NAME_T;
+      OTHER_INFO_STRIP              : PART_OF_OTHER_INFO_T;
+      OTHER_INFO_LABEL              : BOOLEAN;
+      DATA_LINK_EQUIPMENT           : BOOLEAN;
+      VIP_STATUS                    : VIP_STATUSES;
+      U_WARNING                     : BOOLEAN;                            -- Moved here from FIX_T (DB: 21-9-95)
+      TAS_IN_KNOTS                  : KINEMATICS.SPEED_T;
+      TAS_IN_KMHR                   : KINEMATICS.SPEED_T;
+      TAS_UNITY                     : KINEMATICS.SPEED_TYPE_T;
+      TAS_IN_MACH                   : KINEMATICS.MACH_T;
+      GLOBAL_OPS_INFO               : GLOBAL_OPS_INFO_T;
+      OP_DATA                       : OP_DATA_T;
+      ACFT_ADS_CODE                 : AGDP_AGDLC_TYPES.ICAO_AIRFRAME_ID_T;
+      ALERTS_INHIBITION             : ALERT_INHIBITION_T;
+      ACFT_PER_DATA                 : CHARACTER;
+      CDP_PARTITION_INFO            : CDP_PARTITION_INFO_T;
+      INHIBITION_TIME               : ARTTS.ARTTS_TIME.TC_SMALL_UNIVERSAL;
+      PREVIOUS_SECTOR               : DPR_FORMAT_TYPES.FUNCTIONAL_SECTOR_NAME_T;
+      FIRST_PROPOSAL_SECTOR         : DPR_FORMAT_TYPES.FUNCTIONAL_SECTOR_NAME_T;
+      HOLDING_POINT_NAME            : FPL_DATA_TYPES.EXT_ITEMS;
+      REGISTRATION_NUMBER           : FPL_DATA_TYPES.AIRCRAFT_REGISTRATIONS;
+      POSTING_DATA                  : POSTING_DATA_T;
+      AOC_INFO                      : AOC_INFO_T;
+      SID_OVERFLOWN                 : BOOLEAN;
+      TFMS_AIRPORT                  : FPL_DATA_TYPES.AIRPORTS;
+      INSIDE_FDRG                   : BOOLEAN;
+      TFMS_FEEDER                   : FIX_LIST_LENGTH_T;
+      RNAVCAP_LABEL                 : NAVCAP_T;
+      RVSM_STATE                    : RVSM_STATE_T;
+      RAIW_ALERT                    : BOOLEAN;
+      IN_RVSM_AREA                  : BOOLEAN;
+      COORDINATION_PROMPT           : COORDINATION_PROMPT_T;
+      FLIGHT_DIRECTION              : FLIGHT_DIRECTION_T;
+      IS_FLIGHT_OUTSIDE_FDRG        : BOOLEAN;
+      IS_AUTOMATIC_COORD            : BOOLEAN;
+      MNT_STATUS                    : BOOLEAN;
+      SAR_TIMER                     : ARTTS.ARTTS_TIME.TC_SMALL_UNIVERSAL;
+      SAR_ALERT                     : BOOLEAN;
+      FPCP_STATUS                   : BOOLEAN;
+      SAP_STATUS                    : BOOLEAN;
+      UID                           : INTEGER_32; -- Unique ID
+      DOF                           : DOF_STR_T;
+      COM_NAV_APP_PRE2012           : FPL_DATA_TYPES.COM_NAV_APPS;
+      LAST_APR                      : FIX_T;
+      RNP_CAPABLE                   : BOOLEAN;
+      LAST_MODE_C                   : KINEMATICS.ALTITUDE_T;
+      TOTAL_NB_DPE_PTS              : DPE_POINT_COUNTER_T;
+      DPE_POINTS_TABLE              : DPE_POINTS_TABLE_T;
+      STATUS_OF_833                 : STATUS_OF_833_T;
+      EOBT                          : ARTTS.ARTTS_TIME.TC_SMALL_UNIVERSAL; --ECR-Li_01 ADEXP Messages 30/07/04.
+      CTOT                          : CTOT_T;                              --ECR-Li_03 CFMU Slot allocation
+      LAST_UPDATE_IS_APR            : BOOLEAN;
+      DCL_MESSAGE_SENT              : BOOLEAN;
+
+      -- ppk 15/02/05 SATCONS ECR BK_18
+      ASSIGNED_RUNWAY               : RUNWAY_NAME_T;
+      -- end ppk  
+      --am BANGKOK_ECR-25 TECOS Interface, 23/03/05.
+      RELEASE_AUTHORISE     : RELEASE_AUTHORISATION_T;
+      --am BANGKOK_ECR-25 end.      
+      --am BANGKOK_ECR-25 TECOS Interface, 23/03/05.
+      TAXI_TIME             : ARTTS.ARTTS_TIME.TC_TIME_UNIVERSAL_TIME;
+      ORIGINAL_KEY          : ORIGINAL_KEY_T;
+      --am BANGKOK_ECR-25 end.      
+      -- lw PCR_PRODUCT_3325 26/10/05
+      IFPLID                        : FPL_DATA_TYPES.IFPLID_T;
+      -- PCR_PRODUCT_3325 end
+
+      -- ppk 19/09/06 PCR_PRODUCT_3809 store Field 19 (sup info text) into CDC - for MMI
+      SUP_INFO                      : FPL_DATA_TYPES.SUP_INFO_TEXTS;
+
+      -- SECTOR_ID_* fields require 4 bytes of padding, according to interface requirements.
+      PADDING_PRE_SECTOR_ID         : FPL_PADDING_PRE_FNC_SECTOR_ID_T;
+      FNC_SECTOR_ID_LIST            : DPR_FORMAT_TYPES.FNC_SECTOR_ID_LISTS;
+      FNC_SECTOR_ID_CONTROLLING     : STANDARD_TYPES.INTEGER_32;
+      MAESTRO_INFO                  : MAESTRO_INFORMATION_T;
+      CR_HANDOFF_FROM_SECTOR        : DPR_FORMAT_TYPES.FUNCTIONAL_SECTOR_NAME_T;
+      CR_HANDOFF_TO_SECTOR          : DPR_FORMAT_TYPES.FUNCTIONAL_SECTOR_NAME_T;
+      SSR_EQUIPMENT                 : FPL_DATA_TYPES.SSR_EQUIPMENTS;
+      -- KA ECR_Ry_07 Diplomatic Clearance, 01/12/2006
+      DCC_STATUS                    : DIPLOMATIC_CLEARANCE_RELATED_TYPES.DCC_STATUS_T;
+      DCC_STATUS_TIMESTAMP          : ARTTS.ARTTS_TIME.TC_TIME_UNIVERSAL_TIME;
+      DCC_IDENTIFIER                : DIPLOMATIC_CLEARANCE_RELATED_TYPES.DCC_IDENTIFICATION_T; 
+      DCC_START_DATE                : ARTTS.ARTTS_TIME.TC_TIME_UNIVERSAL_TIME;
+      DCC_END_DATE                  : ARTTS.ARTTS_TIME.TC_TIME_UNIVERSAL_TIME;
+      DCC_RECORD_KIND               : DIPLOMATIC_CLEARANCE_RELATED_TYPES.DCC_RECORD_TYPE_T;
+      DCC_OPERATION_DAYS            : DIPLOMATIC_CLEARANCE_RELATED_TYPES.OPERATION_DAYS_T;
+      -- KA ECR_Ry_07 end
+      ATOW                          : FPL_DATA_TYPES.TAKE_OFF_WT_T;
+      DCC_RECORD_NUMBER             : DIPLOMATIC_CLEARANCE_RELATED_TYPES.NUMBER_T;
+      -- Padding to avoid unused byte warnings.
+      -- NOTE: Add any new FLIGHT_PLAN_T fields ABOVE this padding.
+      --       Then alter FPL_PADDING_RECORD_SIZE_C appropriately.
+      --       (to ensure record size = multiple of 8 bytes)
+      BOUNDARY_FNC_SECTOR           : DPR_FORMAT_TYPES.FUNCTIONAL_SECTOR_NAME_T;
+      POST_2012                     : BOOLEAN;
+      COM_NAV_APP_MAP_POST2012      : FPL_DATA_TYPES_EXTENDED_2012.COM_NAV_APPS_MAP_T; 
+      SSR_EQUIPMENT_MAP_POST2012    : FPL_DATA_TYPES_EXTENDED_2012.SSR_EQUIPMENTS_MAP_T;
+      RNAVCAP_DATA                  : FPL_DATA_TYPES_EXTENDED_2012.RNAVCAP_DATA_T;
+      RNPCERT_DATA                  : FPL_DATA_TYPES_EXTENDED_2012.RNPCERT_DATA_T;
+      COM_NAV_APP_STRING_POST2012   : FPL_DATA_TYPES_EXTENDED_2012.STRING_COM_NAV_APP_T;
+      SSR_EQUIPMENT_STRING_POST2012 : FPL_DATA_TYPES_EXTENDED_2012.STRING_SSR_EQUIPMENT_T;
+      TFMS_DEPARTURE_AIRPORT        : FPL_DATA_TYPES.AIRPORTS;
+      SID_EXIT_POINT                : MAESTRO_FIX_T;
+      PRE_INHIBIT_CONTROL_SECTOR    : DPR_FORMAT_TYPES.FUNCTIONAL_SECTOR_NAME_T;
+      RE_CALCULATED_DEP_RUNWAY      : RUNWAY_NAME_T;
+      RE_CALCULATED_ARR_RUNWAY      : RUNWAY_NAME_T;
+      PBN_RULE_CHARACTER            : PBN_RULE_CHARACTER_T;
+      TOTAL_DELAY                   : INTEGER_8;
+      ACC_DELAY                     : INTEGER_8;
+      RUNWAY_FROM_EUROCAT_T         : BOOLEAN;
+      RUNWAY_FROM_AMAN              : BOOLEAN;
+      CFL_APPROACH_MODE             : APPROACH_MODE_T;
+      TOTAL_HALF_MINUTE_FLAG        : BOOLEAN;
+      ACC_HALF_MINUTE_FLAG          : BOOLEAN;
+      DISPLAY_RWY_IN_TRACK          : BOOLEAN;
+      ENTRY_FIR                     : FIR_NAME_T;
+      FDECM_COORD_WARNING           : FDECM_COORD_WARNING_T;
+      PROPOSED_STAR                 : NAMES;
+      PADDING_RECORD                : FPL_PADDING_RECORD_T;
+    end record;
+
+  ------------------------------------------------------------------------------
+  -- If the below record structure or offsets are changed, the following files
+  -- should also be checked for impacts and updated:
+  --
+  -- common/cdcC/iac_flight_plan_types.h
+  -- common/cdc_formats/flight_plan.fmt
+  -- feed_xml/xml/flight_plan.xml
+  -- flp/flp_data_tools/flp_convert_flight_plan.c
+  -- mmi_centre/fqm/fpt/FPT_convert_flight_plan.h
+  -- ubss_config/ubss_files/mapping/cdc_size_nb_records
+  --
+  ------------------------------------------------------------------------------
+
+  for FLIGHT_PLAN_T use
+    record
+      CREATION_TIME                 at 0     range 0 .. 95;
+      MODIFICATION_TIME             at 12    range 0 .. 95;
+      ETO_MODIF_TIME                at 24    range 0 .. 95;
+      CALLSIGN                      at 36    range 0 .. 79;
+      NUMBER                        at 48    range 0 .. 15;
+      VERSION_NUMBER                at 50    range 0 .. 7;
+      FLIGHT_ORIGIN                 at 52    range 0 .. 2;
+      CFL_UNITY                     at 52    range 4 .. 6;
+      RNP_CAPABLE                   at 52    range 7 .. 7;
+      PSSR_MODE                     at 56    range 0 .. 2;
+      FLIGHT_CATEGORY               at 56    range 5 .. 6;
+      COUPLED_TRACK_LOST_BY_RDP_ENR at 56    range 7 .. 7;
+      WTC                           at 57    range 0 .. 2;
+      RECAT                         at 57    range 3 .. 7;
+      CFL                           at 60    range 0 .. 15;
+      PSSR_CODE                     at 62    range 0 .. 15;
+      ASSR_MODE                     at 64    range 0 .. 7;
+      ASSR_CODE                     at 65    range 0 .. 15;
+      AIRCRAFT_TYPE                 at 68    range 0 .. 31;
+      ADES                          at 72    range 0 .. 31;
+      ADEP                          at 76    range 0 .. 31;
+      ETD                           at 80    range 0 .. 31;
+      ATD                           at 84    range 0 .. 31;
+      SID                           at 88    range 0 .. 87;
+      FIX_LIST_LENGTH               at 100   range 0 .. 7;
+      STAR                          at 101   range 0 .. 87;
+      CURRENT_FIX                   at 112   range 0 .. 7;
+      DEPARTURE_RUNWAY              at 116   range 0 .. 23;
+      ROUTE_UPDATE_COUNTER          at 120   range 0 .. 7;
+      MANUAL_DEP_RWY                at 121   range 0 .. 0;
+      MANUAL_ARR_RWY                at 121   range 1 .. 1;
+      DEP_RWY_WARNING               at 121   range 2 .. 2;
+      DEP_RWY_HIGHLIGHT             at 121   range 3 .. 3;
+      ARR_RWY_WARNING               at 121   range 4 .. 4;
+      ARR_RWY_HIGHLIGHT             at 121   range 5 .. 5;
+      ETDB                          at 124   range 0 .. 31;
+      COORDINATION_INFO             at 128   range 0 .. 21 * STANDARD_TYPES.OCTET - 1;
+      EXIT_INFO                     at 152   range 0 .. 22 * STANDARD_TYPES.OCTET - 1;
+      ETA                           at 176   range 0 .. 31;
+      ATA                           at 180   range 0 .. 31;
+      ADAR                          at 184   range 0 .. 31;
+      HOLDING_INFO                  at 188   range 0 .. 79;
+      FLIGHT_RULES                  at 200   range 0 .. 2;
+      FLIGHT_TYPES                  at 200   range 3 .. 6;
+      REMARK_PRESENCE               at 200   range 7 .. 7;
+      FPL_COUPLED_BY_RDP_EN_ROUTE   at 204   range 0 .. 0;
+      FPL_STATUS_DURING_INHIBITION  at 204   range 2 .. 5;
+      ADS_COUPLED                   at 204   range 6 .. 6;
+      VALIDATED_EXIT_TIME           at 204   range 7 .. 7;
+      HAND_OFF_INFO                 at 208   range 0 .. 11 * STANDARD_TYPES.OCTET - 1;
+      FIX_BEFORE_CUR_TIME           at 220   range 0 .. 7;
+      CONTROLLING_SECTOR            at 224   range 0 .. 39;
+      OTHER_INFO_LABEL              at 232   range 0 .. 7;
+      PRL_VALUE                     at 236   range 0 .. 15;
+      SEQ_ASN                       at 240   range 0 .. 3 * STANDARD_TYPES.OCTET - 1;
+      PADDING2                      at 243   range 0 .. 7 * STANDARD_TYPES.OCTET - 1;
+      BLOCKED_STATUS                at 252   range 0 .. 0;
+      RFL_UNITY                     at 252   range 1 .. 3;
+      FPL_STATUS                    at 252   range 4 .. 7;
+      RNAV_EQUIP                    at 256   range 0 .. 0;
+      SID_OVERFLOWN                 at 256   range 1 .. 1;
+      ADS_B_EQUIP                   at 256   range 2 .. 2;
+      ADS_C_EQUIP                   at 256   range 3 .. 3;
+      ROUTE_FIELD                   at 260   range 0 .. 156 * STANDARD_TYPES.OCTET - 1;
+      PADDING1                      at 416   range 0 .. 31; -- move GATE_NAME to the end, replace by padding1
+      TFMS_FEEDER                   at 420   range 0 .. 31;
+      TFMS_AIRPORT                  at 424   range 0 .. 31;
+      INSIDE_FDRG                   at 428   range 0 .. 0;
+      RNAVCAP_LABEL                 at 428   range 2 .. 4;
+      SAR_ALERT                     at 428   range 6 .. 6;
+      FPCP_STATUS                   at 432   range 0 .. 0;
+      SAP_STATUS                    at 432   range 1 .. 1;
+      RVSM_STATE                    at 432   range 2 .. 5;
+      RAIW_ALERT                    at 432   range 6 .. 6;
+      IN_RVSM_AREA                  at 432   range 7 .. 7;
+      COORDINATION_PROMPT           at 433   range 0 .. 2; -- Moved due to import of RVSM
+      IS_FLIGHT_OUTSIDE_FDRG        at 433   range 3 .. 3; -- Moved due to import of RVSM
+      IS_AUTOMATIC_COORD            at 433   range 4 .. 4;
+      FLIGHT_DIRECTION              at 433   range 5 .. 5; -- To handle flight direction
+      MNT_STATUS                    at 433   range 6 .. 6;
+      FIXES                         at 436   range 0 .. 5_040 * STANDARD_TYPES.OCTET - 1;
+      ARRIVAL_RUNWAY                at 5_476 range 0 .. 23;
+      NBR_OF_AIRCRAFT               at 5_480 range 0 .. 7;
+      DESTINATION_FIR               at 5_484 range 0 .. 31;
+      ALERTS_INHIBITION             at 5_488 range 0 .. 31;
+      OTHER_INFO_STRIP              at 5_492 range 0 .. 79;
+      PRL_UNITY                     at 5_504 range 0 .. 2;
+      DATA_LINK_EQUIPMENT           at 5_504 range 3 .. 3;
+      VIP_STATUS                    at 5_504 range 4 .. 6;
+      U_WARNING                     at 5_504 range 7 .. 7;
+      ACFT_PER_DATA                 at 5_508 range 0 .. 7;
+      UFL                           at 5_512 range 0 .. 15;
+      TAS_IN_KNOTS                  at 5_516 range 0 .. 31;
+      TAS_IN_MACH                   at 5_520 range 0 .. 31;
+      ACFT_ADS_CODE                 at 5_524 range 0 .. 31;
+      RFL_VALUE                     at 5_528 range 0 .. 15;
+      GLOBAL_OPS_INFO               at 5_532 range 0 .. 15 * STANDARD_TYPES.OCTET - 1;
+      CDP_PARTITION_INFO            at 5_548 range 0 .. MAX_PARTITION_NUMBER * 4 * STANDARD_TYPES.OCTET - 1; --20 * 4 * STANDARD_TYPES.OCTET - 1;
+      INHIBITION_TIME               at 5_628 range 0 .. 31;
+      PREVIOUS_SECTOR               at 5_632 range 0 .. 39;
+      FIRST_PROPOSAL_SECTOR         at 5_640 range 0 .. 39;
+      HOLDING_POINT_NAME            at 5_648 range 0 .. 87;
+      REGISTRATION_NUMBER           at 5_660 range 0 .. 79;
+      POSTING_DATA                  at 5_672 range 0 .. 10 * MAX_NB_OF_STRIP * STANDARD_TYPES.OCTET - 1;
+      AOC_INFO                      at 5_872 range 0 .. 39;
+      SAR_TIMER                     at 5_880 range 0 .. 31;
+      UID                           at 5_884 range 0 .. 31;
+      TAS_IN_KMHR                   at 5_888 range 0 .. 31;
+      TAS_UNITY                     at 5_892 range 0 .. 7;
+      DOF                           at 5_896 range 0 .. 47;
+      LAST_APR                      at 5_916 range 0 .. 56 * STANDARD_TYPES.OCTET - 1;
+      LAST_MODE_C                   at 5_972 range 0 .. 31;
+      TOTAL_NB_DPE_PTS              at 5_976 range 0 .. 7;
+      DPE_POINTS_TABLE              at 5_980 range 0 .. 160 * STANDARD_TYPES.OCTET - 1;
+      STATUS_OF_833                 at 6_140 range 0 .. 7;
+      EOBT                          at 6_144 range 0 .. 4*STANDARD_TYPES.OCTET-1;
+      CTOT                          at 6_148 range 0 .. 4*STANDARD_TYPES.OCTET-1;
+      LAST_UPDATE_IS_APR            at 6_152 range 0 .. 7;
+      DCL_MESSAGE_SENT              at 6_153 range 0 .. 7;
+      ASSIGNED_RUNWAY               at 6_156 range 0 .. 23;
+      RELEASE_AUTHORISE             at 6_160 range 0 .. 9 * STANDARD_TYPES.OCTET - 1; 
+      TAXI_TIME                     at 6_172 range 0 .. 95;
+      ORIGINAL_KEY                  at 6_184 range 0 .. 32 * STANDARD_TYPES.OCTET - 1;
+      IFPLID                        at 6_216 range 0 .. FPL_DATA_TYPES.IFPLID_LENGTH_C*STANDARD_TYPES.OCTET - 1;
+      SUP_INFO                      at 6_228 range 0 .. FPL_DATA_TYPES.SUP_INFO_FIELD_LENGTH*STANDARD_TYPES.OCTET - 1;
+      PADDING_PRE_SECTOR_ID         at 6_328 range 0 .. (4 * STANDARD_TYPES.OCTET) - 1;
+      -- 1 * Integer32 for LENGTH, MAX_SECTOR_TABLE_RANGE'LAST * Integer32s for Sectors in Region.
+      FNC_SECTOR_ID_LIST            at 6_332 range 0 .. ((1 + DPR_FORMAT_TYPES.MAX_SECTOR_TABLE_RANGE'LAST) * 32) - 1;
+      FNC_SECTOR_ID_CONTROLLING     at 6_980 range 0 .. 31;
+      MAESTRO_INFO                  at 6_984 range 0 .. 685 * STANDARD_TYPES.OCTET - 1;
+      CR_HANDOFF_FROM_SECTOR        at 7_672 range 0 .. 39;
+      CR_HANDOFF_TO_SECTOR          at 7_680 range 0 .. 39;
+      SSR_EQUIPMENT                 at 7_688 range 0 .. 15;
+      DCC_STATUS                    at 7_690 range 0 .. 7;
+      DCC_STATUS_TIMESTAMP          at 7_691 range 0 .. 95;
+      DCC_IDENTIFIER                at 7_703 range 0 .. 95;
+      DCC_START_DATE                at 7_715 range 0 .. 95;
+      DCC_END_DATE                  at 7_727 range 0 .. 95;
+      DCC_RECORD_KIND               at 7_739 range 0 .. 7;
+      DCC_OPERATION_DAYS            at 7_740 range 0 .. 55;
+      ATOW                          at 7_747 range 0 .. 47;
+      DCC_RECORD_NUMBER             at 7_753 range 0 .. 31;
+      BOUNDARY_FNC_SECTOR           at 7_757 range 0 .. 39;
+      COM_NAV_APP_PRE2012           at 7_762 range 0 .. (25 * STANDARD_TYPES.OCTET) - 1;
+      POST_2012                     at 7_787 range 0 .. 0;
+      COM_NAV_APP_MAP_POST2012      at 7_788 range 0 .. (43 * STANDARD_TYPES.OCTET) - 1;
+      SSR_EQUIPMENT_MAP_POST2012    at 7_832 range 0 .. (18 * STANDARD_TYPES.OCTET) - 1;
+      RNAVCAP_DATA                  at 7_850 range 0 .. (15 * STANDARD_TYPES.OCTET) - 1;
+      RNPCERT_DATA                  at 7_865 range 0 .. ( 9 * STANDARD_TYPES.OCTET) - 1;
+      COM_NAV_APP_STRING_POST2012   at 7_876 range 0 .. (50 * STANDARD_TYPES.OCTET) - 1;
+      SSR_EQUIPMENT_STRING_POST2012 at 7_928 range 0 .. (20 * STANDARD_TYPES.OCTET) - 1; 
+      TFMS_DEPARTURE_AIRPORT        at 7_948 range 0 .. ( 4 * STANDARD_TYPES.OCTET) - 1;
+      SID_EXIT_POINT                at 7_952 range 0 .. ( 5 * STANDARD_TYPES.OCTET) - 1;
+      PRE_INHIBIT_CONTROL_SECTOR    at 7_957 range 0 .. ( 5 * STANDARD_TYPES.OCTET) - 1;
+      RE_CALCULATED_DEP_RUNWAY      at 7_962 range 0 .. ( 3 * STANDARD_TYPES.OCTET) - 1;
+      RE_CALCULATED_ARR_RUNWAY      at 7_965 range 0 .. ( 3 * STANDARD_TYPES.OCTET) - 1;
+      PBN_RULE_CHARACTER            at 7_968 range 0 .. 31;
+      TOTAL_DELAY                   at 7_972 range 0 .. 7;
+      ACC_DELAY                     at 7_973 range 0 .. 7;
+      RUNWAY_FROM_EUROCAT_T         at 7_974 range 0 .. 0;
+      RUNWAY_FROM_AMAN              at 7_974 range 1 .. 1; 
+      CFL_APPROACH_MODE             at 7_975 range 0 .. 31;
+      GATE_NAME                     at 7_979 range 0 .. 39;
+      TOTAL_HALF_MINUTE_FLAG        at 7_984 range 0 .. 7;
+      ACC_HALF_MINUTE_FLAG          at 7_985 range 0 .. 7;
+      DISPLAY_RWY_IN_TRACK          at 7_986 range 0 .. 7;
+      ENTRY_FIR                     at 7_987 range 0 .. ( 4 * STANDARD_TYPES.OCTET) - 1;
+      FDECM_COORD_WARNING           at 7_991 range 0 .. ( 6 * STANDARD_TYPES.OCTET) - 1;
+      OP_DATA                       at 7_997 range 0 .. 159;
+      PROPOSED_STAR                 at 8_017 range 0 .. 87;
+      PADDING_RECORD                at 8_028 range 0 .. (FPL_PADDING_RECORD_SIZE_C * STANDARD_TYPES.OCTET) - 1;
+    end record;
+
+
+  -- CB 04/5/00 size increased from 3_983 to 3_988 to insert the SAR_TIMER
+  -- mda 14/11/00 icrease from 3_992 to  4_001
+  -- MDo 05Mar01 CH_10 --> upped to 4007 with the inclusion of DOF
+  -- NS 10/08/01 size increased from 4007 to 4011 ( UID )
+  -- CM 26/02/02 size increased from 4_011 to 4_021 (ICAO field 10 A)
+  -- CB 24/04/02 NESACC-22 size increased from 4_021 to 4_381 due to 2 new variables in the FIX_T
+  -- AM 13/05/02 NESACC-26 size increased from 4_381 to 4_383 due to ALERTS_INHIBITION change.
+  -- CM 13/05/02 size increased from 4_383 to 4_423 mod 4 = 4_424
+  -- AJ ECR_SAAATS1-02 19/11/02 - RNP based routes.
+  -- CB 07/01/03 align all records on a 4 byte boundaries => size increased
+  --             to 4_512
+  -- BW PCR_11 LAST_MODE_C => new field last_mode_c added => size increased to 4_520
+  -- JA 28/05/03 to accomadate new sizes of fix_t for coded_route_number => size increased to 4_884
+  --    also changed positions throughout record as required for the change.
+  -- BP 03/06/04 STATUS_OF_833 => new field added => size increased from 6140 to 6144
+  -- ECR-Li_01 & Li_03 => New fields added. Change from 6144 => 6152.
+  -- KG 14/10/04 Import changes from Bgx Change size 6152 => 6156
+  -- am BANGKOK_ECR-25 => New fields added for TECOS, change from 6_160 => 6_216
+  -- LW 26/10/05 PCR_PRODUCT_3325 => add IFPLID field for 10 bytes, change size from 6_216 to 6_224
+  ------------------------------------------------------------------------------
+
+  -- ============================================================================
+  -- BP The elements starting byte position within FLIGHT_PLAN_T MUST be
+  --    divisible by 4.
+  --
+  -- FLIGHT_PLAN_T'SIZE MUST be divisible by 8.
+  -- ============================================================================
+  for FLIGHT_PLAN_T'SIZE use 8_032 * STANDARD_TYPES.OCTET;
+
+  FLIGHT_PLAN_DEF : constant FLIGHT_PLAN_T :=
+          (NUMBER                        => FLIGHT_PLAN_NUMBER_DEF,
+           VERSION_NUMBER                => 0,
+           CREATION_TIME                 => ARTTS.ARTTS_TIME.TC_TIME_INIT_UNIVERSAL_TIME,
+           MODIFICATION_TIME             => ARTTS.ARTTS_TIME.TC_TIME_INIT_UNIVERSAL_TIME,
+           ETO_MODIF_TIME                => ARTTS.ARTTS_TIME.TC_TIME_INIT_UNIVERSAL_TIME,
+           CALLSIGN                      => FPL_DATA_TYPES.CALLSIGN_DEF,
+           FLIGHT_ORIGIN                 => FLIGHT_ORIGIN_DEF,
+           CFL_UNITY                     => IAC_INPUT_LEVEL_TYPES.LEVEL_TYPE_DEF,
+           CFL                           => KINEMATICS.INT_FLIGHT_LEVEL_DEF,
+           UFL                           => KINEMATICS.INT_FLIGHT_LEVEL_DEF, -- TAREP_044
+           PSSR_MODE                     => FPL_DATA_TYPES.SSR_MODE_DEF,
+           ASSR_MODE                     => FPL_DATA_TYPES.SSR_MODE_DEF,
+           PSSR_CODE                     => SSR_CODE_DEF,
+           ASSR_CODE                     => SSR_CODE_DEF,
+           NBR_OF_AIRCRAFT               => 1,
+           AIRCRAFT_TYPE                 => FPL_DATA_TYPES.AIRCRAFT_TYPE_DEF,
+           ADES                          => FPL_DATA_TYPES.AIRPORT_DEF,
+           RFL_VALUE                     => KINEMATICS.INT_FLIGHT_LEVEL_DEF,
+           RFL_UNITY                     => IAC_INPUT_LEVEL_TYPES.LEVEL_TYPE_DEF,
+           FPL_STATUS                    => STATUS_DEF,
+           RNAV_EQUIP                    => FALSE,
+           FPL_STATUS_DURING_INHIBITION  => STATUS_DEF,
+           ADS_B_EQUIP                   => FALSE,  
+           ADS_C_EQUIP                   => FALSE,
+           ADS_COUPLED                   => FALSE,
+           VALIDATED_EXIT_TIME           => FALSE,
+           WTC                           => FPL_DATA_TYPES.WAKE_TURBULENCE_DEF,
+           RECAT                         => FPL_DATA_TYPES.RECAT_WAKE_TURBULENCE_DEF,
+           ADEP                          => FPL_DATA_TYPES.AIRPORT_DEF,
+           ETD                           => ARTTS.ARTTS_TIME.TC_INIT_SMALL_UNIVERSAL,
+           ATD                           => ARTTS.ARTTS_TIME.TC_INIT_SMALL_UNIVERSAL,
+           SID                           => (others => ' '),
+           STAR                          => (others => ' '),
+           DEPARTURE_RUNWAY              => RUNWAY_NAME_DEF,
+           ARRIVAL_RUNWAY                => RUNWAY_NAME_DEF,
+           FIX_LIST_LENGTH               => FIX_LIST_LENGTH_DEF,
+           FIXES                         => FIX_TABLE_DEF,
+           CURRENT_FIX                   => FIX_LIST_LENGTH_DEF,
+           FIX_BEFORE_CUR_TIME           => FIX_LIST_LENGTH_DEF,
+           ETDB                          => ARTTS.ARTTS_TIME.TC_INIT_SMALL_UNIVERSAL,
+           COORDINATION_INFO             => COORD_INFO_DEF,
+           EXIT_INFO                     => EXIT_INFO_DEF,
+           ETA                           => ARTTS.ARTTS_TIME.TC_INIT_SMALL_UNIVERSAL,
+           ATA                           => ARTTS.ARTTS_TIME.TC_INIT_SMALL_UNIVERSAL,
+           ADAR                          => FPL_DATA_TYPES.AIRPORT_DEF,
+           FLIGHT_CATEGORY               => FLIGHT_CATEGORY_DEF,
+           HOLDING_INFO                  => HOLDING_INFO_DEF,
+           FLIGHT_RULES                  => FPL_DATA_TYPES.FLIGHT_RULE_DEF,
+           FLIGHT_TYPES                  => FPL_DATA_TYPES.FLIGHT_TYPE_DEF,
+           CONTROLLING_SECTOR            => DPR_FORMAT_TYPES.FUNCTIONAL_SECTOR_NAME_DEF,
+           HAND_OFF_INFO                 => HAND_OFF_INFO_DEF,
+           ROUTE_UPDATE_COUNTER          => ROUTE_UPDATE_INDICATION_DEF,
+           MANUAL_DEP_RWY                => FALSE,
+           MANUAL_ARR_RWY                => FALSE,
+           DEP_RWY_WARNING               => FALSE,
+           DEP_RWY_HIGHLIGHT             => FALSE,
+           ARR_RWY_WARNING               => FALSE,
+           ARR_RWY_HIGHLIGHT             => FALSE,
+           BLOCKED_STATUS                => FALSE,
+           ROUTE_FIELD                   => ICAO_ROUTE_DEF,
+           PADDING1                      => (others => ' '),
+           PADDING2                      => (others => ' '),
+           SEQ_ASN                       => RUNWAY_NAME_DEF,
+           GATE_NAME                     => GATE_DEF,
+           REMARK_PRESENCE               => FALSE,
+           FPL_COUPLED_BY_RDP_EN_ROUTE   => FALSE,
+           COUPLED_TRACK_LOST_BY_RDP_ENR => FALSE,
+           DESTINATION_FIR               => FIR_NAME_DEF,
+           OTHER_INFO_STRIP              => PART_OF_OTHER_INFO_DEF,
+           OTHER_INFO_LABEL              => FALSE,
+           PRL_UNITY                     => IAC_INPUT_LEVEL_TYPES.LEVEL_TYPE_DEF,
+           PRL_VALUE                     => KINEMATICS.INT_FLIGHT_LEVEL_DEF,
+           DATA_LINK_EQUIPMENT           => FALSE,
+           VIP_STATUS                    => VIP_STATUS_DEF,
+           U_WARNING                     => FALSE,
+           TAS_IN_KNOTS                  => KINEMATICS.SPEED_DEF,
+           TAS_IN_KMHR                   => KINEMATICS.SPEED_DEF,
+           TAS_UNITY                     => KINEMATICS.SPEED_TYPE_DEF,
+           TAS_IN_MACH                   => KINEMATICS.MACH_DEF,
+           GLOBAL_OPS_INFO               => GLOBAL_OPS_INFO_DEF,
+           OP_DATA                       => OP_DATA_DEF,
+           ACFT_ADS_CODE                 => AGDP_AGDLC_TYPES.ICAO_AIRFRAME_ID_DEF,
+           ALERTS_INHIBITION             => ALERT_INHIBITION_DEF,
+           ACFT_PER_DATA                 => ' ',
+           CDP_PARTITION_INFO            => CDP_PARTITION_INFO_DEF,
+           INHIBITION_TIME               => ARTTS.ARTTS_TIME.TC_INIT_SMALL_UNIVERSAL,
+           PREVIOUS_SECTOR               => DPR_FORMAT_TYPES.FUNCTIONAL_SECTOR_NAME_DEF,
+           FIRST_PROPOSAL_SECTOR         => DPR_FORMAT_TYPES.FUNCTIONAL_SECTOR_NAME_DEF,
+           HOLDING_POINT_NAME            => FPL_DATA_TYPES.EXT_ITEM_DEF,
+           REGISTRATION_NUMBER           => FPL_DATA_TYPES.AIRCRAFT_REGISTRATION_DEF,
+           POSTING_DATA                  => POSTING_DATA_DEF,
+           AOC_INFO                      => AOC_INFO_DEF,
+           SID_OVERFLOWN                 => FALSE,
+           TFMS_AIRPORT                  => FPL_DATA_TYPES.AIRPORT_DEF,
+           INSIDE_FDRG                   => FALSE,
+           TFMS_FEEDER                   => FIX_LIST_LENGTH_DEF,
+           RNAVCAP_LABEL                 => RNAVCAP_DEF,
+           FPCP_STATUS                   => FALSE,
+           SAP_STATUS                    => FALSE,
+           RVSM_STATE                    => RVSM_STATE_DEF,
+           RAIW_ALERT                    => FALSE,
+           IN_RVSM_AREA                  => FALSE,
+           COORDINATION_PROMPT           => COORDINATION_PROMPT_DEF,
+           FLIGHT_DIRECTION              => FLIGHT_DIRECTION_DEF,
+           IS_FLIGHT_OUTSIDE_FDRG        => FALSE,
+           IS_AUTOMATIC_COORD            => FALSE,
+           MNT_STATUS                    => FALSE,
+           SAR_ALERT                     => FALSE,
+           SAR_TIMER                     => ARTTS.ARTTS_TIME.TC_INIT_SMALL_UNIVERSAL,
+           DOF                           => DOF_STR_DEF,
+           UID                           => 0,
+           COM_NAV_APP_PRE2012           => FPL_DATA_TYPES.COM_NAV_APP_DEF,
+           LAST_APR                      => FIX_DEF,
+           RNP_CAPABLE                   => FALSE,
+           LAST_MODE_C                   => KINEMATICS.ALTITUDE_DEF,
+           TOTAL_NB_DPE_PTS              => DPE_POINT_COUNTER_DEF,
+           DPE_POINTS_TABLE              => DPE_POINTS_TABLE_DEF,
+           STATUS_OF_833                 => STATUS_OF_833_DEF,
+           EOBT                          => ARTTS.ARTTS_TIME.TC_INIT_SMALL_UNIVERSAL, --ECR-Li_01 ADEXP Messages 30/07/04.
+           CTOT                          => CTOT_DEF,                                 --ECR-Li_03 CFMU Slot Allocation
+           LAST_UPDATE_IS_APR            => FALSE,
+           DCL_MESSAGE_SENT              => FALSE,
+	   -- ppk 15/02/05 SATCONS ECR BK_18
+           ASSIGNED_RUNWAY               => RUNWAY_NAME_DEF,
+           -- end ppk  
+           --am BANGKOK_ECR-25 TECOS Interface, 23/03/05.
+           RELEASE_AUTHORISE     => RELEASE_AUTHORISATION_DEF,
+           --am BANGKOK_ECR-25 end.      
+           --am BANGKOK_ECR-25 TECOS Interface, 23/03/05.
+           TAXI_TIME             => ARTTS.ARTTS_TIME.TC_TIME_INIT_UNIVERSAL_TIME,
+           ORIGINAL_KEY          => ORIGINAL_KEY_DEF,
+           --am BANGKOK_ECR-25 end.      
+           -- lw PCR_PRODUCT_3325 26/10/05
+           IFPLID                        => FPL_DATA_TYPES.IFPLID_DEF,
+           -- PCR_PRODUCT_3325 end 
+
+           -- PCR_PRODUCT_3809
+           SUP_INFO                      => (others => ' '), 
+           PADDING_PRE_SECTOR_ID         => FPL_PADDING_PRE_FNC_SECTOR_ID_DEF,
+           FNC_SECTOR_ID_LIST            => DPR_FORMAT_TYPES.FNC_SECTOR_ID_LISTS_DEF,
+           FNC_SECTOR_ID_CONTROLLING     => FNC_SECTOR_ID_CONTROLLING_DEF,
+           MAESTRO_INFO                  => MAESTRO_INFORMATION_DEF,
+           CR_HANDOFF_FROM_SECTOR        => DPR_FORMAT_TYPES.FUNCTIONAL_SECTOR_NAME_DEF,
+           CR_HANDOFF_TO_SECTOR          => DPR_FORMAT_TYPES.FUNCTIONAL_SECTOR_NAME_DEF,
+           SSR_EQUIPMENT                 => FPL_DATA_TYPES.SSR_EQUIPMENT_DEF,
+           DCC_STATUS                    => DIPLOMATIC_CLEARANCE_RELATED_TYPES.DCC_STATUS_DEF,
+           DCC_STATUS_TIMESTAMP          => ARTTS.ARTTS_TIME.TC_TIME_INIT_UNIVERSAL_TIME,
+           DCC_IDENTIFIER                => DIPLOMATIC_CLEARANCE_RELATED_TYPES.DCC_IDENTIFICATION_DEF,
+           DCC_START_DATE                => ARTTS.ARTTS_TIME.TC_TIME_INIT_UNIVERSAL_TIME,
+           DCC_END_DATE                  => ARTTS.ARTTS_TIME.TC_TIME_INIT_UNIVERSAL_TIME,
+           DCC_RECORD_KIND               => DIPLOMATIC_CLEARANCE_RELATED_TYPES.DCC_RECORD_TYPE_DEF,
+           DCC_OPERATION_DAYS            => DIPLOMATIC_CLEARANCE_RELATED_TYPES.OPERATION_DAYS_DEF,
+           DCC_RECORD_NUMBER             => DIPLOMATIC_CLEARANCE_RELATED_TYPES.NUMBER_DEF,
+           ATOW                          => FPL_DATA_TYPES.TAKE_OFF_WT_DEF,
+           BOUNDARY_FNC_SECTOR           => DPR_FORMAT_TYPES.FUNCTIONAL_SECTOR_NAME_DEF,
+           POST_2012                     => FALSE,
+           COM_NAV_APP_MAP_POST2012      => FPL_DATA_TYPES_EXTENDED_2012.COM_NAV_APPS_MAP_DEF,
+           SSR_EQUIPMENT_MAP_POST2012    => FPL_DATA_TYPES_EXTENDED_2012.SSR_EQUIPMENTS_MAP_DEF,
+           RNAVCAP_DATA                  => FPL_DATA_TYPES_EXTENDED_2012.RNAVCAP_DATA_DEF,
+           RNPCERT_DATA                  => FPL_DATA_TYPES_EXTENDED_2012.RNPCERT_DATA_DEF,
+           COM_NAV_APP_STRING_POST2012   => FPL_DATA_TYPES_EXTENDED_2012.STRING_COM_NAV_APP_DEF,
+           SSR_EQUIPMENT_STRING_POST2012 => FPL_DATA_TYPES_EXTENDED_2012.STRING_SSR_EQUIPMENT_DEF,
+           TFMS_DEPARTURE_AIRPORT        => FPL_DATA_TYPES.AIRPORT_DEF,
+           SID_EXIT_POINT                => MAESTRO_FIX_DEF,
+           PRE_INHIBIT_CONTROL_SECTOR    => DPR_FORMAT_TYPES.FUNCTIONAL_SECTOR_NAME_DEF,
+           RE_CALCULATED_DEP_RUNWAY      => RUNWAY_NAME_DEF,
+           RE_CALCULATED_ARR_RUNWAY      => RUNWAY_NAME_DEF,
+           PBN_RULE_CHARACTER            => PBN_RULE_CHARACTER_DEF,
+           TOTAL_DELAY                   => DELAY_DEF,
+           ACC_DELAY                     => DELAY_DEF,
+           RUNWAY_FROM_EUROCAT_T         => FALSE, 
+           RUNWAY_FROM_AMAN              => FALSE,
+           CFL_APPROACH_MODE             => APPROACH_MODE_DEF,
+           TOTAL_HALF_MINUTE_FLAG        => FALSE,
+           ACC_HALF_MINUTE_FLAG          => FALSE,
+           DISPLAY_RWY_IN_TRACK          => FALSE,
+           ENTRY_FIR                     => FIR_NAME_DEF,
+           FDECM_COORD_WARNING           => FDECM_COORD_WARNING_DEF,
+           PROPOSED_STAR                 => (others => ' '),
+           PADDING_RECORD                => FPL_PADDING_RECORD_DEF
+        );
+
+  --$PROC
+  --
+  -----------------------------------------------------------------------
+  --
+  --  PROCEDURE OR FUNCTION NAME : IS_ELIGIBLE_FOR_POSITIO_REPORT
+  --
+  --  FUNCTION :
+  --
+  --  IN ARGUMENTS DESCRIPTION     : FIX_KIND
+  --
+  --  IN-OUT ARGUMENTS DESCRIPTION : NONE
+  --
+  --  OUT ARGUMENTS DESCRIPTION    : NONE
+  --
+  --  RETURN ARGUMENTS DESCRIPTION : NONE
+  --
+  --  EXCEPTIONS :
+  --
+  -----------------------------------------------------------------------
+  --
+  --$PROC
+
+  function IS_ELIGIBLE_FOR_POSITION_REPORT
+      (FIX_KIND : in     POINT_KIND_T)
+      return BOOLEAN;
+
+  --$PROC
+  --
+  -----------------------------------------------------------------------
+  --
+  --  PROCEDURE OR FUNCTION NAME : IS_ELIGIBLE_AS_RAM_POINT
+  --
+  --  FUNCTION : for each kind of fix, determine if it is eligible
+  --             as a route point for RAM processing.
+  --             In fact all the points inserted by FDP are not RAM points
+  --             WARNING : do not include "when others" in the case statement
+  --                       of the function. It prevents the adding of a new fix
+  --                       kind to be forgotten in this function.
+  --
+  --  IN ARGUMENTS DESCRIPTION     :
+  --
+  --  IN-OUT ARGUMENTS DESCRIPTION :
+  --
+  --  OUT ARGUMENTS DESCRIPTION    :
+  --
+  --  EXCEPTIONS :
+  --
+  -----------------------------------------------------------------------
+  --
+  --$PROC
+
+  function IS_ELIGIBLE_AS_RAM_POINT
+      (FIX_KIND : in     POINT_KIND_T)
+      return BOOLEAN;
+
+end IAC_FLIGHT_PLAN_TYPES;
+
+--~---------------------------------------------------------------------------------------------------------------------------------
+
+--Software_Configuration_Manager 1
+-- SCCS MARKERS HAVE BEEN INSERTED
+
+
+
+
+
+
+
+
