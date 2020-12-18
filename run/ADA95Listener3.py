@@ -7,10 +7,13 @@ from common.ada_record_type import AdaRecordType
 from common.ada_record_field import AdaRecordField
 from common.ada_enum_type import AdaEnumType
 from common.ada_str_type import AdaStrType
-from common.ada_num_type import AdaNumType
+from common.ada_int_type import AdaIntType
+from common.ada_real_type import AdaRealType
+from common.ada_array_type import AdaArrayType
 from common.ada_derived_type import AdaDerivedType
 from common.ada_subtype import AdaSubtype
 from common.ada_type import AdaType
+from common.ada_var import AdaVar
 import common.parse_util as cpu
 import pprint
 import re
@@ -113,41 +116,41 @@ class ADA95Listener3(ADA95Listener):
 
     def enterRange_constraint(self, ctx):
         if not ctx.parser.ada_ctx.cur_const:
-            ctx.parser.ada_ctx.cur_const = {'t': 'range'}
+            ctx.parser.ada_ctx.cur_const = {'type': 'range'}
 
     def enterDigits_constraint(self, ctx):
         if not ctx.parser.ada_ctx.cur_const:
-            ctx.parser.ada_ctx.cur_const = {'t': 'digits'}
+            ctx.parser.ada_ctx.cur_const = {'type': 'digits'}
 
     def enterDelta_constraint(self, ctx):
         if not ctx.parser.ada_ctx.cur_const:
-            ctx.parser.ada_ctx.cur_const = {'t': 'delta'}
+            ctx.parser.ada_ctx.cur_const = {'type': 'delta'}
 
     def enterIndex_constraint(self, ctx):
         if not ctx.parser.ada_ctx.cur_const:
-            ctx.parser.ada_ctx.cur_const = {'t': 'index'}
+            ctx.parser.ada_ctx.cur_const = {'type': 'index'}
 
     def enterDiscriminant_constraint(self, ctx):
         if not ctx.parser.ada_ctx.cur_const:
-            ctx.parser.ada_ctx.cur_const = {'t': 'discrim', 'ch': {}}
+            ctx.parser.ada_ctx.cur_const = {'type': 'discrim', 'choice': {}}
 
     def exitDigits_constraint(self, ctx):
         ctx.parser.ada_ctx.cur_const.update({
-            'n': cpu.solve_expr(ctx.parser.ada_ctx, cpu.get_texts(ctx.expression()))[0],
-            'r': ctx.parser.ada_ctx.cur_range})
+            'digits': cpu.solve_expr(ctx.parser.ada_ctx, cpu.get_texts(ctx.expression()))[0],
+            'range': ctx.parser.ada_ctx.cur_range})
 
     def exitDelta_constraint(self, ctx):
         ctx.parser.ada_ctx.cur_const.update({
-            'n': cpu.solve_expr(ctx.parser.ada_ctx, cpu.get_texts(ctx.expression()))[0],
-            'r': ctx.parser.ada_ctx.cur_range})
+            'delta': cpu.solve_expr(ctx.parser.ada_ctx, cpu.get_texts(ctx.expression()))[0],
+            'range': ctx.parser.ada_ctx.cur_range})
 
     def exitIndex_constraint(self, ctx):
         ctx.parser.ada_ctx.cur_const.update({
-            'list': cpu.get_texts(ctx.discrete_range())})
+            'discrete': cpu.get_texts(ctx.discrete_range())})
 
     def exitDiscriminant_association(self, ctx):
         for n in cpu.get_texts(ctx.discriminant_selector_name()):
-            ctx.parser.ada_ctx.cur_const['ch'][n] = cpu.solve_expr(
+            ctx.parser.ada_ctx.cur_const['choice'][n] = cpu.solve_expr(
                 ctx.parser.ada_ctx,
                 cpu.get_texts(ctx.expression()))[0]
 
@@ -162,8 +165,10 @@ class ADA95Listener3(ADA95Listener):
                                             'first': cpu.solve_expr(ctx.parser.ada_ctx, cpu.get_texts(ctx.simple_expression(0)))[0],
                                             'last': cpu.solve_expr(ctx.parser.ada_ctx, cpu.get_texts(ctx.simple_expression(1)))[0]
                                             }
-        if ctx.parser.ada_ctx.cur_const['t'] == 'range':
+        if ctx.parser.ada_ctx.cur_const and ctx.parser.ada_ctx.cur_const['type'] == 'range':
             ctx.parser.ada_ctx.cur_const.update({'range': ctx.parser.ada_ctx.cur_range})
+        else:
+            print("ignore range statement: %s" % ctx.getText())
 
     def exitEnumeration_type_definition(self, ctx):
         pass
@@ -253,3 +258,105 @@ class ADA95Listener3(ADA95Listener):
                 #ctx.parser.ada_ctx.types[ctx.parser.ada_ctx.cur_type.package][ctx.parser.ada_ctx.cur_type.name].size = ctx.parser.ada_ctx.cur_spec.types[ctx.parser.ada_ctx.cur_type.package][
                 #    ctx.parser.ada_ctx.cur_type.name].size
 
+    def exitNumber_declaration(self, ctx):
+        av = AdaVar(ctx.parser.ada_ctx.cur_idents.pop(),
+                    ctx.parser.ada_ctx.cur_spec.package,
+                    ctx.parser.ada_ctx)
+        av.solve_value(cpu.get_texts(ctx.expression()))
+        av.const = True
+        ctx.parser.ada_ctx.cur_spec.add_var(av)
+        for ident in ctx.parser.ada_ctx.cur_idents:
+            ctx.parser.ada_ctx.cur_spec.add_var(av.copy(ident))
+
+    def enterUnconstrained_array_definition(self, ctx):
+        ctx.parser.ada_ctx.cur_type = AdaArrayType(ctx.parser.ada_ctx.cur_type,
+                                                   ctx.parser.ada_ctx.cur_spec.package,
+                                                   ctx.parser.ada_ctx
+                                                   )
+
+    def exitUnconstrained_array_definition(self, ctx):
+        ctx.parser.ada_ctx.cur_type.elem = cpu.solve_type(ctx.parser.ada_ctx,
+                                                          cpu.get_texts(ctx.component_definition))[0]
+
+    def exitIndex_subtype_definition(self, ctx):
+        if not ctx.parser.ada_ctx.cur_var and ctx.parser.ada_ctx.cur_type.ttype == AdaType.ARRAY_TYPE:
+            ctx.parser.ada_ctx.cur_type.dim.append({'type': 'unconst',
+                                                    'base': cpu.solve_type(ctx.parser.ada_ctx,
+                                                                           cpu.get_texts(ctx.subtype_mark()))[0]
+                                                    })
+
+    def enterConstrained_array_definition(self, ctx):
+        ctx.parser.ada_ctx.cur_type = AdaArrayType(ctx.parser.ada_ctx.cur_type,
+                                                   ctx.parser.ada_ctx.cur_spec.package,
+                                                   ctx.parser.ada_ctx
+                                                   )
+
+    def exitConstrained_array_definition(self, ctx):
+        ctx.parser.ada_ctx.cur_type.elem = cpu.solve_type(ctx.parser.ada_ctx,
+                                                          cpu.get_texts(ctx.component_definition))[0]
+
+    def exitDiscrete_subtype_definition(self, ctx):
+        dsi = ctx.discrete_subtype_indication()
+        if dsi and not ctx.parser.ada_ctx.cur_var and ctx.parser.ada_ctx.cur_type.ttype == AdaType.ARRAY_TYPE:
+            ctx.parser.ada_ctx.cur_type.dim.append({'type': 'const',
+                                                    'base': cpu.solve_type(ctx.parser.ada_ctx,
+                                                                           cpu.get_texts(dsi))[0]
+                                                    })
+        else:
+            ctx.parser.ada_ctx.cur_type.dim.append({'type': 'range',
+                                                    'range': ctx.parser.ada_ctx.cur_range
+                                                    })
+    def exitSigned_integer_type_definition(self, ctx):
+        ctx.parser.ada_ctx.cur_type = AdaIntType(ctx.parser.ada_ctx.cur_type,
+                                                 ctx.parser.ada_ctx.cur_spec.package,
+                                                 ctx.parser.ada_ctx)
+        ctx.parser.ada_ctx.cur_type.first = cpu.solve_expr(ctx.parser.ada_ctx,
+                                                           cpu.get_texts(ctx.simple_expression(0)))[0]
+        ctx.parser.ada_ctx.cur_type.last = cpu.solve_expr(ctx.parser.ada_ctx,
+                                                           cpu.get_texts(ctx.simple_expression(1)))[0]
+
+    def exitModular_type_definition(self, ctx):
+        ctx.parser.ada_ctx.cur_type = AdaIntType(ctx.parser.ada_ctx.cur_type,
+                                                 ctx.parser.ada_ctx.cur_spec.package,
+                                                 ctx.parser.ada_ctx)
+        ctx.parser.ada_ctx.cur_type.mod, solved = cpu.solve_expr(ctx.parser.ada_ctx,
+                                                           cpu.get_texts(ctx.expression()))
+        ctx.parser.ada_ctx.cur_type.first = '0'
+        if solved:
+            ctx.parser.ada_ctx.cur_type.last = str(eval("-".join([ctx.parser.ada_ctx.cur_type.mod, '1'])))
+
+    def enterFloating_point_definition(self, ctx):
+        ctx.parser.ada_ctx.cur_type = AdaRealType(ctx.parser.ada_ctx.cur_type,
+                                                 ctx.parser.ada_ctx.cur_spec.package,
+                                                 ctx.parser.ada_ctx)
+
+    def exitFloating_point_definition(self, ctx):
+        ctx.parser.ada_ctx.cur_type.digits = cpu.solve_expr(ctx.parser.ada_ctx,
+                                                           cpu.get_texts(ctx.expression()))[0]
+
+    def enterOrdinary_fixed_point_definition(self, ctx):
+        ctx.parser.ada_ctx.cur_type = AdaRealType(ctx.parser.ada_ctx.cur_type,
+                                                  ctx.parser.ada_ctx.cur_spec.package,
+                                                  ctx.parser.ada_ctx)
+
+    def exitOrdinary_fixed_point_definition(self, ctx):
+        ctx.parser.ada_ctx.cur_type.delta = cpu.solve_expr(ctx.parser.ada_ctx,
+                                                            cpu.get_texts(ctx.expression()))[0]
+
+    def enterDecimal_fixed_point_definition(self, ctx):
+        ctx.parser.ada_ctx.cur_type = AdaRealType(ctx.parser.ada_ctx.cur_type,
+                                                  ctx.parser.ada_ctx.cur_spec.package,
+                                                  ctx.parser.ada_ctx)
+
+    def exitDecimal_fixed_point_definition(self, ctx):
+        ctx.parser.ada_ctx.cur_type.delta = cpu.solve_expr(ctx.parser.ada_ctx,
+                                                            cpu.get_texts(ctx.expression(0)))[0]
+        ctx.parser.ada_ctx.cur_type.digits = cpu.solve_expr(ctx.parser.ada_ctx,
+                                                            cpu.get_texts(ctx.expression(1)))[0]
+
+    def exitReal_range_specification(self, ctx):
+        ctx.parser.ada_ctx.cur_type.first = cpu.solve_expr(ctx.parser.ada_ctx,
+                                                           cpu.get_texts(ctx.simple_expression(0)))[0]
+
+        ctx.parser.ada_ctx.cur_type.last = cpu.solve_expr(ctx.parser.ada_ctx,
+                                                        cpu.get_texts(ctx.simple_expression(1)))[0]

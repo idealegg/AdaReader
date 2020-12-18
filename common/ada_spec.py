@@ -26,6 +26,9 @@ class AdaSpec:
             self.types[stype.package] = {}
         if stype.package not in self.ctx.types:
             self.ctx.types[stype.package] = {}
+        stype.solve_constraint()
+        stype.update_leader_str()
+        stype.solve_type_chain()
         self.types[stype.package][stype.name] = stype
         self.ctx.types[stype.package][stype.name] = stype
 
@@ -36,4 +39,6 @@ class AdaSpec:
             self.vars[svar.package] = {}
         if svar.package not in self.ctx.vars:
             self.ctx.vars[svar.package] = {}
+        #svar.solve_constraint()
+        self.vars[svar.package][svar.name] = svar
         self.ctx.vars[svar.package][svar.name] = svar

@@ -164,7 +164,7 @@ fragment Decimal_literal:  Numeral ('.' Numeral)? Exponent?;
 fragment Based_literal:  
    Base '#' Based_numeral ('.' Based_numeral)? '#' Exponent?;
    
-fragment Exponent:  Exp '+'? Numeral | Exp '–' Numeral;
+fragment Exponent:  Exp [+-]? Numeral;
 
 fragment Base:  Numeral;
 

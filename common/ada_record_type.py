@@ -7,7 +7,8 @@ class AdaRecordType(AdaType):
         self.fields = {}
         self.fpos = []
         self.mod_clause = None
-        self.to_print = ['fpos', 'fields:fpos', 'size']
+        self.to_print = ['fpos', 'fields:fpos']
+        self.join_char = [',', '\n', '\n']
 
     def add_fields(self, fs):
         for f in fs:

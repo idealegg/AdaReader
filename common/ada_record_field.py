@@ -1,8 +1,10 @@
 import common.parse_util
+from common.common_based import CommonBased
 
 
-class AdaRecordField:
+class AdaRecordField(CommonBased):
     def __init__(self, name, record_type, ctx=None):
+        super(AdaRecordField, self).__init__()
         self.name = name
         self.record_type = record_type
         self.field_type = None
@@ -54,11 +56,3 @@ class AdaRecordField:
         arf.ctx = self.ctx
         return arf
 
-    def __str__(self):
-        out = []
-        for attr in self.to_print:
-            out.append("%s: %s" %(attr, getattr(self, attr, None)))
-        return "{%s}" % ", ".join(out)
-
-    def print(self):
-        print(self)

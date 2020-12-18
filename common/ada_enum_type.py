@@ -6,7 +6,8 @@ class AdaEnumType(AdaType):
         super(AdaEnumType, self).__init__(name, AdaType.ENUM_TYPE, package, ctx)
         self.enums = []
         self.values = {}
-        self.to_print = ['enums', 'values:enums', 'size']
+        self.is_based = True
+        self.to_print = ['enums', 'values:enums']
 
     def pos(self, enum):
         try:

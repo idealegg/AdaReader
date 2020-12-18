@@ -1,24 +1,34 @@
 import common.parse_util
+from common.common_based import CommonBased
 
 
-class AdaType:
+class AdaType(CommonBased):
     RECORD_TYPE = "Record"
     ENUM_TYPE = "Enum"
     STR_TYPE = "String"
-    NUM_TYPE = "Number"
     ARRAY_TYPE = "Array"
     DERIVED_TYPE = "Derived"
     SUBTYPE = "Subtype"
+    INT_TYPE = "Integer"
+    REAL_TYPE = "Real"
     def __init__(self, name, ttype, package=None, ctx=None):
+        super(AdaType, self).__init__()
         self.name = name
         self.package = package
         self.ttype = ttype
+        self.is_based = False
         self.discriminant = {}
         self.size = None
         self.ctx = ctx
         self.ctx.cur_type = self
         self.size_solved = False
+        self.const_solved = False
+        self.type_chain = []
+        self.first = None
+        self.last = None
+        self.must_print = ['first', 'last', 'size']
         self.to_print = ['discriminant', 'size']
+        self.leader_str = "%s type [%s] in [%s]:" % (self.ttype, self.name, self.package)
 
     def add_discrim(self, f):
         self.discriminant[f.name] = f
@@ -26,29 +36,29 @@ class AdaType:
     def solve_size(self, i_size):
         self.size, self.size_solved = common.parse_util.solve_expr(self.ctx, i_size)
 
-    def __str__(self):
-        out = []
-        for attr in self.to_print:
-            key = None
-            if attr.count(':'):
-                attr, key = attr.split(":")
-            if attr == 'size' and not self.size_solved:
-                continue
-            if attr == 'discriminant' and not self.discriminant:
-                continue
-            attr_v = getattr(self, attr, None)
-            if isinstance(attr_v, (list, set, tuple)):
-                out.append("%s: [%s]" %(attr, ",".join(map(str, attr_v))))
-            elif isinstance(attr_v, dict):
-                keys = attr_v.keys()
-                if key:
-                    keys = getattr(self, key, None)
-                    if not keys or len(key) != len(attr_v.keys()):
-                        keys = attr_v.keys()
-                out.append("%s:\n{%s}" % (attr, "\n".join(map(lambda x: "%s: %s" %(x, attr_v[x]), keys))))
-            else:
-                out.append("%s: %s" % (attr, attr_v))
-        return "%s type [%s] in [%s]:\n{%s}" % (self.ttype, self.name, self.package, "\n".join(out))
+    def update_leader_str(self):
+        self.leader_str = "%s type [%s] in [%s]:\n" % (self.ttype, self.name, self.package)
 
-    def print(self):
-        print(self)
+    def solve_type_chain(self):
+        pass
+
+    def full_name(self):
+        return '.'.join([self.package, self.name])
+
+    def solve_constraint(self):
+        const = getattr(self, 'constraint', None)
+        if self.const_solved or not const:
+            return
+        if const['type'] == 'range':
+            if const['range']['type'] == 'range':
+                self.first, solved1 = common.parse_util.solve_expr(self.ctx, const['range']['first'])
+                self.last, solved2 = common.parse_util.solve_expr(self.ctx, const['range']['last'])
+                self.const_solved = solved1 and solved2
+            elif const['range']['type'] == 'attr':
+                const['range']['base'], solved = common.parse_util.solve_type(self.ctx, const['range']['base'])
+                if solved:
+                    self.first, solved1 = common.parse_util.solve_expr(self.ctx, const['range']['base'].first)
+                    self.last, solved2 = common.parse_util.solve_expr(self.ctx, const['range']['base'].last)
+                    self.const_solved = solved1 and solved2
+        if self.const_solved:
+            setattr(self, 'constraint', None)
