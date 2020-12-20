@@ -25,38 +25,48 @@ class ADA95Listener3(ADA95Listener):
         self.unsolved = set()
 
     # Enter a parse tree produced by ADA95Parser#compilation_unit_lib.
-    def enterCompilation_unit_lib(self, ctx:ADA95Parser.Compilation_unit_libContext):
-        ctx.parser.ada_ctx.cur_spec = AdaSpec(
-            ctx.parser.getTokenStream().tokenSource.inputStream.fileName,
-            ctx.parser.ada_ctx)
+    #def enterCompilation_unit_lib(self, ctx:ADA95Parser.Compilation_unit_libContext):
+    #    ctx.parser.ada_ctx.cur_spec = AdaSpec(
+    #        ctx.parser.getTokenStream().tokenSource.inputStream.fileName,
+    #        ctx.parser.ada_ctx)
 
     # Exit a parse tree produced by ADA95Parser#compilation_unit_lib.
-    def exitCompilation_unit_lib(self, ctx:ADA95Parser.Compilation_unit_libContext):
-        ctx.parser.ada_ctx.cur_spec = None
+    #def exitCompilation_unit_lib(self, ctx:ADA95Parser.Compilation_unit_libContext):
+    #    ctx.parser.ada_ctx.cur_spec = None
         #pass
 
     # Exit a parse tree produced by ADA95Parser#with_clause.
     def exitWith_clause(self, ctx:ADA95Parser.With_clauseContext):
-        ctx.parser.ada_ctx.cur_spec.add_with(cpu.get_texts(ctx.library_unit_name()))
+        if ctx.parser.ada_ctx.cur_spec:
+            ctx.parser.ada_ctx.cur_spec.add_with(cpu.get_texts(ctx.library_unit_name()))
+        else:
+            ctx.parser.ada_ctx.cur_fm.add_with(cpu.get_texts(ctx.library_unit_name()))
 
     def exitUse_package_clause(self, ctx):
-        ctx.parser.ada_ctx.cur_spec.add_use(cpu.get_texts(ctx.package_name()))
+        if ctx.parser.ada_ctx.cur_spec:
+            ctx.parser.ada_ctx.cur_spec.add_use(cpu.get_texts(ctx.package_name()))
+        else:
+            ctx.parser.ada_ctx.cur_fm.add_use(cpu.get_texts(ctx.package_name()))
 
     def exitUse_type_clause(self, ctx):
-        ctx.parser.ada_ctx.cur_spec.add_use_types(cpu.get_texts(ctx.subtype_mark()))
+        if ctx.parser.ada_ctx.cur_spec:
+            ctx.parser.ada_ctx.cur_spec.add_use_types(cpu.get_texts(ctx.subtype_mark()))
+        else:
+            ctx.parser.ada_ctx.cur_fm.add_use_types(cpu.get_texts(ctx.subtype_mark()))
 
     def enterPackage_specification(self, ctx):
-        if not ctx.parser.ada_ctx.cur_spec.package:
-            ctx.parser.ada_ctx.cur_spec.package = cpu.get_texts(ctx.defining_program_unit_name()).upper()
-        else:
-            ctx.parser.ada_ctx.spec_list.append(ctx.parser.ada_ctx.cur_spec)
-            ctx.parser.ada_ctx.cur_spec = AdaSpec(
+        if ctx.parser.ada_ctx.cur_spec:
+            ctx.parser.ada_ctx.cur_spec_list.append(ctx.parser.ada_ctx.cur_spec)
+        ctx.parser.ada_ctx.cur_spec = AdaSpec(
                 ctx.parser.getTokenStream().tokenSource.inputStream.fileName,
                 ctx.parser.ada_ctx)
+        ctx.parser.ada_ctx.cur_spec.package = cpu.get_texts(ctx.defining_program_unit_name()).upper()
 
     def exitPackage_specification(self, ctx):
-        ctx.parser.ada_ctx.cur_spec.package = cpu.get_texts(ctx.defining_program_unit_name()).upper()
-        pass
+        if ctx.parser.ada_ctx.cur_spec_list:
+            ctx.parser.ada_ctx.cur_spec = ctx.parser.ada_ctx.cur_spec_list.pop()
+        else:
+            ctx.parser.ada_ctx.cur_spec = None
 
     # Enter a parse tree produced by ADA95Parser#type_definition_clause.
     def enterType_definition_clause(self, ctx: ADA95Parser.Type_definition_clauseContext):

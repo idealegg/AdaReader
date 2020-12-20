@@ -25,7 +25,9 @@ class ParseAdaCtx:
         self.cur_field = None
         self.cur_range = None
         self.cur_const = None
-        self.spec_list = []
+        self.cur_spec_list = []
+        self.cur_fm = None
+        self.packages = {}
 
     def init(self, pred:PreDefined, cscis):
         self.vars = pred.vars
@@ -41,15 +43,28 @@ class ParseAdaCtx:
         self.cur_field = None
         self.cur_range = None
         self.cur_const = None
+        self.cur_spec_list = []
+        self.cur_fm = None
+
+    def check_with(self, package):
+        return  package in self.packages
 
     def parse(self):
         for csci in self.cscis:
             self.files.extend(csci.get_all_spec())
         print("\n".join(self.files))
-        for f in self.files:
-            print(f)
-            fm = FileMng(f, self)
-            fm.walk_file()
+        while self.files:
+            f = self.files.pop(0)
+            if isinstance(f, str):
+                print(f)
+                fm = FileMng(f, self)
+            else:
+                fm = f
+            if not isinstance(f, str) and not self.packages or fm.check_withs():
+                fm.walk()
+                self.packages.update({fm.package: fm.f_path})
+            else:
+                self.files.append(fm)
             self.init_cur()
 
 

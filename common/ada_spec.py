@@ -2,8 +2,8 @@ class AdaSpec:
     def __init__(self, f_name, ctx):
         self.f_name = f_name
         self.package = None
-        self.with_list = set()
-        self.use_list = set()
+        self.withs = set()
+        self.uses = set()
         self.use_types = set()
         self.vars = {}
         self.types = {}
@@ -11,10 +11,10 @@ class AdaSpec:
         self.ctx.cur_spec = self
 
     def add_with(self, w):
-        self.with_list.update(map(lambda x: x.upper(), w))
+        self.withs.update(map(lambda x: x.upper(), w))
 
     def add_use(self, u):
-        self.use_list.update(map(lambda x: x.upper(), u))
+        self.uses.update(map(lambda x: x.upper(), u))
 
     def add_use_types(self, t):
         self.use_types.update(map(lambda x: x.upper(), t))

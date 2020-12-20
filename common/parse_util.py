@@ -6,13 +6,16 @@ ADA_SYSTEM_DEFINED = 'ADA_SYSTEM_DEFINED'
 
 def find_name(name, ctx, itype='var'):
     #print(ctx.types)
+    cur_uses = ctx.cur_spec.uses.update(ctx.cur_fm.uses)
+    cur_withs = ctx.cur_spec.withs.update(ctx.cur_fm.withs)
     name = name.upper()
     if itype == 'var':
         check_info = ctx.vars
     else:
         check_info = ctx.types
     direct_packages = [ctx.cur_spec.package, ADA_SYSTEM_DEFINED]
-    direct_packages.extend(ctx.cur_spec.use_list)
+    if cur_uses:
+        direct_packages.extend(cur_uses)
     for pakcage in direct_packages:
         if pakcage in check_info:
             if name in check_info[pakcage]:
@@ -22,7 +25,7 @@ def find_name(name, ctx, itype='var'):
         for i in range(1, len(idents)):
             pakcage = ".".join(idents[:i])
             t_name = ".".join(idents[i:])
-            if pakcage in check_info and pakcage in ctx.cur_spec.with_list:
+            if pakcage in check_info and (not cur_withs or pakcage in cur_withs):
                 if t_name in check_info[pakcage]:
                     return check_info[pakcage][t_name], True
     return name, False
