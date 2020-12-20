@@ -3,12 +3,29 @@ import sys
 from antlr4 import *
 from run.ADA95Lexer import ADA95Lexer
 from run.ADA95Parser import ADA95Parser
-from run.ADA95Listener3 import ADA95Listener3
 import common.parse_util as cpu
+from common.common_based import CommonBased
+from enum import Enum
 
 
-class FileMng:
-    def __init__(self, f_path, ctx=None):
+class FileMng(CommonBased):
+    States = Enum('States',
+                  ('FILE',
+                   'PACKAGE',
+                   'VAR',
+                   'VAR_TYPE',
+                   'VAR_VALUE',
+                   'TYPE',
+                   'SUB_DER_TYPE',
+                   'DISCRIMINANT',
+                   'FIELD',
+                   'FIELD_TYPE',
+    #               'FIELD_VALUE',
+                   'POS',
+                   'POS_FIELD',
+                   'ATTR'))
+    def __init__(self, f_path, ctx=None, listener=None):
+        super(FileMng, self).__init__()
         self.f_path = f_path
         self.dir_name = os.path.dirname(f_path)
         self.f_name = os.path.basename(f_path)
@@ -29,8 +46,11 @@ class FileMng:
         self.lexer = ADA95Lexer(self.istream)
         self.stream = CommonTokenStream(self.lexer)
         self.parser = ADA95Parser(self.stream)
-        self.parser.ada_ctx = self.ctx
         self.tree = self.parser.compilation()
+        self.cur_states = [FileMng.States.FILE]
+        self.to_print = ['f_path', 'cur_states']
+        self.leader_str = '[%s:%s]'%(self.tree.start.start, self.tree.stop.stop)
+        self.listener = listener
 
         culs = self.tree.compilation_unit()
         if len(culs) >= 1:
@@ -64,5 +84,10 @@ class FileMng:
         return not unsolved
 
     def walk(self):
-        walker = ParseTreeWalker()
-        walker.walk(ADA95Listener3(), self.tree)
+        try:
+            walker = ParseTreeWalker()
+            walker.walk(self.listener, self.tree)
+        except:
+            self.print()
+            raise
+

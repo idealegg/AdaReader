@@ -1,16 +1,5 @@
 grammar ADA95;
 
-@parser::members {
-@property
-def ada_ctx(self):
-    return self._ada_ctx
-
-@ada_ctx.setter
-def ada_ctx(self, value):
-    self._ada_ctx = value
-
-}
-
 /*Reversed words*/
 
 Abort: [aA][bB][oO][rR][tT];

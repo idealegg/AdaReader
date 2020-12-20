@@ -28,6 +28,7 @@ class ParseAdaCtx:
         self.cur_spec_list = []
         self.cur_fm = None
         self.packages = {}
+        self.listener = ADA95Listener3(self)
 
     def init(self, pred:PreDefined, cscis):
         self.vars = pred.vars
@@ -56,11 +57,11 @@ class ParseAdaCtx:
         while self.files:
             f = self.files.pop(0)
             if isinstance(f, str):
-                print(f)
-                fm = FileMng(f, self)
+                fm = FileMng(f, self, self.listener)
             else:
                 fm = f
             if not isinstance(f, str) and not self.packages or fm.check_withs():
+                print(fm.f_path)
                 fm.walk()
                 self.packages.update({fm.package: fm.f_path})
             else:

@@ -1,6 +1,6 @@
 grammar ADA95;
 
-@parser::members {
+/*@parser::members {
 @property
 def ada_ctx(self):
     return self._ada_ctx
@@ -9,7 +9,8 @@ def ada_ctx(self):
 def ada_ctx(self, value):
     self._ada_ctx = value
 
-}
+}*/
+
 
 /*Reversed words*/
 

@@ -3,7 +3,7 @@ class CommonBased(object):
     self.name = None
     self.to_print = []
     self.must_print = []
-    self.leader_str = ''
+    self.leader_str = str(self.__class__)
     self.join_char = [',', ',', ',']
 
   def __str__(self):

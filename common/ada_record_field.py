@@ -1,10 +1,10 @@
 import common.parse_util
-from common.common_based import CommonBased
+from common.ada_type import AdaType
 
 
-class AdaRecordField(CommonBased):
+class AdaRecordField(AdaType):
     def __init__(self, name, record_type, ctx=None):
-        super(AdaRecordField, self).__init__()
+        super(AdaRecordField, self).__init__(name, AdaType.FIELD_TYPE, None, ctx)
         self.name = name.upper()
         self.record_type = record_type
         self.field_type = None
@@ -17,6 +17,8 @@ class AdaRecordField(CommonBased):
         self.pos_solved = False
         self.start_bit_solved = False
         self.end_bit_solved = False
+        self.based = None
+        self.constraint= None
         self.ctx = ctx
         #self.ctx.cur_field = self
         self.to_print = ['field_type', 'default_value', 'pos', 'start_bit', 'end_bit']
@@ -54,5 +56,9 @@ class AdaRecordField(CommonBased):
         arf.start_bit_solved = self.start_bit_solved
         arf.end_bit_solved = self.end_bit_solved
         arf.ctx = self.ctx
+        arf.based = self.based
+        arf.constraint = self.constraint
+        arf.first = arf.first
+        arf.last = arf.last
         return arf
 

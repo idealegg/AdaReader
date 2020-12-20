@@ -65,7 +65,7 @@ def solve_expr(ctx, i_expr):
     try:
         i_expr = str(eval(i_expr))
     except (NameError, SyntaxError) as ne:
-        print('No solved: %s\n[%s]' % (ne, i_expr))
+        print('No solved: %s\n[%s] in [%s]' % (ne, i_expr, ctx.cur_fm.f_path))
         return i_expr, False
     return i_expr, True
 

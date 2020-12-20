@@ -11,6 +11,7 @@ class AdaType(CommonBased):
     SUBTYPE = "Subtype"
     INT_TYPE = "Integer"
     REAL_TYPE = "Real"
+    FIELD_TYPE = "Field_Type"
     def __init__(self, name, ttype, package=None, ctx=None):
         super(AdaType, self).__init__()
         self.name = name.upper()
