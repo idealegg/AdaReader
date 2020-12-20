@@ -1,3 +1,19 @@
 while read key; do perl -pe "{\$a='$key';\$b=uc(substr(\$a, 0,1)).substr(\$a, 1);s/\b\$a\b/\$b/g;s/'\$b'/'\$a'/g;}"  -i ADA95.g4; done < keywords
 
 while read key; do perl -pe "{\$a='$key';\$b=uc(substr(\$a, 0,1)).substr(\$a, 1);s/\b\$a\b/\$b/g;s/'\$b'/'\$a'/g;}"  -i template; done < keywords
+
+import os
+fd =open(r'run\keywords')
+out =[]
+for f in fd:
+    f = f.strip()
+    k = ''
+    for f2 in f:
+        k=''.join([k, '[', f2, f2.upper(), ']'])
+
+    out.append("".join([f[0].upper(), f[1:], ': ', k, ';', '\n\n']))
+
+fd.close()
+fd = open('k2', 'wb')
+fd.write(bytes("".join(out).encode('utf8')))
+fd.close()

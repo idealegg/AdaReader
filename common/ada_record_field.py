@@ -5,7 +5,7 @@ from common.common_based import CommonBased
 class AdaRecordField(CommonBased):
     def __init__(self, name, record_type, ctx=None):
         super(AdaRecordField, self).__init__()
-        self.name = name
+        self.name = name.upper()
         self.record_type = record_type
         self.field_type = None
         self.default_value = None
@@ -25,7 +25,7 @@ class AdaRecordField(CommonBased):
         self.field_type, self.type_solved = common.parse_util.solve_type(self.ctx, i_type)
 
     def solve_default(self, i_val):
-        self.default_value, = common.parse_util.solve_expr(self.ctx, i_val)
+        self.default_value, dummy= common.parse_util.solve_expr(self.ctx, i_val)
 
     def solve_pos(self, i_pos):
         self.pos, self.pos_solved = common.parse_util.solve_expr(self.ctx, i_pos)
@@ -42,7 +42,7 @@ class AdaRecordField(CommonBased):
         self.solve_end_bit(f['end'])
 
     def copy(self, name):
-        arf = AdaRecordField(name, self.record_type, self.ctx)
+        arf = AdaRecordField(name.upper(), self.record_type, self.ctx)
         arf.field_type = self.field_type
         arf.default_value = self.default_value
         arf.const = self.const

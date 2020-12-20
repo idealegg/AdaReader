@@ -1,52 +1,5 @@
+ARTTS
 Integer type [INTEGER] in [ADA_SYSTEM_DEFINED]:{mod: None,first: -2147483648,last: 2147483647}
 Real type [SHORT_FLOAT] in [ADA_SYSTEM_DEFINED]:{delta: None,digits: None,first: None,last: None}
 Real type [LONG_FLOAT] in [ADA_SYSTEM_DEFINED]:{delta: None,digits: None,first: None,last: None}
 Array type [STRING] in [ADA_SYSTEM_DEFINED]:{dim_list: [],elem: None,first: None,last: None}
-Derived type [INTEGER_8] in [STANDARD_TYPES]:
-{based: Integer type [INTEGER] in [ADA_SYSTEM_DEFINED]:{mod: None,first: -2147483648,last: 2147483647},constraint: None,type_chain: [INTEGER],is_based: True,first: -128,last: 127,size: 8}
-Derived type [INTEGER_16] in [STANDARD_TYPES]:
-{based: Integer type [INTEGER] in [ADA_SYSTEM_DEFINED]:{mod: None,first: -2147483648,last: 2147483647},constraint: None,type_chain: [INTEGER],is_based: True,first: -32768,last: 32767,size: 16}
-Subtype type [INTEGER_32] in [STANDARD_TYPES]:
-{based: Integer type [INTEGER] in [ADA_SYSTEM_DEFINED]:{mod: None,first: -2147483648,last: 2147483647},constraint: None,type_chain: [INTEGER],is_based: True,first: -2147483648,last: 2147483647}
-Integer type [INTEGER_64] in [STANDARD_TYPES]:
-{mod: None,first: -9223372036854775808,last: 9223372036854775807,size: 64}
-Subtype type [NATURAL_8] in [STANDARD_TYPES]:
-{based: Derived type [INTEGER_8] in [STANDARD_TYPES]:
-{based: Integer type [INTEGER] in [ADA_SYSTEM_DEFINED]:{mod: None,first: -2147483648,last: 2147483647},constraint: None,type_chain: [INTEGER],is_based: True,first: -128,last: 127,size: 8},constraint: None,type_chain: [INTEGER_8,INTEGER],is_based: True,first: 0,last: 127}
-Subtype type [NATURAL_16] in [STANDARD_TYPES]:
-{based: Derived type [INTEGER_16] in [STANDARD_TYPES]:
-{based: Integer type [INTEGER] in [ADA_SYSTEM_DEFINED]:{mod: None,first: -2147483648,last: 2147483647},constraint: None,type_chain: [INTEGER],is_based: True,first: -32768,last: 32767,size: 16},constraint: None,type_chain: [INTEGER_16,INTEGER],is_based: True,first: 0,last: 32767}
-Subtype type [NATURAL_32] in [STANDARD_TYPES]:
-{based: Subtype type [INTEGER_32] in [STANDARD_TYPES]:
-{based: Integer type [INTEGER] in [ADA_SYSTEM_DEFINED]:{mod: None,first: -2147483648,last: 2147483647},constraint: None,type_chain: [INTEGER],is_based: True,first: -2147483648,last: 2147483647},constraint: None,type_chain: [INTEGER_32,INTEGER],is_based: True,first: 0,last: 2147483647}
-Subtype type [NATURAL_64] in [STANDARD_TYPES]:
-{based: Integer type [INTEGER_64] in [STANDARD_TYPES]:
-{mod: None,first: -9223372036854775808,last: 9223372036854775807,size: 64},constraint: None,type_chain: [],is_based: False,first: 0,last: 9223372036854775807}
-Subtype type [POSITIVE_8] in [STANDARD_TYPES]:
-{based: Derived type [INTEGER_8] in [STANDARD_TYPES]:
-{based: Integer type [INTEGER] in [ADA_SYSTEM_DEFINED]:{mod: None,first: -2147483648,last: 2147483647},constraint: None,type_chain: [INTEGER],is_based: True,first: -128,last: 127,size: 8},constraint: None,type_chain: [INTEGER_8,INTEGER],is_based: True,first: 1,last: 127}
-Subtype type [POSITIVE_16] in [STANDARD_TYPES]:
-{based: Derived type [INTEGER_16] in [STANDARD_TYPES]:
-{based: Integer type [INTEGER] in [ADA_SYSTEM_DEFINED]:{mod: None,first: -2147483648,last: 2147483647},constraint: None,type_chain: [INTEGER],is_based: True,first: -32768,last: 32767,size: 16},constraint: None,type_chain: [INTEGER_16,INTEGER],is_based: True,first: 1,last: 32767}
-Subtype type [POSITIVE_32] in [STANDARD_TYPES]:
-{based: Subtype type [INTEGER_32] in [STANDARD_TYPES]:
-{based: Integer type [INTEGER] in [ADA_SYSTEM_DEFINED]:{mod: None,first: -2147483648,last: 2147483647},constraint: None,type_chain: [INTEGER],is_based: True,first: -2147483648,last: 2147483647},constraint: None,type_chain: [INTEGER_32,INTEGER],is_based: True,first: 1,last: 2147483647}
-Subtype type [POSITIVE_64] in [STANDARD_TYPES]:
-{based: Integer type [INTEGER_64] in [STANDARD_TYPES]:
-{mod: None,first: -9223372036854775808,last: 9223372036854775807,size: 64},constraint: None,type_chain: [],is_based: False,first: 1,last: 9223372036854775807}
-Derived type [UNSIGNED_8] in [STANDARD_TYPES]:
-{based: Integer type [INTEGER] in [ADA_SYSTEM_DEFINED]:{mod: None,first: -2147483648,last: 2147483647},constraint: None,type_chain: [INTEGER],is_based: True,first: 0,last: 255,size: 8}
-Derived type [UNSIGNED_16] in [STANDARD_TYPES]:
-{based: Integer type [INTEGER] in [ADA_SYSTEM_DEFINED]:{mod: None,first: -2147483648,last: 2147483647},constraint: None,type_chain: [INTEGER],is_based: True,first: 0,last: 65535,size: 16}
-Integer type [UNSIGNED_32] in [STANDARD_TYPES]:
-{mod: None,first: 0,last: 4294967295,size: 32}
-Subtype type [UNSIGNED_64] in [STANDARD_TYPES]:
-{based: Integer type [INTEGER_64] in [STANDARD_TYPES]:
-{mod: None,first: -9223372036854775808,last: 9223372036854775807,size: 64},constraint: None,type_chain: [],is_based: False,first: 0,last: 9223372036854775807}
-Derived type [FLOAT_32] in [STANDARD_TYPES]:
-{based: Real type [SHORT_FLOAT] in [ADA_SYSTEM_DEFINED]:{delta: None,digits: None,first: None,last: None},constraint: None,type_chain: [SHORT_FLOAT],is_based: True,first: None,last: None,size: 32}
-Derived type [FLOAT_64] in [STANDARD_TYPES]:
-{based: Real type [LONG_FLOAT] in [ADA_SYSTEM_DEFINED]:{delta: None,digits: None,first: None,last: None},constraint: None,type_chain: [LONG_FLOAT],is_based: True,first: None,last: None,size: 64}
-{name: OCTET,package: STANDARD_TYPES,data_type: None,value: 8,const: True}
-{name: SHORT,package: STANDARD_TYPES,data_type: None,value: 16,const: True}
-{name: WORD,package: STANDARD_TYPES,data_type: None,value: 32,const: True}

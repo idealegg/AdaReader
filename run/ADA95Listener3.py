@@ -33,6 +33,7 @@ class ADA95Listener3(ADA95Listener):
     # Exit a parse tree produced by ADA95Parser#compilation_unit_lib.
     def exitCompilation_unit_lib(self, ctx:ADA95Parser.Compilation_unit_libContext):
         ctx.parser.ada_ctx.cur_spec = None
+        #pass
 
     # Exit a parse tree produced by ADA95Parser#with_clause.
     def exitWith_clause(self, ctx:ADA95Parser.With_clauseContext):
@@ -45,7 +46,17 @@ class ADA95Listener3(ADA95Listener):
         ctx.parser.ada_ctx.cur_spec.add_use_types(cpu.get_texts(ctx.subtype_mark()))
 
     def enterPackage_specification(self, ctx):
-        ctx.parser.ada_ctx.cur_spec.package = cpu.get_texts(ctx.defining_program_unit_name())
+        if not ctx.parser.ada_ctx.cur_spec.package:
+            ctx.parser.ada_ctx.cur_spec.package = cpu.get_texts(ctx.defining_program_unit_name()).upper()
+        else:
+            ctx.parser.ada_ctx.spec_list.append(ctx.parser.ada_ctx.cur_spec)
+            ctx.parser.ada_ctx.cur_spec = AdaSpec(
+                ctx.parser.getTokenStream().tokenSource.inputStream.fileName,
+                ctx.parser.ada_ctx)
+
+    def exitPackage_specification(self, ctx):
+        ctx.parser.ada_ctx.cur_spec.package = cpu.get_texts(ctx.defining_program_unit_name()).upper()
+        pass
 
     # Enter a parse tree produced by ADA95Parser#type_definition_clause.
     def enterType_definition_clause(self, ctx: ADA95Parser.Type_definition_clauseContext):
@@ -111,6 +122,11 @@ class ADA95Listener3(ADA95Listener):
         if ctx.parser.ada_ctx.cur_type and not isinstance(ctx.parser.ada_ctx.cur_type, str):
             ctx.parser.ada_ctx.cur_type.based = cpu.get_texts(ctx.subtype_mark())
             ctx.parser.ada_ctx.cur_type.constraint = ctx.parser.ada_ctx.cur_const
+            ctx.parser.ada_ctx.cur_const = None
+            ctx.parser.ada_ctx.cur_range = None
+        elif ctx.parser.ada_ctx.cur_var and not isinstance(ctx.parser.ada_ctx.cur_var, str):
+            ctx.parser.ada_ctx.cur_var.based = cpu.get_texts(ctx.subtype_mark())
+            ctx.parser.ada_ctx.cur_var.constraint = ctx.parser.ada_ctx.cur_const
             ctx.parser.ada_ctx.cur_const = None
             ctx.parser.ada_ctx.cur_range = None
 
@@ -227,7 +243,7 @@ class ADA95Listener3(ADA95Listener):
 
     def exitComponent_clause(self, ctx):
         a_memb = {}
-        a_memb['name'] = cpu.get_texts(ctx.component_local_name())
+        a_memb['name'] = cpu.get_texts(ctx.component_local_name()).upper()
         a_memb['pos'] = cpu.get_texts(ctx.position())
         a_memb['start'] = cpu.get_texts(ctx.first_bit())
         a_memb['end'] = cpu.get_texts(ctx.last_bit())
@@ -276,11 +292,11 @@ class ADA95Listener3(ADA95Listener):
 
     def exitUnconstrained_array_definition(self, ctx):
         ctx.parser.ada_ctx.cur_type.elem = cpu.solve_type(ctx.parser.ada_ctx,
-                                                          cpu.get_texts(ctx.component_definition))[0]
+                                                          cpu.get_texts(ctx.component_definition()))[0]
 
     def exitIndex_subtype_definition(self, ctx):
         if not ctx.parser.ada_ctx.cur_var and ctx.parser.ada_ctx.cur_type.ttype == AdaType.ARRAY_TYPE:
-            ctx.parser.ada_ctx.cur_type.dim.append({'type': 'unconst',
+            ctx.parser.ada_ctx.cur_type.dim_list.append({'type': 'unconst',
                                                     'base': cpu.solve_type(ctx.parser.ada_ctx,
                                                                            cpu.get_texts(ctx.subtype_mark()))[0]
                                                     })
@@ -293,17 +309,17 @@ class ADA95Listener3(ADA95Listener):
 
     def exitConstrained_array_definition(self, ctx):
         ctx.parser.ada_ctx.cur_type.elem = cpu.solve_type(ctx.parser.ada_ctx,
-                                                          cpu.get_texts(ctx.component_definition))[0]
+                                                          cpu.get_texts(ctx.component_definition()))[0]
 
     def exitDiscrete_subtype_definition(self, ctx):
         dsi = ctx.discrete_subtype_indication()
         if dsi and not ctx.parser.ada_ctx.cur_var and ctx.parser.ada_ctx.cur_type.ttype == AdaType.ARRAY_TYPE:
-            ctx.parser.ada_ctx.cur_type.dim.append({'type': 'const',
+            ctx.parser.ada_ctx.cur_type.dim_list.append({'type': 'const',
                                                     'base': cpu.solve_type(ctx.parser.ada_ctx,
                                                                            cpu.get_texts(dsi))[0]
                                                     })
         else:
-            ctx.parser.ada_ctx.cur_type.dim.append({'type': 'range',
+            ctx.parser.ada_ctx.cur_type.dim_list.append({'type': 'range',
                                                     'range': ctx.parser.ada_ctx.cur_range
                                                     })
     def exitSigned_integer_type_definition(self, ctx):
@@ -360,3 +376,18 @@ class ADA95Listener3(ADA95Listener):
 
         ctx.parser.ada_ctx.cur_type.last = cpu.solve_expr(ctx.parser.ada_ctx,
                                                         cpu.get_texts(ctx.simple_expression(1)))[0]
+
+    def enterObject_declaration(self, ctx):
+        ctx.parser.ada_ctx.cur_var = AdaVar(None,
+                    ctx.parser.ada_ctx.cur_spec.package,
+                    ctx.parser.ada_ctx)
+
+    def exitObject_declaration(self, ctx):
+        ctx.parser.ada_ctx.cur_var.set_name(ctx.parser.ada_ctx.cur_idents.pop())
+        obj_val = ctx.object_value()
+        if obj_val:
+            ctx.parser.ada_ctx.cur_var.solve_value(cpu.get_texts(obj_val))
+        ctx.parser.ada_ctx.cur_spec.add_var(ctx.parser.ada_ctx.cur_var)
+        for ident in ctx.parser.ada_ctx.cur_idents:
+            ctx.parser.ada_ctx.cur_spec.add_var(ctx.parser.ada_ctx.cur_var.copy(ident))
+        ctx.parser.ada_ctx.cur_var = None

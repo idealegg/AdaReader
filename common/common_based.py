@@ -1,5 +1,6 @@
 class CommonBased(object):
   def __init__(self):
+    self.name = None
     self.to_print = []
     self.must_print = []
     self.leader_str = ''
@@ -37,3 +38,6 @@ class CommonBased(object):
 
   def update_leader_str(self):
     pass
+
+  def set_name(self, name):
+    self.name = name.upper()

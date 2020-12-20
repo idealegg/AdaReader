@@ -13,8 +13,8 @@ class AdaType(CommonBased):
     REAL_TYPE = "Real"
     def __init__(self, name, ttype, package=None, ctx=None):
         super(AdaType, self).__init__()
-        self.name = name
-        self.package = package
+        self.name = name.upper()
+        self.package = package.upper()
         self.ttype = ttype
         self.is_based = False
         self.discriminant = {}
@@ -30,8 +30,9 @@ class AdaType(CommonBased):
         self.to_print = ['discriminant', 'size']
         self.leader_str = "%s type [%s] in [%s]:" % (self.ttype, self.name, self.package)
 
-    def add_discrim(self, f):
-        self.discriminant[f.name] = f
+    def add_discrim(self, fs):
+        for f in fs:
+            self.discriminant[f.name] = f
 
     def solve_size(self, i_size):
         self.size, self.size_solved = common.parse_util.solve_expr(self.ctx, i_size)

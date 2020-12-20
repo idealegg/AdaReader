@@ -64,5 +64,7 @@ if __name__ == '__main__':
     #main(sys.argv)
     #main([0, r'C:\works\AdaReader\run\iac_flight_plan_types.a'])
     #main([0, r'C:\works\AdaReader\run\iac_flight_plan_types.a'])
-    main([0, r'C:\works\AdaReader\run\standard_types.ads'])
+    #main([0, r'C:\works\AdaReader\run\standard_types.ads'])
+    #main([0, r'C:\works\btma_code\ubss_src\artts.ads'])
+    main([0, r'C:\works\AdaReader\java\test_input'])
 

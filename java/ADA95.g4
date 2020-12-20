@@ -1,150 +1,157 @@
 grammar ADA95;
 
+@parser::members {
+@property
+def ada_ctx(self):
+    return self._ada_ctx
+
+@ada_ctx.setter
+def ada_ctx(self, value):
+    self._ada_ctx = value
+
+}
+
 /*Reversed words*/
 
-Abort: 'abort';
+Abort: [aA][bB][oO][rR][tT];
 
-Abs: 'abs';
+Abs: [aA][bB][sS];
 
-Abstract: 'abstract';
+Abstract: [aA][bB][sS][tT][rR][aA][cC][tT];
 
-Accept: 'accept';
+Accept: [aA][cC][cC][eE][pP][tT];
 
-Access: 'access';
+Access: [aA][cC][cC][eE][sS][sS];
 
-Aliased: 'aliased';
+Aliased: [aA][lL][iI][aA][sS][eE][dD];
 
-All: 'all';
+All: [aA][lL][lL];
 
-And: 'and';
+And: [aA][nN][dD];
 
-Array: 'array';
+Array: [aA][rR][rR][aA][yY];
 
-At: 'at';
+At: [aA][tT];
 
-Begin: 'begin';
+Begin: [bB][eE][gG][iI][nN];
 
-Body: 'body';
+Body: [bB][oO][dD][yY];
 
-Case: 'case';
+Case: [cC][aA][sS][eE];
 
-Constant: 'constant';
+Constant: [cC][oO][nN][sS][tT][aA][nN][tT];
 
-Declare: 'declare';
+Declare: [dD][eE][cC][lL][aA][rR][eE];
 
-Delay: 'delay';
+Delay: [dD][eE][lL][aA][yY];
 
-Delta: 'delta';
+Delta: [dD][eE][lL][tT][aA];
 
-Digits: 'digits';
+Digits: [dD][iI][gG][iI][tT][sS];
 
-Do: 'do';
+Do: [dD][oO];
 
-Else: 'else';
+Else: [eE][lL][sS][eE];
 
-Elsif: 'elsif';
+Elsif: [eE][lL][sS][iI][fF];
 
-End: 'end';
+End: [eE][nN][dD];
 
-Entry: 'entry';
- 
-Exception: 'exception';
- 
-Exit: 'exit';
- 
-For: 'for';
- 
-Function: 'function';
- 
-Generic: 'generic';
- 
-Goto: 'goto';
- 
-If: 'if';
- 
-In: 'in';
- 
-Is: 'is';
- 
-Limited: 'limited';
- 
-Loop: 'loop';
- 
-Mod: 'mod';
+Entry: [eE][nN][tT][rR][yY];
 
-New: 'new';
+Exception: [eE][xX][cC][eE][pP][tT][iI][oO][nN];
 
-Not: 'not';
+Exit: [eE][xX][iI][tT];
 
-Null: 'null';
+For: [fF][oO][rR];
 
-Of: 'of';
+Function: [fF][uU][nN][cC][tT][iI][oO][nN];
 
-Or: 'or';
+Generic: [gG][eE][nN][eE][rR][iI][cC];
 
-Others: 'others';
+Goto: [gG][oO][tT][oO];
 
-Out: 'out';
+If: [iI][fF];
 
-Package: 'package';
+In: [iI][nN];
 
-Pragma: 'pragma';
+Is: [iI][sS];
 
-Private: 'private';
+Limited: [lL][iI][mM][iI][tT][eE][dD];
 
-Procedure: 'procedure';
+Loop: [lL][oO][oO][pP];
 
-Protected: 'protected';
+Mod: [mM][oO][dD];
 
-Raise: 'raise';
+New: [nN][eE][wW];
 
-Range: 'range';
+Not: [nN][oO][tT];
 
-Record: 'record';
+Null: [nN][uU][lL][lL];
 
-Rem: 'rem';
+Of: [oO][fF];
 
-Renames: 'renames';
+Or: [oO][rR];
 
-Requeue: 'requeue';
+Others: [oO][tT][hH][eE][rR][sS];
 
-Return: 'return';
+Out: [oO][uU][tT];
 
-Reverse: 'reverse';
+Package: [pP][aA][cC][kK][aA][gG][eE];
 
-Select: 'select';
+Pragma: [pP][rR][aA][gG][mM][aA];
 
-Separate: 'separate';
+Private: [pP][rR][iI][vV][aA][tT][eE];
 
-Subtype: 'subtype';
+Procedure: [pP][rR][oO][cC][eE][dD][uU][rR][eE];
 
-Tagged: 'tagged';
+Protected: [pP][rR][oO][tT][eE][cC][tT][eE][dD];
 
-Task: 'task';
+Raise: [rR][aA][iI][sS][eE];
 
-Terminate: 'terminate';
+Range: [rR][aA][nN][gG][eE];
 
-Then: 'then';
+Record: [rR][eE][cC][oO][rR][dD];
 
-Type: 'type';
+Rem: [rR][eE][mM];
 
-Until: 'until';
+Renames: [rR][eE][nN][aA][mM][eE][sS];
 
-Use: 'use';
+Requeue: [rR][eE][qQ][uU][eE][uU][eE];
 
-When: 'when';
+Return: [rR][eE][tT][uU][rR][nN];
 
-While: 'while';
+Reverse: [rR][eE][vV][eE][rR][sS][eE];
 
-With: 'with';
+Select: [sS][eE][lL][eE][cC][tT];
 
-Xor: 'xor';
+Separate: [sS][eE][pP][aA][rR][aA][tT][eE];
 
-Positive: 'positive';
+Subtype: [sS][uU][bB][tT][yY][pP][eE];
 
-PreRange: 'R' [aA][nN][gG][eE];
+Tagged: [tT][aA][gG][gG][eE][dD];
 
+Task: [tT][aA][sS][kK];
 
+Terminate: [tT][eE][rR][mM][iI][nN][aA][tT][eE];
+
+Then: [tT][hH][eE][nN];
+
+Type: [tT][yY][pP][eE];
+
+Until: [uU][nN][tT][iI][lL];
+
+Use: [uU][sS][eE];
+
+When: [wW][hH][eE][nN];
+
+While: [wW][hH][iI][lL][eE];
+
+With: [wW][iI][tT][hH];
+
+Xor: [xX][oO][rR];
+
+//Positive: [pP][oO][sS][iI][tT][iI][vV][eE];
 
 Numeric_literal:  Decimal_literal | Based_literal;
 
@@ -153,7 +160,7 @@ fragment Decimal_literal:  Numeral ('.' Numeral)? Exponent?;
 fragment Based_literal:  
    Base '#' Based_numeral ('.' Based_numeral)? '#' Exponent?;
    
-fragment Exponent:  Exp '+'? Numeral | Exp '–' Numeral;
+fragment Exponent:  Exp [+-]? Numeral;
 
 fragment Base:  Numeral;
 
@@ -182,7 +189,7 @@ basic_declaration:
    | subprogram_declaration | abstract_subprogram_declaration
    | package_declaration | renaming_declaration
    | exception_declaration | generic_declaration
-   | generic_instantiation;
+   | generic_instantiation | pragma_clause;
    
 defining_identifier:  Identifier;
 
@@ -192,9 +199,10 @@ type_declaration:   full_type_declaration
    | private_extension_declaration;
    
 full_type_declaration:  
-     Type defining_identifier known_discriminant_part? Is type_definition ';'
-   | task_type_declaration
-   | protected_type_declaration;
+     Type defining_identifier known_discriminant_part? Is type_definition ';' # type_definition_clause
+   | task_type_declaration                                                    # task_definition_clause
+   | protected_type_declaration                                               # pro_type_definition_clause
+   ;
    
 type_definition:  
      enumeration_type_definition | integer_type_definition
@@ -220,11 +228,15 @@ composite_constraint:
      index_constraint | discriminant_constraint;
      
 object_declaration:  
-    defining_identifier_list ':' Aliased? Constant? subtype_indication (':=' expression)? ';'
-  | defining_identifier_list ':' Aliased? Constant? array_type_definition (':=' expression)? ';'
+//    defining_identifier_list ':' Aliased? Constant? subtype_indication (':=' expression)? ';'
+//  | defining_identifier_list ':' Aliased? Constant? array_type_definition (':=' expression)? ';'
+    defining_identifier_list ':' Aliased? Constant? subtype_indication (':=' object_value)? ';'
+  | defining_identifier_list ':' Aliased? Constant? array_type_definition (':=' object_value)? ';'  
   | single_task_declaration
   | single_protected_declaration;
   
+object_value: expression |  '(' pragma_argument_association+ ')' | '(' name '\'' Range '=>' expression ')';
+	
 defining_identifier_list:  
   defining_identifier (',' defining_identifier)*;
   
@@ -280,7 +292,7 @@ array_type_definition:
 unconstrained_array_definition:  
    Array '(' index_subtype_definition (',' index_subtype_definition)* ')' Of component_definition;
    
-index_subtype_definition:  subtype_mark Range '<>';
+index_subtype_definition:  subtype_mark Range ('<>' | range_state);
 
 constrained_array_definition:  
    Array '(' discrete_subtype_definition (',' discrete_subtype_definition)* ')' Of component_definition;
@@ -324,7 +336,7 @@ record_definition:
   | Null Record;
   
 component_list:  
-      component_item component_item*
+      component_item+
    | component_item* variant_part
    |  Null ';' ;
    
@@ -414,7 +426,7 @@ attribute_designator:
   
 range_attribute_reference:  name '\'' range_attribute_designator;
 
-range_attribute_designator:  PreRange ('(' expression ')')?;
+range_attribute_designator:  Range ('(' expression ')')?;
 
 aggregate:  record_aggregate | extension_aggregate | array_aggregate;
 
@@ -825,8 +837,9 @@ task_name: name;
 compilation:  compilation_unit*;
 
 compilation_unit:  
-    context_item* library_item
-  | context_item* subunit;
+    context_item* library_item # compilation_unit_lib
+  | context_item* subunit      # compilation_unit_sep
+  ;    
   
 library_item:  Private? library_unit_declaration
   | library_unit_body
@@ -915,7 +928,7 @@ explicit_generic_actual_parameter:  expression | variable_name
    | subtype_mark;
    
 formal_object_declaration:  
-    defining_identifier_list ':' io_mode? subtype_mark (':=' default_expression) ';';
+    defining_identifier_list ':' io_mode? subtype_mark (':=' default_expression)? ';';
     
 formal_type_declaration:  
     Type defining_identifier discriminant_part? Is formal_type_definition ';';
@@ -1085,6 +1098,10 @@ SUB             : '-';
 Identifier:  
    Identifier_letter ('_'? Letter_or_digit)*;
 
+MultiLineMacro:
+	'#' (Identifier_letter ~[\n]*? '\\' '\r'? '\n')+ ~ [\n]+ -> channel (HIDDEN);
+
+Directive: '#' Identifier_letter ~ [\n]* -> channel (HIDDEN);
 
 Whitespace: [ \t]+ -> skip;
 Newline: ('\r' '\n'? | '\n') -> skip;

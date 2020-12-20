@@ -6,6 +6,7 @@ ADA_SYSTEM_DEFINED = 'ADA_SYSTEM_DEFINED'
 
 def find_name(name, ctx, itype='var'):
     #print(ctx.types)
+    name = name.upper()
     if itype == 'var':
         check_info = ctx.vars
     else:
@@ -68,5 +69,6 @@ def solve_expr(ctx, i_expr):
 def get_texts(ctxs):
     if isinstance(ctxs, (list, set, tuple)):
         return list(map(lambda x: x.getText(), list(ctxs)))
-    else:
+    elif ctxs:
         return ctxs.getText()
+    return None

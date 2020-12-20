@@ -11,13 +11,13 @@ class AdaSpec:
         self.ctx.cur_spec = self
 
     def add_with(self, w):
-        self.with_list.update(w)
+        self.with_list.update(map(lambda x: x.upper(), w))
 
     def add_use(self, u):
-        self.use_list.update(u)
+        self.use_list.update(map(lambda x: x.upper(), u))
 
     def add_use_types(self, t):
-        self.use_types.update(t)
+        self.use_types.update(map(lambda x: x.upper(), t))
 
     def add_type(self, stype):
         if not self.types:
