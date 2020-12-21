@@ -49,7 +49,7 @@ class FileMng(CommonBased):
         self.tree = self.parser.compilation()
         self.cur_states = [FileMng.States.FILE]
         self.to_print = ['f_path', 'cur_states']
-        self.leader_str = '[%s:%s]'%(self.tree.start.start, self.tree.stop.stop)
+        self.leader_str = "'[%s:%s][%s:%s]'%(self.tree.start.line, self.tree.start.column, self.tree.stop.line, self.tree.stop.column)"
         self.listener = listener
 
         culs = self.tree.compilation_unit()
@@ -58,8 +58,8 @@ class FileMng(CommonBased):
             for ci in cis:
                 wc = ci.with_clause()
                 if wc:
-                    map(lambda x: self.solved_withs.update({x.upper(): self.ctx.check_with(x.upper())}),
-                            cpu.get_texts(wc.library_unit_name()))
+                    for lib_name in cpu.get_texts(wc.library_unit_name()):
+                        self.solved_withs.update({lib_name.upper(): self.ctx.check_with(lib_name.upper())})
             self.withs = set(self.solved_withs.keys())
             li = culs[0].library_item()
             if li:
@@ -68,6 +68,8 @@ class FileMng(CommonBased):
                     pd = lud.package_declaration()
                     if pd:
                         self.package = cpu.get_texts(pd.package_specification().defining_program_unit_name()).upper()
+        print("withs: %s"%self.withs)
+        print("solved_withs: %s" % self.solved_withs)
 
     def add_with(self, w):
         self.withs.update(map(lambda x: x.upper(), w))
@@ -78,10 +80,14 @@ class FileMng(CommonBased):
     def add_use_types(self, t):
         self.use_types.update(map(lambda x: x.upper(), t))
 
-    def check_withs(self):
+    def unsolved_withs(self):
+        return list(filter(lambda x: not self.solved_withs[x], self.withs))
 
-        unsolved = list(filter(lambda x: not self.solved_withs[x], self.withs))
-        return not unsolved
+    def check_withs(self):
+        return not self.unsolved_withs()
+
+    def solve_with(self, package):
+        self.solved_withs[package] = True
 
     def walk(self):
         try:

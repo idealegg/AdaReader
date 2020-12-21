@@ -216,9 +216,11 @@ subtype_declaration:
    
 subtype_indication:   subtype_mark constraint?;
 
-subtype_mark:  subtype_name;
+/*subtype_mark:  subtype_name;
 
-subtype_name: name;
+subtype_name: name;*/
+
+subtype_mark: name;
 
 constraint:  scalar_constraint | composite_constraint;
 

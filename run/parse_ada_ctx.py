@@ -47,12 +47,11 @@ def main(argv):
     lexer = ADA95Lexer(istream)
     stream = CommonTokenStream(lexer)
     parser = ADA95Parser(stream)
-    parser.ada_ctx = ParseAdaCtx()
     tree = parser.compilation()
     #print(tree.toStringTree(recog=parser))
 
     walker = ParseTreeWalker()
-    walker.walk(ADA95Listener3(), tree)
+    walker.walk(ADA95Listener3(ParseAdaCtx()), tree)
     for pk in  parser.ada_ctx.types:
         for ty in parser.ada_ctx.types[pk]:
             parser.ada_ctx.types[pk][ty].print()

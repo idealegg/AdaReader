@@ -2,8 +2,8 @@ from common.ada_type import AdaType
 
 
 class AdaArrayType(AdaType):
-    def __init__(self, name, package=None, ctx=None):
-        super(AdaArrayType, self).__init__(name, AdaType.ARRAY_TYPE, package, ctx)
+    def __init__(self, name, package=None, ctx=None, is_based=False):
+        super(AdaArrayType, self).__init__(name, AdaType.ARRAY_TYPE, package, ctx, is_based)
         self.dim_list = []
         self.elem = None
         self.to_print = ['dim_list', 'elem']

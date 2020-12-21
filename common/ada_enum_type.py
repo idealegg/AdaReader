@@ -2,9 +2,9 @@ from common.ada_type import AdaType
 
 
 class AdaEnumType(AdaType):
-    def __init__(self, name, package=None, ctx=None):
+    def __init__(self, name, package=None, ctx=None, elems=[]):
         super(AdaEnumType, self).__init__(name, AdaType.ENUM_TYPE, package, ctx)
-        self.enums = []
+        self.enums = elems
         self.values = {}
         self.is_based = True
         self.to_print = ['enums', 'values:enums']

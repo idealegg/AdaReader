@@ -22,6 +22,7 @@ class AdaRecordField(AdaType):
         self.ctx = ctx
         #self.ctx.cur_field = self
         self.to_print = ['field_type', 'default_value', 'pos', 'start_bit', 'end_bit']
+        self.leader_str = "'Field [%s]:' % self.name"
 
     def solve_type(self, i_type):
         self.field_type, self.type_solved = common.parse_util.solve_type(self.ctx, i_type)

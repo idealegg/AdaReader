@@ -33,7 +33,7 @@ class CsciMng:
                             val = next(fd)
                         out[var] = ' '.join([out[var], val.strip()]).strip()
         except Exception as exc:
-            print(exc)
+            #print(exc)
             out = {}
         return out
 
@@ -46,25 +46,29 @@ class CsciMng:
                 if CsciMng.SUBDIRS in vars and vars[CsciMng.SUBDIRS]:
                     dirs = re.split('\s+', vars[CsciMng.SUBDIRS])
                     dirs = list(map(lambda x: os.path.join(dir, x), dirs))
-                    if self.stop_dir in dirs:
-                        dirs = dirs[:dirs.index(self.stop_dir)+1]
-                    self.get_spce_list(dirs, depth)
-                else:
-                    files = []
-                    if CsciMng.SOURCES in vars and vars[CsciMng.SOURCES]:
-                        files = re.split('\s+', vars[CsciMng.SOURCES])
-                    else:
-                        if os.path.isdir(dir):
-                            files = os.listdir(dir)
-                    if files:
-                        files = list(filter(
-                            lambda x: (x.endswith('.a') or x.endswith('.ads')) and not x.endswith('_b.a'), files))
-                        #print("[%s]%s" %(depth, files))
-                        self.specs.extend(list(map(lambda x: os.path.join(dir, x), files)))
+                    #print(dirs)
+                    if self.stop_dir != dir:
+                        for t_dir in dirs:
+                            if self.stop_dir and self.stop_dir.startswith("".join([t_dir, os.path.sep])):
+                                dirs = dirs[:dirs.index(t_dir)+1]
+                                break
+                        self.get_spce_list(dirs, depth)
 
-                if self.stop_dir and self.stop_dir.startswith("".join([dir, os.path.sep])):
-                    self.stopped = True
-                    break
+                files = []
+                if CsciMng.SOURCES in vars and vars[CsciMng.SOURCES]:
+                    files = re.split('\s+', vars[CsciMng.SOURCES])
+                else:
+                    if os.path.isdir(dir):
+                        files = os.listdir(dir)
+                if files:
+                    files = list(filter(
+                        lambda x: (x.endswith('.a') or x.endswith('.ads')) and not x.endswith('_b.a'), files))
+                    #print("[%s]%s" %(depth, files))
+                    self.specs.extend(list(map(lambda x: os.path.join(dir, x), files)))
+
+                #if self.stop_dir and self.stop_dir.startswith("".join([dir, os.path.sep])):
+                #    self.stopped = True
+                #    break
 
     def get_all_spec(self):
         self.get_spce_list([self.root_path])
@@ -72,8 +76,11 @@ class CsciMng:
 
 
 if __name__ == "__main__":
-    cn = CsciMng(r'C:\works\btma_code\common', 'common', r'C:\works\btma_code\common\cdc\cdc')
+    #cn = CsciMng(r'D:\sourceCode\1_eurocat\btma_ada\common', 'common', r'D:\sourceCode\1_eurocat\btma_ada\common\cdc\cdc')
+    #cn = CsciMng(r'D:\sourceCode\1_eurocat\btma_ada\kinematics\Ada', 'kinematics', r'D:\sourceCode\1_eurocat\btma_ada\kinematics\Ada')
+    cn = CsciMng(r'D:\sourceCode\1_eurocat\btma_ada\ubss_src',  'ubss')
     #print(cn.get_makefile_vars(r'C:\works\btma_code\common\cdc\cdc\Makefile', ['SUBDIRS', 'AMG_SOURCES']))
     #print(cn.get_makefile_vars(r'C:\works\btma_code\common\cdc\Makefile', ['SUBDIRS', 'AMG_SOURCES']))
-    cn.get_spce_list([r'C:\works\btma_code\common'])
-    #print("\n".join(cn.specs))
+    #cn.get_spce_list([r'C:\works\btma_code\common'])
+    cn.get_all_spec()
+    print("\n".join(cn.specs))

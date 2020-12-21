@@ -24,6 +24,7 @@ import re
 class ADA95Listener3(ADA95Listener):
     def __init__(self, ctx):
         self.ctx = ctx
+        self.MARK_PATTERN = re.compile('[\w.]+')
 
     # Enter a parse tree produced by ADA95Parser#compilation_unit_lib.
     #def enterCompilation_unit_lib(self, ctx:ADA95Parser.Compilation_unit_libContext):
@@ -91,14 +92,15 @@ class ADA95Listener3(ADA95Listener):
         self.ctx.cur_fm.cur_states.pop()
 
     def exitDiscriminant_specification(self, ctx):
-        a_memb = AdaRecordField(self.ctx.cur_idents.pop(), self.ctx.cur_type, self.ctx)
-        a_memb.solve_type(cpu.get_texts(ctx.subtype_mark()))
-        def_val = ctx.default_expression()
-        if def_val is not None:
-            a_memb.solve_default(cpu.get_texts(def_val))
-        self.ctx.cur_discrim.append(a_memb)
-        for ident in self.ctx.cur_idents:
-            self.ctx.cur_discrim.append(a_memb.copy(ident))
+        if self.ctx.cur_discrim is not None:
+            a_memb = AdaRecordField(self.ctx.cur_idents.pop(), self.ctx.cur_type, self.ctx)
+            a_memb.solve_type(cpu.get_texts(ctx.subtype_mark()))
+            def_val = ctx.default_expression()
+            if def_val is not None:
+                a_memb.solve_default(cpu.get_texts(def_val))
+            self.ctx.cur_discrim.append(a_memb)
+            for ident in self.ctx.cur_idents:
+                self.ctx.cur_discrim.append(a_memb.copy(ident))
 
     def enterEnumeration_type_definition(self, ctx):
         self.ctx.cur_type = AdaEnumType(
@@ -139,25 +141,47 @@ class ADA95Listener3(ADA95Listener):
     def enterSubtype_indication(self, ctx):
         if self.ctx.cur_fm.cur_states[-1] == FileMng.States.VAR:
             self.ctx.cur_fm.cur_states.append(FileMng.States.VAR_TYPE)
-        elif self.ctx.cur_fm.cur_states[-2] == FileMng.States.TYPE:
+        elif self.ctx.cur_fm.cur_states[-1] == FileMng.States.TYPE:
             self.ctx.cur_fm.cur_states.append(FileMng.States.SUB_DER_TYPE)
-        elif self.ctx.cur_fm.cur_states[-2] == FileMng.States.FIELD:
+        elif self.ctx.cur_fm.cur_states[-1] == FileMng.States.FIELD:
             self.ctx.cur_fm.cur_states.append(FileMng.States.FIELD_TYPE)
 
     def exitSubtype_indication(self, ctx):
-        rollback = False
-        if self.ctx.cur_fm.cur_states[-2] == FileMng.States.TYPE and self.ctx.cur_type:
-            #self.ctx.cur_type and not isinstance(self.ctx.cur_type, str):
-            self.ctx.cur_type.based = cpu.get_texts(ctx.subtype_mark())
-            self.ctx.cur_type.constraint = self.ctx.cur_const
-        elif self.ctx.cur_fm.cur_states[-2] == FileMng.States.VAR and self.ctx.cur_var:
-            #self.ctx.cur_var and not isinstance(self.ctx.cur_var, str):
-            self.ctx.cur_var.based = cpu.get_texts(ctx.subtype_mark())
-            self.ctx.cur_var.constraint = self.ctx.cur_const
-        elif self.ctx.cur_fm.cur_states[-2] == FileMng.States.FIELD:
-            self.ctx.cur_field = {'based': cpu.get_texts(ctx.subtype_mark()),
+        #rollback = False
+        cur_mark = re.search(self.MARK_PATTERN, cpu.get_texts(ctx.subtype_mark()))
+        cur_mark = cur_mark.group()
+        if self.ctx.cur_fm.cur_states[-1] == FileMng.States.SUB_DER_TYPE and self.ctx.cur_type:
+            if not isinstance(self.ctx.cur_type, str):
+                self.ctx.cur_type.based = cur_mark
+                if self.ctx.cur_const and not self.ctx.cur_type.constraint:
+                    self.ctx.cur_type.constraint = self.ctx.cur_const
+                self.ctx.cur_type.solve_constraint()
+            else:
+                print("Type error [%s:%s, %s:%s] %s" % (ctx.start.line,
+                                             ctx.start.column,
+                                             ctx.stop.line,
+                                             ctx.stop.column,
+                                             self.ctx.cur_type
+                                             ))
+        elif self.ctx.cur_fm.cur_states[-1] == FileMng.States.VAR_TYPE and self.ctx.cur_var:
+            if not isinstance(self.ctx.cur_var, str):
+                self.ctx.cur_var.based = cur_mark
+                self.ctx.cur_var.constraint = self.ctx.cur_const
+                self.ctx.cur_var.solve_type(self.ctx.cur_var.based)
+                self.ctx.cur_var.solve_constraint()
+            else:
+                print("Var error [%s:%s, %s:%s] %s" % (ctx.start.line,
+                                             ctx.start.column,
+                                             ctx.stop.line,
+                                             ctx.stop.column,
+                                             self.ctx.cur_var
+                                             ))
+        elif self.ctx.cur_fm.cur_states[-1] == FileMng.States.FIELD_TYPE:
+            self.ctx.cur_field = {'based': cur_mark,
                                   'constraint': self.ctx.cur_const}
-        if rollback:
+        if self.ctx.cur_fm.cur_states[-1] in [FileMng.States.SUB_DER_TYPE,
+                                              FileMng.States.VAR_TYPE,
+                                              FileMng.States.FIELD_TYPE]:
             self.ctx.cur_const = None
             self.ctx.cur_range = None
             self.ctx.cur_fm.cur_states.pop()
@@ -223,9 +247,12 @@ class ADA95Listener3(ADA95Listener):
                                             }
         if self.ctx.cur_const and self.ctx.cur_const['type'] == 'range':
             self.ctx.cur_const.update({'range': self.ctx.cur_range})
-        elif self.ctx.cur_fm.cur_states[-1] in (FileMng.States.SUB_DER_TYPE,
-                                                FileMng.States.FIELD_TYPE):
-            self.ctx.cur_type.constraint.update({'range': self.ctx.cur_range})
+        elif self.ctx.cur_fm.cur_states[-1] == FileMng.States.SUB_DER_TYPE:
+            self.ctx.cur_type.constraint = {'type': 'range',
+                                            'range': self.ctx.cur_range}
+        elif self.ctx.cur_fm.cur_states[-1] in (FileMng.States.FIELD_TYPE, FileMng.States.VAR_TYPE):
+            self.ctx.cur_const = {'type': 'range',
+                                  'range': self.ctx.cur_range}
         else:
             print("ignore range statement: %s" % ctx.getText())
 

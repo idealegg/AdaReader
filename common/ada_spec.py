@@ -1,5 +1,9 @@
-class AdaSpec:
+from common.common_based import CommonBased
+
+
+class AdaSpec(CommonBased):
     def __init__(self, f_name, ctx):
+        super(AdaSpec, self).__init__()
         self.f_name = f_name
         self.package = None
         self.withs = set()
@@ -8,7 +12,8 @@ class AdaSpec:
         self.vars = {}
         self.types = {}
         self.ctx = ctx
-        self.ctx.cur_spec = self
+        #self.ctx.cur_spec = self
+        self.to_print = ['f_name', 'package', 'withs', 'uses']
 
     def add_with(self, w):
         self.withs.update(map(lambda x: x.upper(), w))
@@ -27,7 +32,6 @@ class AdaSpec:
         if stype.package not in self.ctx.types:
             self.ctx.types[stype.package] = {}
         stype.solve_constraint()
-        stype.update_leader_str()
         stype.solve_type_chain()
         self.types[stype.package][stype.name] = stype
         self.ctx.types[stype.package][stype.name] = stype

@@ -12,16 +12,17 @@ class AdaType(CommonBased):
     INT_TYPE = "Integer"
     REAL_TYPE = "Real"
     FIELD_TYPE = "Field_Type"
-    def __init__(self, name, ttype, package=None, ctx=None):
+    VAR_TYPE = "Var"
+    def __init__(self, name, ttype, package=None, ctx=None, is_based=False):
         super(AdaType, self).__init__()
-        self.name = name.upper()
-        self.package = package.upper()
+        self.name = name.upper() if name else None
+        self.package = package.upper() if package else None
         self.ttype = ttype
-        self.is_based = False
+        self.is_based = is_based
         self.discriminant = {}
         self.size = None
         self.ctx = ctx
-        self.ctx.cur_type = self
+        #self.ctx.cur_type = self
         self.size_solved = False
         self.const_solved = False
         self.type_chain = []
@@ -29,7 +30,7 @@ class AdaType(CommonBased):
         self.last = None
         self.must_print = ['first', 'last', 'size']
         self.to_print = ['discriminant', 'size']
-        self.leader_str = "%s type [%s] in [%s]:" % (self.ttype, self.name, self.package)
+        self.leader_str = "'%s type [%s] in [%s]:' % (self.ttype, self.name, self.package)"
 
     def add_discrim(self, fs):
         for f in fs:
@@ -37,9 +38,6 @@ class AdaType(CommonBased):
 
     def solve_size(self, i_size):
         self.size, self.size_solved = common.parse_util.solve_expr(self.ctx, i_size)
-
-    def update_leader_str(self):
-        self.leader_str = "%s type [%s] in [%s]:\n" % (self.ttype, self.name, self.package)
 
     def solve_type_chain(self):
         pass

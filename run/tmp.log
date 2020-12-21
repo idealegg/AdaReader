@@ -1,5 +1,1928 @@
-ARTTS
-Integer type [INTEGER] in [ADA_SYSTEM_DEFINED]:{mod: None,first: -2147483648,last: 2147483647}
-Real type [SHORT_FLOAT] in [ADA_SYSTEM_DEFINED]:{delta: None,digits: None,first: None,last: None}
-Real type [LONG_FLOAT] in [ADA_SYSTEM_DEFINED]:{delta: None,digits: None,first: None,last: None}
-Array type [STRING] in [ADA_SYSTEM_DEFINED]:{dim_list: [],elem: None,first: None,last: None}
+Csci[ubss]All files[D:\sourceCode\1_eurocat\btma_ada\ubss_src\argument.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_bns_c_types.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_bns_interfaces.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_cdc_c_types.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_cdc_interfaces.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_end_interfaces.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_npm_c_types.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_npm_interfaces.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_queueing_c_types.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_queueing_interfaces.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_interfaces.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_start.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_time_c_types.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_time_interfaces.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_definitions.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_error.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\bserrno.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\bs_definitions.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\bs_error.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_definitions.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\cs_definitions.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\cs_error.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\current_exception.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\dps_definitions.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\dps_error.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\dss_definitions.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\dss_error.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\dump_exception.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\eti_definitions.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\eti_error.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\gbs_ipc_definitions.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\gbs_ipc_error.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\hrt_definitions.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\hrt_error.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_binary_io.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_binary_io_c_types.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_binary_io_interfaces.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_direct_io.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_direct_io_c_types.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_direct_io_interfaces.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_indexed_sequential.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_indexed_sequential_c_types.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_management.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_management_c_types.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_management_interfaces.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_semaphore.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_semaphore_interfaces.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_text_io.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_text_io_c_types.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_text_io_interfaces.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_definitions.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_definitions.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_const_definitions.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_const_error.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_definitions.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_param_definitions.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_param_error.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\msg_direct_io.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_definitions.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\probing.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\rusage.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_definitions.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\standard_types.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\tcm_definitions.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\tcm_error.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\tc_ext_queue_fifo_interfaces.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\tc_queue_deck_interfaces.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\tc_queue_fifo_interfaces.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\tc_queue_fp_interfaces.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\tc_telecom_interfaces.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_definitions.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\text_handler.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_definitions.ads
+D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+withs: {'TEXT_HANDLER'}
+solved_withs: {'TEXT_HANDLER': False}
+withs: {'TELECOM_DEFINITIONS', 'ARTTS_BNS_C_TYPES', 'IPC_FP_DEFINITIONS', 'ARTTS_SCM_C_TYPES', 'ARTTS_TIME_C_TYPES', 'TM_DEFINITIONS', 'CDC_DEFINITIONS', 'ARTTS_QUEUEING_C_TYPES', 'DPS_DEFINITIONS', 'NPM_DEFINITIONS', 'STANDARD_TYPES', 'ARTTS_NPM_C_TYPES', 'BNS_DEFINITIONS', 'BS_DEFINITIONS', 'SYSTEM', 'SCM_DEFINITIONS', 'IPC_DEFINITIONS'}
+solved_withs: {'STANDARD_TYPES': False, 'SYSTEM': True, 'BS_DEFINITIONS': False, 'BNS_DEFINITIONS': False, 'ARTTS_BNS_C_TYPES': False, 'CDC_DEFINITIONS': False, 'TM_DEFINITIONS': False, 'ARTTS_TIME_C_TYPES': False, 'SCM_DEFINITIONS': False, 'ARTTS_SCM_C_TYPES': False, 'IPC_DEFINITIONS': False, 'IPC_FP_DEFINITIONS': False, 'ARTTS_QUEUEING_C_TYPES': False, 'NPM_DEFINITIONS': False, 'ARTTS_NPM_C_TYPES': False, 'TELECOM_DEFINITIONS': False, 'DPS_DEFINITIONS': False}
+withs: {'BNS_DEFINITIONS', 'STANDARD_TYPES'}
+solved_withs: {'BNS_DEFINITIONS': False, 'STANDARD_TYPES': False}
+withs: {'ARTTS_BNS_C_TYPES', 'SYSTEM', 'STANDARD_TYPES'}
+solved_withs: {'SYSTEM': True, 'STANDARD_TYPES': False, 'ARTTS_BNS_C_TYPES': False}
+withs: {'STANDARD_TYPES'}
+solved_withs: {'STANDARD_TYPES': False}
+withs: {'SYSTEM', 'ARTTS_CDC_C_TYPES', 'STANDARD_TYPES', 'ARTTS'}
+solved_withs: {'STANDARD_TYPES': False, 'SYSTEM': True, 'ARTTS': False, 'ARTTS_CDC_C_TYPES': False}
+withs: {'SYSTEM', 'STANDARD_TYPES', 'ARTTS'}
+solved_withs: {'STANDARD_TYPES': False, 'SYSTEM': True, 'ARTTS': False}
+withs: {'NPM_DEFINITIONS', 'STANDARD_TYPES', 'SCM_DEFINITIONS'}
+solved_withs: {'STANDARD_TYPES': False, 'NPM_DEFINITIONS': False, 'SCM_DEFINITIONS': False}
+withs: {'SYSTEM', 'ARTTS_NPM_C_TYPES', 'STANDARD_TYPES'}
+solved_withs: {'SYSTEM': True, 'STANDARD_TYPES': False, 'ARTTS_NPM_C_TYPES': False}
+withs: {'TELECOM_DEFINITIONS', 'IPC_FP_CONST_DEFINITIONS', 'STANDARD_TYPES', 'SYSTEM', 'IPC_DEFINITIONS'}
+solved_withs: {'STANDARD_TYPES': False, 'SYSTEM': True, 'IPC_DEFINITIONS': False, 'IPC_FP_CONST_DEFINITIONS': False, 'TELECOM_DEFINITIONS': False}
+withs: {'ARTTS', 'SYSTEM'}
+solved_withs: {'SYSTEM': True, 'ARTTS': False}
+withs: {'BS_DEFINITIONS', 'STANDARD_TYPES', 'SCM_DEFINITIONS'}
+solved_withs: {'SCM_DEFINITIONS': False, 'STANDARD_TYPES': False, 'BS_DEFINITIONS': False}
+withs: {'ARTTS_SCM_C_TYPES', 'SYSTEM', 'STANDARD_TYPES'}
+solved_withs: {'SYSTEM': True, 'STANDARD_TYPES': False, 'ARTTS_SCM_C_TYPES': False}
+withs: set()
+solved_withs: {}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_start.ads], total: [70/83]
+withs: {'TM_DEFINITIONS', 'STANDARD_TYPES'}
+solved_withs: {'TM_DEFINITIONS': False, 'STANDARD_TYPES': False}
+withs: {'ARTTS_TIME_C_TYPES', 'SYSTEM', 'STANDARD_TYPES'}
+solved_withs: {'SYSTEM': True, 'STANDARD_TYPES': False, 'ARTTS_TIME_C_TYPES': False}
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': False}
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': False}
+withs: {'ARTTS'}
+solved_withs: {'ARTTS': False}
+withs: set()
+solved_withs: {}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bs_definitions.ads], total: [77/82]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bs_error.ads], total: [81/81]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_definitions.ads], total: [80/80]
+No solved: name 'BS_DNCSINGLE' is not defined
+[BS_DNCSINGLE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_definitions.ads]
+No solved: name 'BS_DNCMASTER' is not defined
+[BS_DNCMASTER] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_definitions.ads]
+No solved: name 'BS_DNCSLAVE' is not defined
+[BS_DNCSLAVE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_definitions.ads]
+No solved: name 'BS_DNCNOTAVAILABLE' is not defined
+[BS_DNCNOTAVAILABLE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_definitions.ads]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads], total: [79/79]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+2)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+3)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+4)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+5)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+6)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+7)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+8)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+9)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+10)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+11)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+12)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+13)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+14)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+15)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+16)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+17)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+18)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+19)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+20)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+21)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+22)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+23)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+24)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+25)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+26)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+27)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+28)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+29)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+30)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+31)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+32)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+33)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+34)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+41)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+42)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+43)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+44)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+46)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+47)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+48)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+49)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+50)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+51)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+52)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+53)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+54)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+55)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+56)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+57)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+58)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+59)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+62)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+63)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+64)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+65)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+66)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+67)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+68)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+69)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+70)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+71)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+72)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+73)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+76)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+77)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+78)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+79)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+80)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+81)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+82)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+83)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+84)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+85)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+86)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+87)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+88)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+89)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+90)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+91)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+92)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+No solved: name 'ECDC_BASE' is not defined
+[(ECDC_BASE+93)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cdc_error.ads]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cs_definitions.ads], total: [78/78]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cs_error.ads], total: [77/77]
+No solved: name 'ECS_BASE' is not defined
+[(ECS_BASE+1)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cs_error.ads]
+No solved: name 'ECS_BASE' is not defined
+[(ECS_BASE+2)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cs_error.ads]
+No solved: name 'ECS_BASE' is not defined
+[(ECS_BASE+3)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cs_error.ads]
+No solved: name 'ECS_BASE' is not defined
+[(ECS_BASE+4)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cs_error.ads]
+No solved: name 'ECS_BASE' is not defined
+[(ECS_BASE+5)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cs_error.ads]
+No solved: name 'ECS_BASE' is not defined
+[(ECS_BASE+6)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cs_error.ads]
+No solved: name 'ECS_BASE' is not defined
+[(ECS_BASE+7)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cs_error.ads]
+No solved: name 'ECS_BASE' is not defined
+[(ECS_BASE+8)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cs_error.ads]
+No solved: name 'ECS_BASE' is not defined
+[(ECS_BASE+9)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cs_error.ads]
+No solved: name 'ECS_BASE' is not defined
+[(ECS_BASE+10)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cs_error.ads]
+No solved: name 'ECS_BASE' is not defined
+[(ECS_BASE+11)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\cs_error.ads]
+withs: set()
+solved_withs: {}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\current_exception.ads], total: [76/76]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dps_definitions.ads], total: [75/75]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dps_error.ads], total: [74/74]
+No solved: name 'EDPS_BASE' is not defined
+[(EDPS_BASE+1)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dps_error.ads]
+No solved: name 'EDPS_BASE' is not defined
+[(EDPS_BASE+2)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dps_error.ads]
+No solved: name 'EDPS_BASE' is not defined
+[(EDPS_BASE+3)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dps_error.ads]
+No solved: name 'EDPS_BASE' is not defined
+[(EDPS_BASE+4)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dps_error.ads]
+No solved: name 'EDPS_BASE' is not defined
+[(EDPS_BASE+10)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dps_error.ads]
+No solved: name 'EDPS_BASE' is not defined
+[(EDPS_BASE+11)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dps_error.ads]
+No solved: name 'EDPS_BASE' is not defined
+[(EDPS_BASE+12)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dps_error.ads]
+No solved: name 'EDPS_BASE' is not defined
+[(EDPS_BASE+13)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dps_error.ads]
+No solved: name 'EDPS_BASE' is not defined
+[(EDPS_BASE+14)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dps_error.ads]
+No solved: name 'EDPS_BASE' is not defined
+[(EDPS_BASE+15)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dps_error.ads]
+No solved: name 'EDPS_BASE' is not defined
+[(EDPS_BASE+16)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dps_error.ads]
+No solved: name 'EDPS_BASE' is not defined
+[(EDPS_BASE+17)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dps_error.ads]
+No solved: name 'EDPS_BASE' is not defined
+[(EDPS_BASE+18)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dps_error.ads]
+No solved: name 'EDPS_BASE' is not defined
+[(EDPS_BASE+19)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dps_error.ads]
+No solved: name 'EDPS_BASE' is not defined
+[(EDPS_BASE+20)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dps_error.ads]
+No solved: name 'EDPS_BASE' is not defined
+[(EDPS_BASE+21)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dps_error.ads]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dss_definitions.ads], total: [73/73]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dss_error.ads], total: [72/72]
+No solved: name 'EDSS_BASE' is not defined
+[(EDSS_BASE+1)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dss_error.ads]
+No solved: name 'EDSS_BASE' is not defined
+[(EDSS_BASE+2)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dss_error.ads]
+No solved: name 'EDSS_BASE' is not defined
+[(EDSS_BASE+3)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dss_error.ads]
+No solved: name 'EDSS_BASE' is not defined
+[(EDSS_BASE+4)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dss_error.ads]
+No solved: name 'EDSS_BASE' is not defined
+[(EDSS_BASE+5)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dss_error.ads]
+No solved: name 'EDSS_BASE' is not defined
+[(EDSS_BASE+6)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dss_error.ads]
+No solved: name 'EDSS_BASE' is not defined
+[(EDSS_BASE+7)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dss_error.ads]
+No solved: name 'EDSS_BASE' is not defined
+[(EDSS_BASE+8)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dss_error.ads]
+No solved: name 'EDSS_BASE' is not defined
+[(EDSS_BASE+9)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dss_error.ads]
+No solved: name 'EDSS_BASE' is not defined
+[(EDSS_BASE+10)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dss_error.ads]
+No solved: name 'EDSS_BASE' is not defined
+[(EDSS_BASE+11)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dss_error.ads]
+No solved: name 'EDSS_BASE' is not defined
+[(EDSS_BASE+12)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dss_error.ads]
+No solved: name 'EDSS_BASE' is not defined
+[(EDSS_BASE+13)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dss_error.ads]
+No solved: name 'EDSS_BASE' is not defined
+[(EDSS_BASE+14)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dss_error.ads]
+No solved: name 'EDSS_BASE' is not defined
+[(EDSS_BASE+15)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dss_error.ads]
+No solved: name 'EDSS_BASE' is not defined
+[(EDSS_BASE+16)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dss_error.ads]
+No solved: name 'EDSS_BASE' is not defined
+[(EDSS_BASE+17)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dss_error.ads]
+No solved: name 'EDSS_BASE' is not defined
+[(EDSS_BASE+18)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dss_error.ads]
+No solved: name 'EDSS_BASE' is not defined
+[(EDSS_BASE+19)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dss_error.ads]
+No solved: name 'EDSS_BASE' is not defined
+[(EDSS_BASE+20)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dss_error.ads]
+No solved: name 'EDSS_BASE' is not defined
+[(EDSS_BASE+21)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dss_error.ads]
+No solved: name 'EDSS_BASE' is not defined
+[(EDSS_BASE+22)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dss_error.ads]
+No solved: name 'EDSS_BASE' is not defined
+[(EDSS_BASE+23)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dss_error.ads]
+withs: set()
+solved_withs: {}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\dump_exception.ads], total: [71/71]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\eti_definitions.ads], total: [70/70]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\eti_error.ads], total: [69/69]
+No solved: name 'EETI_BASE' is not defined
+[(EETI_BASE+0)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\eti_error.ads]
+No solved: name 'EETI_BASE' is not defined
+[(EETI_BASE+1)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\eti_error.ads]
+No solved: name 'EETI_BASE' is not defined
+[(EETI_BASE+2)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\eti_error.ads]
+No solved: name 'EETI_BASE' is not defined
+[(EETI_BASE+3)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\eti_error.ads]
+No solved: name 'EETI_BASE' is not defined
+[(EETI_BASE+4)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\eti_error.ads]
+No solved: name 'EETI_BASE' is not defined
+[(EETI_BASE+5)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\eti_error.ads]
+No solved: name 'EETI_BASE' is not defined
+[(EETI_BASE+6)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\eti_error.ads]
+No solved: name 'EETI_BASE' is not defined
+[(EETI_BASE+7)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\eti_error.ads]
+No solved: name 'EETI_BASE' is not defined
+[(EETI_BASE+8)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\eti_error.ads]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\gbs_ipc_definitions.ads], total: [68/68]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\gbs_ipc_error.ads], total: [67/67]
+No solved: name 'EGBS_BASE' is not defined
+[(EGBS_BASE+0)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\gbs_ipc_error.ads]
+No solved: name 'EGBS_BASE' is not defined
+[(EGBS_BASE+1)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\gbs_ipc_error.ads]
+No solved: name 'EGBS_BASE' is not defined
+[(EGBS_BASE+2)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\gbs_ipc_error.ads]
+No solved: name 'EGBS_BASE' is not defined
+[(EGBS_BASE+3)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\gbs_ipc_error.ads]
+No solved: name 'EGBS_BASE' is not defined
+[(EGBS_BASE+4)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\gbs_ipc_error.ads]
+No solved: name 'EGBS_BASE' is not defined
+[(EGBS_BASE+5)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\gbs_ipc_error.ads]
+No solved: name 'EGBS_BASE' is not defined
+[(EGBS_BASE+6)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\gbs_ipc_error.ads]
+No solved: name 'EGBS_BASE' is not defined
+[(EGBS_BASE+7)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\gbs_ipc_error.ads]
+No solved: name 'EGBS_BASE' is not defined
+[(EGBS_BASE+8)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\gbs_ipc_error.ads]
+No solved: name 'EGBS_BASE' is not defined
+[(EGBS_BASE+9)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\gbs_ipc_error.ads]
+No solved: name 'EGBS_BASE' is not defined
+[(EGBS_BASE+10)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\gbs_ipc_error.ads]
+No solved: name 'EGBS_BASE' is not defined
+[(EGBS_BASE+11)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\gbs_ipc_error.ads]
+No solved: name 'EGBS_BASE' is not defined
+[(EGBS_BASE+12)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\gbs_ipc_error.ads]
+No solved: name 'EGBS_BASE' is not defined
+[(EGBS_BASE+13)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\gbs_ipc_error.ads]
+No solved: name 'EGBS_BASE' is not defined
+[(EGBS_BASE+14)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\gbs_ipc_error.ads]
+No solved: name 'EGBS_BASE' is not defined
+[(EGBS_BASE+15)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\gbs_ipc_error.ads]
+No solved: name 'EGBS_BASE' is not defined
+[(EGBS_BASE+16)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\gbs_ipc_error.ads]
+No solved: name 'EGBS_BASE' is not defined
+[(EGBS_BASE+17)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\gbs_ipc_error.ads]
+No solved: name 'EGBS_BASE' is not defined
+[(EGBS_BASE+18)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\gbs_ipc_error.ads]
+No solved: name 'EGBS_BASE' is not defined
+[(EGBS_BASE+19)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\gbs_ipc_error.ads]
+No solved: name 'EGBS_BASE' is not defined
+[(EGBS_BASE+20)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\gbs_ipc_error.ads]
+No solved: name 'EGBS_BASE' is not defined
+[(EGBS_BASE+21)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\gbs_ipc_error.ads]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\hrt_definitions.ads], total: [66/66]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\hrt_error.ads], total: [65/65]
+No solved: name 'EHRT_BASE' is not defined
+[(EHRT_BASE)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\hrt_error.ads]
+No solved: name 'EHRT_BASE' is not defined
+[(EHRT_BASE+1)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\hrt_error.ads]
+No solved: name 'EHRT_BASE' is not defined
+[(EHRT_BASE+2)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\hrt_error.ads]
+No solved: name 'EHRT_BASE' is not defined
+[(EHRT_BASE+3)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\hrt_error.ads]
+No solved: name 'EHRT_BASE' is not defined
+[(EHRT_BASE+4)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\hrt_error.ads]
+No solved: name 'EHRT_BASE' is not defined
+[(EHRT_BASE+5)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\hrt_error.ads]
+No solved: name 'EHRT_BASE' is not defined
+[(EHRT_BASE+6)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\hrt_error.ads]
+No solved: name 'EHRT_BASE' is not defined
+[(EHRT_BASE+7)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\hrt_error.ads]
+No solved: name 'EHRT_BASE' is not defined
+[(EHRT_BASE+8)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\hrt_error.ads]
+No solved: name 'EHRT_BASE' is not defined
+[(EHRT_BASE+9)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\hrt_error.ads]
+No solved: name 'EHRT_BASE' is not defined
+[(EHRT_BASE+10)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\hrt_error.ads]
+No solved: name 'EHRT_BASE' is not defined
+[(EHRT_BASE+11)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\hrt_error.ads]
+No solved: name 'EHRT_BASE' is not defined
+[(EHRT_BASE+12)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\hrt_error.ads]
+No solved: name 'EHRT_BASE' is not defined
+[(EHRT_BASE+13)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\hrt_error.ads]
+No solved: name 'EHRT_BASE' is not defined
+[(EHRT_BASE+14)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\hrt_error.ads]
+No solved: name 'EHRT_BASE' is not defined
+[(EHRT_BASE+15)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\hrt_error.ads]
+No solved: name 'EHRT_BASE' is not defined
+[(EHRT_BASE+16)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\hrt_error.ads]
+withs: {'ARTTS', 'IOCALL_BINARY_IO_C_TYPES', 'STANDARD_TYPES'}
+solved_withs: {'STANDARD_TYPES': False, 'ARTTS': False, 'IOCALL_BINARY_IO_C_TYPES': False}
+withs: {'SYSTEM', 'STANDARD_TYPES'}
+solved_withs: {'SYSTEM': True, 'STANDARD_TYPES': False}
+withs: {'IOCALL_BINARY_IO_C_TYPES', 'SYSTEM', 'STANDARD_TYPES'}
+solved_withs: {'SYSTEM': True, 'STANDARD_TYPES': False, 'IOCALL_BINARY_IO_C_TYPES': False}
+withs: {'IOCALL_DIRECT_IO_C_TYPES', 'ARTTS', 'STANDARD_TYPES'}
+solved_withs: {'STANDARD_TYPES': False, 'ARTTS': False, 'IOCALL_DIRECT_IO_C_TYPES': False}
+withs: {'IOC_DEFINITIONS', 'SYSTEM', 'STANDARD_TYPES'}
+solved_withs: {'SYSTEM': True, 'STANDARD_TYPES': False, 'IOC_DEFINITIONS': False}
+withs: {'IOCALL_DIRECT_IO_C_TYPES', 'SYSTEM', 'STANDARD_TYPES'}
+solved_withs: {'SYSTEM': True, 'STANDARD_TYPES': False, 'IOCALL_DIRECT_IO_C_TYPES': False}
+withs: {'ARTTS', 'IOCALL_INDEXED_SEQUENTIAL_C_TYPES'}
+solved_withs: {'ARTTS': False, 'IOCALL_INDEXED_SEQUENTIAL_C_TYPES': False}
+withs: {'IOCALL_DIRECT_IO_C_TYPES', 'STANDARD_TYPES'}
+solved_withs: {'STANDARD_TYPES': False, 'IOCALL_DIRECT_IO_C_TYPES': False}
+withs: {'IOCALL_MANAGEMENT_C_TYPES', 'ARTTS', 'IOC_DEFINITIONS', 'STANDARD_TYPES'}
+solved_withs: {'STANDARD_TYPES': False, 'ARTTS': False, 'IOC_DEFINITIONS': False, 'IOCALL_MANAGEMENT_C_TYPES': False}
+withs: {'IOC_DEFINITIONS', 'STANDARD_TYPES'}
+solved_withs: {'STANDARD_TYPES': False, 'IOC_DEFINITIONS': False}
+withs: {'IOCALL_MANAGEMENT_C_TYPES', 'SYSTEM', 'STANDARD_TYPES'}
+solved_withs: {'SYSTEM': True, 'STANDARD_TYPES': False, 'IOCALL_MANAGEMENT_C_TYPES': False}
+withs: {'STANDARD_TYPES'}
+solved_withs: {'STANDARD_TYPES': False}
+withs: {'SYSTEM', 'STANDARD_TYPES'}
+solved_withs: {'STANDARD_TYPES': False, 'SYSTEM': True}
+withs: {'ARTTS', 'IOCALL_TEXT_IO_C_TYPES'}
+solved_withs: {'ARTTS': False, 'IOCALL_TEXT_IO_C_TYPES': False}
+withs: {'SYSTEM', 'STANDARD_TYPES'}
+solved_withs: {'SYSTEM': True, 'STANDARD_TYPES': False}
+withs: {'IOCALL_TEXT_IO_C_TYPES', 'SYSTEM', 'STANDARD_TYPES'}
+solved_withs: {'SYSTEM': True, 'STANDARD_TYPES': False, 'IOCALL_TEXT_IO_C_TYPES': False}
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_definitions.ads], total: [48/64]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads], total: [63/63]
+No solved: name 'EIOC_BASE' is not defined
+[(EIOC_BASE+1)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads]
+No solved: name 'EIOC_BASE' is not defined
+[(EIOC_BASE+2)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads]
+No solved: name 'EIOC_BASE' is not defined
+[(EIOC_BASE+3)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads]
+No solved: name 'EIOC_BASE' is not defined
+[(EIOC_BASE+4)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads]
+No solved: name 'EIOC_BASE' is not defined
+[(EIOC_BASE+5)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads]
+No solved: name 'EIOC_BASE' is not defined
+[(EIOC_BASE+6)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads]
+No solved: name 'EIOC_BASE' is not defined
+[(EIOC_BASE+7)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads]
+No solved: name 'EIOC_BASE' is not defined
+[(EIOC_BASE+8)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads]
+No solved: name 'EIOC_BASE' is not defined
+[(EIOC_BASE+9)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads]
+No solved: name 'EIOC_BASE' is not defined
+[(EIOC_BASE+10)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads]
+No solved: name 'EIOC_BASE' is not defined
+[(EIOC_BASE+11)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads]
+No solved: name 'EIOC_BASE' is not defined
+[(EIOC_BASE+12)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads]
+No solved: name 'EIOC_BASE' is not defined
+[(EIOC_BASE+13)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads]
+No solved: name 'EIOC_BASE' is not defined
+[(EIOC_BASE+14)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads]
+No solved: name 'EIOC_BASE' is not defined
+[(EIOC_BASE+15)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads]
+No solved: name 'EIOC_BASE' is not defined
+[(EIOC_BASE+16)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads]
+No solved: name 'EIOC_BASE' is not defined
+[(EIOC_BASE+17)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads]
+No solved: name 'EIOC_BASE' is not defined
+[(EIOC_BASE+18)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads]
+No solved: name 'EIOC_BASE' is not defined
+[(EIOC_BASE+19)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads]
+No solved: name 'EIOC_BASE' is not defined
+[(EIOC_BASE+20)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads]
+No solved: name 'EIOC_BASE' is not defined
+[(EIOC_BASE+21)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads]
+No solved: name 'EIOC_BASE' is not defined
+[(EIOC_BASE+22)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads]
+No solved: name 'EIOC_BASE' is not defined
+[(EIOC_BASE+23)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads]
+No solved: name 'EIOC_BASE' is not defined
+[(EIOC_BASE+24)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads]
+No solved: name 'EIOC_BASE' is not defined
+[(EIOC_BASE+25)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads]
+No solved: name 'EIOC_BASE' is not defined
+[(EIOC_BASE+26)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads]
+No solved: name 'EIOC_BASE' is not defined
+[(EIOC_BASE+27)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads]
+No solved: name 'EIOC_BASE' is not defined
+[(EIOC_BASE+28)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ioc_error.ads]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_definitions.ads], total: [62/62]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads], total: [61/61]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+0)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+1)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+2)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+3)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+6)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+7)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+8)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+9)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+10)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+11)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+12)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+14)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+16)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+18)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+19)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+20)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+21)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+23)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+24)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+25)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+26)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+28)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+29)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+30)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+31)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+32)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+33)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+34)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+35)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+36)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+37)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+38)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+39)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+40)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+42)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+43)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+44)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+45)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+46)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+47)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+48)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+50)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+51)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+52)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+53)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+54)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+55)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+56)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+57)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+58)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+59)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+60)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+61)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+62)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+63)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+64)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+65)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+66)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+67)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+68)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+69)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+70)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+71)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+72)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+No solved: name 'EIPC_BASE' is not defined
+[(EIPC_BASE+73)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_error.ads]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_const_definitions.ads], total: [60/60]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_const_error.ads], total: [59/59]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_definitions.ads], total: [58/58]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads], total: [57/57]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+1)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+2)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+3)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+4)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+5)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+6)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+7)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+8)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+9)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+10)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+11)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+12)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+13)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+14)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+15)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+16)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+17)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+18)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+19)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+20)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+21)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+22)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+23)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+24)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+25)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+26)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+27)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+28)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+29)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+30)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+31)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+32)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+33)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+34)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+35)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+36)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+37)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+38)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+39)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+40)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+41)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+42)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+43)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+44)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+No solved: name 'EIPC_FP_BASE' is not defined
+[(EIPC_FP_BASE+45)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_error.ads]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_param_definitions.ads], total: [56/56]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\ipc_fp_param_error.ads], total: [55/55]
+withs: {'STANDARD_TYPES', 'IOCALL_BINARY_IO'}
+solved_withs: {'STANDARD_TYPES': False, 'IOCALL_BINARY_IO': False}
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_definitions.ads], total: [53/54]
+No solved: name 'BS_MAX_LG_PROCESS' is not defined
+[BS_MAX_LG_PROCESS] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_definitions.ads]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads], total: [53/53]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+0)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+1)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+2)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+3)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+4)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+6)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+7)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+8)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+9)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+10)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+14)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+15)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+16)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+17)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+18)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+19)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+20)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+21)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+22)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+24)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+26)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+27)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+28)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+29)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+30)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+31)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+32)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+33)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+34)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+35)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+36)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+37)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+38)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+39)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+40)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+41)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+42)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+43)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+44)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+45)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+46)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+47)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+48)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+49)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+50)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+51)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+52)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+53)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+54)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+55)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+No solved: name 'ENPM_BASE' is not defined
+[(ENPM_BASE+56)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\npm_error.ads]
+withs: set()
+solved_withs: {}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\probing.ads], total: [52/52]
+withs: {'STANDARD_TYPES'}
+solved_withs: {'STANDARD_TYPES': False}
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_definitions.ads], total: [50/51]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads], total: [50/50]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+1)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+2)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+3)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+4)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+5)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+6)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+7)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+8)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+9)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+10)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+11)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+12)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+13)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+14)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+15)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+16)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+17)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+18)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+19)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+20)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+21)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+22)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+23)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+24)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+25)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+26)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+27)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+28)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+29)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+30)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+31)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+32)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+33)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+34)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+35)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+36)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+37)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+38)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+39)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+40)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+41)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+42)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+43)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+44)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+45)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+46)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+47)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+48)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+49)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+50)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+51)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+53)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+54)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+55)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+56)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+57)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+58)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+59)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+60)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+61)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+62)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+63)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+64)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+65)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+66)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+67)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+68)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+69)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+70)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+71)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+72)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+73)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+74)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+75)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+76)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+77)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+78)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+79)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+80)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+81)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+82)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+83)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+84)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+85)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+86)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+87)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+88)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+89)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+90)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+91)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+92)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+93)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+94)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+95)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+96)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+97)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+98)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+99)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+100)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+101)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+102)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+103)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+104)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+105)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+No solved: name 'ESCM_BASE' is not defined
+[(ESCM_BASE+106)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\scm_error.ads]
+withs: set()
+solved_withs: {}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\standard_types.ads], total: [49/49]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tcm_definitions.ads], total: [48/48]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tcm_error.ads], total: [47/47]
+No solved: name 'ETCM_BASE' is not defined
+[(ETCM_BASE)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tcm_error.ads]
+No solved: name 'ETCM_BASE' is not defined
+[(ETCM_BASE+1)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tcm_error.ads]
+No solved: name 'ETCM_BASE' is not defined
+[(ETCM_BASE+2)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tcm_error.ads]
+No solved: name 'ETCM_BASE' is not defined
+[(ETCM_BASE+3)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tcm_error.ads]
+No solved: name 'ETCM_BASE' is not defined
+[(ETCM_BASE+4)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tcm_error.ads]
+No solved: name 'ETCM_BASE' is not defined
+[(ETCM_BASE+5)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tcm_error.ads]
+No solved: name 'ETCM_BASE' is not defined
+[(ETCM_BASE+6)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tcm_error.ads]
+No solved: name 'ETCM_BASE' is not defined
+[(ETCM_BASE+7)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tcm_error.ads]
+withs: {'SYSTEM', 'STANDARD_TYPES', 'ARTTS_QUEUEING_C_TYPES'}
+solved_withs: {'STANDARD_TYPES': True, 'ARTTS_QUEUEING_C_TYPES': False, 'SYSTEM': True}
+withs: {'ARTTS_SCM_C_TYPES', 'SYSTEM', 'STANDARD_TYPES'}
+solved_withs: {'SYSTEM': True, 'STANDARD_TYPES': True, 'ARTTS_SCM_C_TYPES': False}
+withs: {'BS_DEFINITIONS', 'SYSTEM', 'ARTTS_QUEUEING_C_TYPES', 'STANDARD_TYPES'}
+solved_withs: {'SYSTEM': True, 'STANDARD_TYPES': True, 'ARTTS_QUEUEING_C_TYPES': False, 'BS_DEFINITIONS': True}
+withs: {'SYSTEM', 'ARTTS_QUEUEING_C_TYPES', 'STANDARD_TYPES'}
+solved_withs: {'SYSTEM': True, 'STANDARD_TYPES': True, 'ARTTS_QUEUEING_C_TYPES': False}
+withs: {'SYSTEM', 'ARTTS_QUEUEING_C_TYPES', 'STANDARD_TYPES'}
+solved_withs: {'SYSTEM': True, 'STANDARD_TYPES': True, 'ARTTS_QUEUEING_C_TYPES': False}
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_definitions.ads], total: [41/46]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads], total: [45/45]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+1)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+2)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+3)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+4)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+5)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+10)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+11)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+12)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+13)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+14)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+15)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+16)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+17)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+18)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+19)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+20)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+21)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+22)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+23)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+24)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+25)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+26)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+27)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+28)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+29)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+30)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+31)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+32)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+33)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+34)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+35)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+36)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+37)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+38)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+39)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+No solved: name 'EMTM_BASE' is not defined
+[(EMTM_BASE+40)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\telecom_error.ads]
+withs: {'SYSTEM'}
+solved_withs: {'SYSTEM': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\text_handler.ads], total: [44/44]
+No solved: name 'MAX_LEN' is not defined
+[MAX_LEN] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\text_handler.ads]
+No solved: name 'MAX_LEN' is not defined
+[MAX_LEN] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\text_handler.ads]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_definitions.ads], total: [43/43]
+withs: {'BS_DEFINITIONS'}
+solved_withs: {'BS_DEFINITIONS': True}
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads], total: [42/42]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+0)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+1)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+2)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+3)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+4)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+5)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+6)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+7)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+8)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+9)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+10)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+11)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+12)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+13)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+14)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+15)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+16)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+17)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+18)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+19)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+20)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+21)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+22)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+23)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+24)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+25)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+26)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+27)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+28)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+29)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+30)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+31)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+32)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+33)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+No solved: name 'ETM_BASE' is not defined
+[(ETM_BASE+38)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tm_error.ads]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\argument.ads], total: [41/41]
+No solved: name 'ASCII' is not defined
+[ASCII.DEL] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\argument.ads]
+No solved: name 'ASCII' is not defined
+[ASCII.NUL] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\argument.ads]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_cdc_c_types.ads], total: [37/40]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_npm_c_types.ads], total: [37/39]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_npm_interfaces.ads], total: [38/38]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_queueing_c_types.ads], total: [37/37]
+No solved: EOL while scanning string literal (<string>, line 1)
+[STANDARD_TYPES.INTEGER_32'SIZE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_queueing_c_types.ads]
+No solved: name 'IPC_SIMPLE' is not defined
+[IPC_SIMPLE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_queueing_c_types.ads]
+No solved: name 'IPC_TELECOM' is not defined
+[IPC_TELECOM] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_queueing_c_types.ads]
+No solved: name 'IPC_SIMPLE' is not defined
+[IPC_SIMPLE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_queueing_c_types.ads]
+No solved: name 'IPC_TELECOM' is not defined
+[IPC_TELECOM] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_queueing_c_types.ads]
+No solved: name 'IPC_SIMPLE' is not defined
+[IPC_SIMPLE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_queueing_c_types.ads]
+No solved: name 'IPC_TELECOM' is not defined
+[IPC_TELECOM] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_queueing_c_types.ads]
+No solved: EOL while scanning string literal (<string>, line 1)
+[STANDARD_TYPES.INTEGER_32'SIZE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_queueing_c_types.ads]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads], total: [35/36]
+No solved: name 'CDC_LOCAL_NOT_IN_USE' is not defined
+[CDC_LOCAL_NOT_IN_USE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'CDC_SET_TO_AUTO_SLAVE' is not defined
+[CDC_SET_TO_AUTO_SLAVE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'CDC_LOCAL_NOT_IN_USE' is not defined
+[CDC_LOCAL_NOT_IN_USE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'CDC_SET_TO_AUTO_SLAVE' is not defined
+[CDC_SET_TO_AUTO_SLAVE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'CDC_LOCAL_NOT_IN_USE' is not defined
+[CDC_LOCAL_NOT_IN_USE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'CDC_SET_TO_AUTO_SLAVE' is not defined
+[CDC_SET_TO_AUTO_SLAVE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'CDC_SYSTEM_NOT_IN_USE' is not defined
+[CDC_SYSTEM_NOT_IN_USE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'CDC_MASTER_ALIVE' is not defined
+[CDC_MASTER_ALIVE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'CDC_SYSTEM_NOT_IN_USE' is not defined
+[CDC_SYSTEM_NOT_IN_USE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'CDC_MASTER_ALIVE' is not defined
+[CDC_MASTER_ALIVE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'CDC_SYSTEM_NOT_IN_USE' is not defined
+[CDC_SYSTEM_NOT_IN_USE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'CDC_MASTER_ALIVE' is not defined
+[CDC_MASTER_ALIVE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'NODE_OFF_LINE' is not defined
+[NODE_OFF_LINE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'NODE_EXITED' is not defined
+[NODE_EXITED] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'NODE_OFF_LINE' is not defined
+[NODE_OFF_LINE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'NODE_EXITED' is not defined
+[NODE_EXITED] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'NODE_OFF_LINE' is not defined
+[NODE_OFF_LINE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'NODE_EXITED' is not defined
+[NODE_EXITED] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'PROCESS_OFF_LINE' is not defined
+[PROCESS_OFF_LINE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'PROCESS_EXITED' is not defined
+[PROCESS_EXITED] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'PROCESS_OFF_LINE' is not defined
+[PROCESS_OFF_LINE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'PROCESS_EXITED' is not defined
+[PROCESS_EXITED] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'PROCESS_OFF_LINE' is not defined
+[PROCESS_OFF_LINE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'PROCESS_EXITED' is not defined
+[PROCESS_EXITED] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'GROUP_OFF_LINE' is not defined
+[GROUP_OFF_LINE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'GROUP_EXITED' is not defined
+[GROUP_EXITED] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'GROUP_OFF_LINE' is not defined
+[GROUP_OFF_LINE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'GROUP_EXITED' is not defined
+[GROUP_EXITED] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'GROUP_OFF_LINE' is not defined
+[GROUP_OFF_LINE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'GROUP_EXITED' is not defined
+[GROUP_EXITED] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'DNC_OFF_LINE' is not defined
+[DNC_OFF_LINE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'DNC_RUN_DOWN' is not defined
+[DNC_RUN_DOWN] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'DNC_OFF_LINE' is not defined
+[DNC_OFF_LINE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'DNC_RUN_DOWN' is not defined
+[DNC_RUN_DOWN] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'DNC_OFF_LINE' is not defined
+[DNC_OFF_LINE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'DNC_RUN_DOWN' is not defined
+[DNC_RUN_DOWN] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'LAN_AUTOMATIC' is not defined
+[LAN_AUTOMATIC] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'LAN_SINGLE' is not defined
+[LAN_SINGLE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'LAN_AUTOMATIC' is not defined
+[LAN_AUTOMATIC] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'LAN_SINGLE' is not defined
+[LAN_SINGLE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'LAN_AUTOMATIC' is not defined
+[LAN_AUTOMATIC] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'LAN_SINGLE' is not defined
+[LAN_SINGLE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'DEVICE_OK' is not defined
+[DEVICE_OK] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'DEVICE_NOT_OK' is not defined
+[DEVICE_NOT_OK] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'DEVICE_OK' is not defined
+[DEVICE_OK] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'DEVICE_NOT_OK' is not defined
+[DEVICE_NOT_OK] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'DEVICE_OK' is not defined
+[DEVICE_OK] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'DEVICE_NOT_OK' is not defined
+[DEVICE_NOT_OK] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'CONTROL_REMOTE_MODE' is not defined
+[CONTROL_REMOTE_MODE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'CONTROL_LOCAL_MODE' is not defined
+[CONTROL_LOCAL_MODE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'CONTROL_REMOTE_MODE' is not defined
+[CONTROL_REMOTE_MODE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'CONTROL_LOCAL_MODE' is not defined
+[CONTROL_LOCAL_MODE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'CONTROL_REMOTE_MODE' is not defined
+[CONTROL_REMOTE_MODE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'CONTROL_LOCAL_MODE' is not defined
+[CONTROL_LOCAL_MODE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'DEVICE_FIXED' is not defined
+[DEVICE_FIXED] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'DEVICE_MANUAL' is not defined
+[DEVICE_MANUAL] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'DEVICE_FIXED' is not defined
+[DEVICE_FIXED] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'DEVICE_MANUAL' is not defined
+[DEVICE_MANUAL] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'DEVICE_FIXED' is not defined
+[DEVICE_FIXED] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+No solved: name 'DEVICE_MANUAL' is not defined
+[DEVICE_MANUAL] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_c_types.ads]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_scm_interfaces.ads], total: [35/35]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_time_c_types.ads], total: [34/34]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_time_interfaces.ads], total: [33/33]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_definitions.ads], total: [32/32]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_error.ads], total: [31/31]
+No solved: name 'EBNS_BASE' is not defined
+[(EBNS_BASE)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_error.ads]
+No solved: name 'EBNS_BASE' is not defined
+[(EBNS_BASE+1)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_error.ads]
+No solved: name 'EBNS_BASE' is not defined
+[(EBNS_BASE+2)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_error.ads]
+No solved: name 'EBNS_BASE' is not defined
+[(EBNS_BASE+3)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_error.ads]
+No solved: name 'EBNS_BASE' is not defined
+[(EBNS_BASE+4)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_error.ads]
+No solved: name 'EBNS_BASE' is not defined
+[(EBNS_BASE+5)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_error.ads]
+No solved: name 'EBNS_BASE' is not defined
+[(EBNS_BASE+6)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_error.ads]
+No solved: name 'EBNS_BASE' is not defined
+[(EBNS_BASE+7)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_error.ads]
+No solved: name 'EBNS_BASE' is not defined
+[(EBNS_BASE+8)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_error.ads]
+No solved: name 'EBNS_BASE' is not defined
+[(EBNS_BASE+9)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_error.ads]
+No solved: name 'EBNS_BASE' is not defined
+[(EBNS_BASE+10)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_error.ads]
+No solved: name 'EBNS_BASE' is not defined
+[(EBNS_BASE+11)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_error.ads]
+No solved: name 'EBNS_BASE' is not defined
+[(EBNS_BASE+12)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_error.ads]
+No solved: name 'EBNS_BASE' is not defined
+[(EBNS_BASE+13)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_error.ads]
+No solved: name 'EBNS_BASE' is not defined
+[(EBNS_BASE+14)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_error.ads]
+No solved: name 'EBNS_BASE' is not defined
+[(EBNS_BASE+15)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_error.ads]
+No solved: name 'EBNS_BASE' is not defined
+[(EBNS_BASE+16)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_error.ads]
+No solved: name 'EBNS_BASE' is not defined
+[(EBNS_BASE+17)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_error.ads]
+No solved: name 'EBNS_BASE' is not defined
+[(EBNS_BASE+18)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_error.ads]
+No solved: name 'EBNS_BASE' is not defined
+[(EBNS_BASE+19)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_error.ads]
+No solved: name 'EBNS_BASE' is not defined
+[(EBNS_BASE+20)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_error.ads]
+No solved: name 'EBNS_BASE' is not defined
+[(EBNS_BASE+21)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_error.ads]
+No solved: name 'EBNS_BASE' is not defined
+[(EBNS_BASE+22)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_error.ads]
+No solved: name 'EBNS_BASE' is not defined
+[(EBNS_BASE+23)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_error.ads]
+No solved: name 'EBNS_BASE' is not defined
+[(EBNS_BASE+24)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bns_error.ads]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_binary_io_c_types.ads], total: [28/30]
+No solved: name 'SYSTEM' is not defined
+[SYSTEM.NULL_ADDRESS] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_binary_io_c_types.ads]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_binary_io_interfaces.ads], total: [29/29]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_direct_io_c_types.ads], total: [27/28]
+No solved: name 'SYSTEM' is not defined
+[SYSTEM.NULL_ADDRESS] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_direct_io_c_types.ads]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_direct_io_interfaces.ads], total: [27/27]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_indexed_sequential_c_types.ads], total: [25/26]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_management_c_types.ads], total: [24/25]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_management_interfaces.ads], total: [24/24]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_semaphore.ads], total: [23/23]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_semaphore_interfaces.ads], total: [22/22]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_text_io_c_types.ads], total: [20/21]
+No solved: name 'SYSTEM' is not defined
+[SYSTEM.NULL_ADDRESS] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_text_io_c_types.ads]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_text_io_interfaces.ads], total: [20/20]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\rusage.ads], total: [18/19]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tc_ext_queue_fifo_interfaces.ads], total: [18/18]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tc_queue_deck_interfaces.ads], total: [17/17]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tc_queue_fifo_interfaces.ads], total: [16/16]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tc_queue_fp_interfaces.ads], total: [15/15]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\tc_telecom_interfaces.ads], total: [14/14]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_bns_c_types.ads], total: [12/13]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_bns_interfaces.ads], total: [12/12]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads], total: [1/11]
+ignore range statement: TC_EXTERNAL_NAME'range
+No solved: EOL while scanning string literal (<string>, line 1)
+[(TC_EXTERNAL_NAME'range=>ASCII.NUL)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'CDC_LOCAL_NOT_IN_USE' is not defined
+[CDC_LOCAL_NOT_IN_USE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'CDC_SET_TO_AUTO_SLAVE' is not defined
+[CDC_SET_TO_AUTO_SLAVE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'CDC_LOCAL_NOT_IN_USE' is not defined
+[CDC_LOCAL_NOT_IN_USE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'CDC_SET_TO_AUTO_SLAVE' is not defined
+[CDC_SET_TO_AUTO_SLAVE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'CDC_LOCAL_NOT_IN_USE' is not defined
+[CDC_LOCAL_NOT_IN_USE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'CDC_SET_TO_AUTO_SLAVE' is not defined
+[CDC_SET_TO_AUTO_SLAVE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'CDC_SYSTEM_NOT_IN_USE' is not defined
+[CDC_SYSTEM_NOT_IN_USE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'CDC_MASTER_ALIVE' is not defined
+[CDC_MASTER_ALIVE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'CDC_SYSTEM_NOT_IN_USE' is not defined
+[CDC_SYSTEM_NOT_IN_USE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'CDC_MASTER_ALIVE' is not defined
+[CDC_MASTER_ALIVE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'CDC_SYSTEM_NOT_IN_USE' is not defined
+[CDC_SYSTEM_NOT_IN_USE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'CDC_MASTER_ALIVE' is not defined
+[CDC_MASTER_ALIVE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'NODE_OFF_LINE' is not defined
+[NODE_OFF_LINE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'NODE_EXITED' is not defined
+[NODE_EXITED] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'NODE_OFF_LINE' is not defined
+[NODE_OFF_LINE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'NODE_EXITED' is not defined
+[NODE_EXITED] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'NODE_OFF_LINE' is not defined
+[NODE_OFF_LINE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'NODE_EXITED' is not defined
+[NODE_EXITED] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'PROCESS_OFF_LINE' is not defined
+[PROCESS_OFF_LINE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'PROCESS_EXITED' is not defined
+[PROCESS_EXITED] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'PROCESS_OFF_LINE' is not defined
+[PROCESS_OFF_LINE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'PROCESS_EXITED' is not defined
+[PROCESS_EXITED] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'PROCESS_OFF_LINE' is not defined
+[PROCESS_OFF_LINE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'PROCESS_EXITED' is not defined
+[PROCESS_EXITED] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'GROUP_OFF_LINE' is not defined
+[GROUP_OFF_LINE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'GROUP_EXITED' is not defined
+[GROUP_EXITED] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'GROUP_OFF_LINE' is not defined
+[GROUP_OFF_LINE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'GROUP_EXITED' is not defined
+[GROUP_EXITED] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'GROUP_OFF_LINE' is not defined
+[GROUP_OFF_LINE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'GROUP_EXITED' is not defined
+[GROUP_EXITED] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'DNC_OFF_LINE' is not defined
+[DNC_OFF_LINE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'DNC_RUN_DOWN' is not defined
+[DNC_RUN_DOWN] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'DNC_OFF_LINE' is not defined
+[DNC_OFF_LINE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'DNC_RUN_DOWN' is not defined
+[DNC_RUN_DOWN] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'DNC_OFF_LINE' is not defined
+[DNC_OFF_LINE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'DNC_RUN_DOWN' is not defined
+[DNC_RUN_DOWN] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'LAN_AUTOMATIC' is not defined
+[LAN_AUTOMATIC] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'LAN_SINGLE' is not defined
+[LAN_SINGLE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'LAN_AUTOMATIC' is not defined
+[LAN_AUTOMATIC] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'LAN_SINGLE' is not defined
+[LAN_SINGLE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'LAN_AUTOMATIC' is not defined
+[LAN_AUTOMATIC] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'LAN_SINGLE' is not defined
+[LAN_SINGLE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'DEVICE_OK' is not defined
+[DEVICE_OK] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'DEVICE_NOT_OK' is not defined
+[DEVICE_NOT_OK] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'DEVICE_OK' is not defined
+[DEVICE_OK] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'DEVICE_NOT_OK' is not defined
+[DEVICE_NOT_OK] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'DEVICE_OK' is not defined
+[DEVICE_OK] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'DEVICE_NOT_OK' is not defined
+[DEVICE_NOT_OK] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'DEVICE_FIXED' is not defined
+[DEVICE_FIXED] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'DEVICE_MANUAL' is not defined
+[DEVICE_MANUAL] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'DEVICE_FIXED' is not defined
+[DEVICE_FIXED] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'DEVICE_MANUAL' is not defined
+[DEVICE_MANUAL] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'DEVICE_FIXED' is not defined
+[DEVICE_FIXED] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'DEVICE_MANUAL' is not defined
+[DEVICE_MANUAL] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'CONTROL_REMOTE_MODE' is not defined
+[CONTROL_REMOTE_MODE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'CONTROL_LOCAL_MODE' is not defined
+[CONTROL_LOCAL_MODE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'CONTROL_REMOTE_MODE' is not defined
+[CONTROL_REMOTE_MODE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'CONTROL_LOCAL_MODE' is not defined
+[CONTROL_LOCAL_MODE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'CONTROL_REMOTE_MODE' is not defined
+[CONTROL_REMOTE_MODE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'CONTROL_LOCAL_MODE' is not defined
+[CONTROL_LOCAL_MODE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+ignore range statement: 1..BS_DEFINITIONS.BS_MAX_NR_PROCESS
+ignore range statement: 1..BS_DEFINITIONS.BS_MAX_NR_NODE
+ignore range statement: 1..BS_DEFINITIONS.BS_MAX_NR_GROUP
+ignore range statement: 1..BS_DEFINITIONS.BS_MAX_NR_DEVICE
+ignore range statement: 1..BS_DEFINITIONS.BS_MAX_NR_DEVICE
+ignore range statement: 1..BS_DEFINITIONS.BS_MAX_NR_STORE
+ignore range statement: 1..BS_DEFINITIONS.BS_MAX_NR_DNCITEM
+ignore range statement: 1..SCM_DEFINITIONS.SCM_MAX_MULTIPLE_DEVICE
+ignore range statement: 1..SCM_DEFINITIONS.SCM_MAX_MULTIPLE_DEVICE
+ignore range statement: 1..SCM_DEFINITIONS.SCM_MAX_MULTIPLE_DEVICE
+Type error [374:41, 374:41] C_SCM_TRG_MSG_POINTER
+ignore type: C_SCM_TRG_MSG_POINTER
+Type error [404:44, 404:44] C_SCM_REPORT_MSG_POINTER
+ignore type: C_SCM_REPORT_MSG_POINTER
+Type error [428:46, 428:46] C_SCM_CPU_LOAD_MSG_POINTER
+ignore type: C_SCM_CPU_LOAD_MSG_POINTER
+Type error [447:44, 447:44] SCM_CPU_LOAD_MSG_POINTER
+ignore type: SCM_CPU_LOAD_MSG_POINTER
+Type error [456:45, 456:45] SCM_DEV_EVENT_MSG_POINTER
+ignore type: SCM_DEV_EVENT_MSG_POINTER
+Type error [543:47, 543:47] SCM_COMMAND_MESSAGE_POINTER
+ignore type: SCM_COMMAND_MESSAGE_POINTER
+No solved: invalid syntax (<string>, line 1)
+[(YEAR=>1970,MONTH=>01,DAY=>01,HOURS=>00,MINUTES=>00,SECONDS=>00,MILLIS=>000,DISCR=>0)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: invalid syntax (<string>, line 1)
+[(SECONDS=>0,MILLIS=>0,TIME_BASE_ID=>0)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+Type error [1501:42, 1501:42] C_NOTIFY_MSG_POINTER
+ignore type: C_NOTIFY_MSG_POINTER
+No solved: invalid syntax (<string>, line 1)
+[(INTERNAL_TIC=>0)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: invalid syntax (<string>, line 1)
+[(UNIVERSAL_SEC=>0,UNIVERSAL_USEC=>0,TIME_BASE_ID=>0)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: invalid syntax (<string>, line 1)
+[(TIME=>TC_TIME_INIT_UNIVERSAL_TIME,STAMP=>0)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: invalid syntax (<string>, line 1)
+[(DATE_IN_SECOND=>0)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'INTEGER' is not defined
+[INTEGER(MAX_NAME_LENGTH+1)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'INTEGER' is not defined
+[INTEGER(MAX_NAME_LENGTH+1)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+Type error [2068:39, 2068:39] BNS_MESSAGE_POINTER
+ignore type: BNS_MESSAGE_POINTER
+No solved: name 'JANUARY' is not defined
+[JANUARY] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'MONDAY' is not defined
+[MONDAY] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'JANUARY' is not defined
+[JANUARY] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'DPS_YEAR_RELATIVE' is not defined
+[DPS_YEAR_RELATIVE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+ignore range statement: 1..DPS_DEFINITIONS.DPS_MAX_DATE_LIST
+No solved: name 'DPS_CONTINUOUS' is not defined
+[DPS_CONTINUOUS] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+ignore range statement: 1..DPS_DEFINITIONS.DPS_MAX_SCHEDULES
+ignore range statement: 1..DPS_DEFINITIONS.DPS_MAX_EXCLUSIONS
+No solved: name 'DPS_AUTOMATIC' is not defined
+[DPS_AUTOMATIC] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'DPS_INACTIVE' is not defined
+[DPS_INACTIVE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'DPS_INACTIVE' is not defined
+[DPS_INACTIVE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+ignore range statement: 1..DPS_DEFINITIONS.DPS_MAX_VALIDITY_PERIOD
+ignore range statement: 1..DPS_DEFINITIONS.DPS_RESERVED_SIZE
+Type error [2635:48, 2635:48] CDC_EVENT_MESSAGE_POINTER
+ignore type: CDC_EVENT_MESSAGE_POINTER
+ignore range statement: 1..TELECOM_DEFINITIONS.MTM_NSAP_LEN
+ignore range statement: 1..4
+ignore range statement: 1..16
+No solved: name 'ADDRESS_PORT' is not defined
+[ADDRESS_PORT] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+ignore range statement: 1..TELECOM_DEFINITIONS.MTM_PDC_MAX_NR_OF_NODES
+ignore range statement: 1..TELECOM_DEFINITIONS.MTM_PDC_MAX_NR_OF_NODES
+ignore range statement: 1..TELECOM_DEFINITIONS.MTM_PDC_MAX_NR_OF_NODES
+ignore range statement: 1..TELECOM_DEFINITIONS.MTM_TCP_DELIM_LEN
+No solved: name 'TCP_DELIMITER' is not defined
+[TCP_DELIMITER] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'NONE' is not defined
+[NONE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+Type error [3609:27, 3609:27] TC_SAP
+ignore type: TC_SAP
+No solved: name 'NULL' is not defined
+[NULL] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: EOL while scanning string literal (<string>, line 1)
+[TC_MESSAGE_LENGTH((TC_MESSAGE_TYPE'OBJECT_SIZE+8-1)/8)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+Type error [3962:45, 3962:45] TC_MESSAGE_LENGTH_POINTER
+ignore type: TC_MESSAGE_LENGTH_POINTER
+No solved: name 'TC_NO_VALIDATION' is not defined
+[TC_NO_VALIDATION] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'STANDARD_TYPES' is not defined
+[STANDARD_TYPES.UNSIGNED_32((2**8)-1)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'STANDARD_TYPES' is not defined
+[STANDARD_TYPES.UNSIGNED_32((2**8)-1)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: name 'STANDARD_TYPES' is not defined
+[STANDARD_TYPES.UNSIGNED_32((2**8)-1)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+Type error [4006:42, 4006:42] REPORT_MESSAGE_POINTER
+ignore type: REPORT_MESSAGE_POINTER
+Type error [4024:50, 4024:50] TELECOM_REPORT_MESSAGE_POINTER
+ignore type: TELECOM_REPORT_MESSAGE_POINTER
+No solved: EOL while scanning string literal (<string>, line 1)
+[TC_POSITIVE'FIRST] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: EOL while scanning string literal (<string>, line 1)
+[TC_POSITIVE'FIRST] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: EOL while scanning string literal (<string>, line 1)
+[TC_POSITIVE'FIRST] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: EOL while scanning string literal (<string>, line 1)
+[TC_POSITIVE'LAST] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: EOL while scanning string literal (<string>, line 1)
+[TC_POSITIVE'LAST] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: EOL while scanning string literal (<string>, line 1)
+[TC_POSITIVE'LAST] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+ignore range statement: 0..IPC_FP_DEFINITIONS.MAX_NUMBER_OF_STATUS
+No solved: EOL while scanning string literal (<string>, line 1)
+[TC_MESSAGE_LENGTH((TC_FIFO_QUEUED'OBJECT_SIZE+8-1)/8)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+No solved: EOL while scanning string literal (<string>, line 1)
+[TC_MESSAGE_LENGTH((TC_FIFO_QUEUED'OBJECT_SIZE+8-1)/8)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+ignore range statement: 1..IPC_DEFINITIONS.IPC_HEADER_SIZE_IN_INT
+No solved: invalid syntax (<string>, line 1)
+[(others=>0)] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts.ads]
+Type error [5103:39, 5103:39] END_MESSAGE_POINTER
+ignore type: END_MESSAGE_POINTER
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_cdc_interfaces.ads], total: [10/10]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_end_interfaces.ads], total: [9/9]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\artts_queueing_interfaces.ads], total: [8/8]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\bserrno.ads], total: [7/7]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_binary_io.ads], total: [6/6]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_direct_io.ads], total: [5/5]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_indexed_sequential.ads], total: [4/4]
+Type error [172:35, 172:35] ITEM_DATA_POINTER
+ignore type: ITEM_DATA_POINTER
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_management.ads], total: [3/3]
+ignore range statement: 1..16
+No solved: EOL while scanning string literal (<string>, line 1)
+[COMMAND_KIND_T'FIRST] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_management.ads]
+Type error [243:37, 243:37] IOC_MESSAGE_POINTER
+ignore type: IOC_MESSAGE_POINTER
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_text_io.ads], total: [2/2]
+No solved: EOL while scanning string literal (<string>, line 1)
+[NUM'WIDTH] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_text_io.ads]
+No solved: EOL while scanning string literal (<string>, line 1)
+[NUM'digits-1] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_text_io.ads]
+No solved: EOL while scanning string literal (<string>, line 1)
+[NUM'FORE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_text_io.ads]
+No solved: EOL while scanning string literal (<string>, line 1)
+[NUM'AFT] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_text_io.ads]
+No solved: EOL while scanning string literal (<string>, line 1)
+[ENUM'WIDTH] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_text_io.ads]
+No solved: name 'UPPER_CASE' is not defined
+[UPPER_CASE] in [D:\sourceCode\1_eurocat\btma_ada\ubss_src\iocall_text_io.ads]
+Current walk file: [D:\sourceCode\1_eurocat\btma_ada\ubss_src\msg_direct_io.ads], total: [1/1]
+Csci[kinematics]All files[D:\sourceCode\1_eurocat\btma_ada\kinematics\Ada\unit_test\artts_npm_dummy_s.a
+D:\sourceCode\1_eurocat\btma_ada\kinematics\Ada\unit_test\artts_time_dummy_s.a
+D:\sourceCode\1_eurocat\btma_ada\kinematics\Ada\unit_test\artts_start_dummy_s.a
+D:\sourceCode\1_eurocat\btma_ada\kinematics\Ada\unit_test\ada_interface_test.a
+D:\sourceCode\1_eurocat\btma_ada\kinematics\Ada\unit_test\coord_conversion_test.a
+D:\sourceCode\1_eurocat\btma_ada\kinematics\Ada\unit_test\kine_radar_test.a
+D:\sourceCode\1_eurocat\btma_ada\kinematics\Ada\unit_test\speed_conversion_test.a
+D:\sourceCode\1_eurocat\btma_ada\kinematics\Ada\unit_test\system_conf_dummy.a
+D:\sourceCode\1_eurocat\btma_ada\kinematics\Ada\unit_test\test_utils.a
+D:\sourceCode\1_eurocat\btma_ada\kinematics\Ada\unit_test\unit_conversion_test.a]
+Traceback (most recent call last):
+  File "D:/pycharmProject/AdaReader/util/parser_engine.py", line 139, in <module>
+    if __name__ == '__main__':
+  File "D:/pycharmProject/AdaReader/util/parser_engine.py", line 125, in test
+    ]
+  File "D:/pycharmProject/AdaReader/util/parser_engine.py", line 91, in parse
+    f = self.files.pop(0)
+  File "D:\pycharmProject\AdaReader\util\file_mng.py", line 64, in __init__
+    li = culs[0].library_item()
+AttributeError: 'Compilation_unit_sepContext' object has no attribute 'library_item'

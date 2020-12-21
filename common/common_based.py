@@ -3,7 +3,7 @@ class CommonBased(object):
     self.name = None
     self.to_print = []
     self.must_print = []
-    self.leader_str = str(self.__class__)
+    self.leader_str = "str(self.__class__)"
     self.join_char = [',', ',', ',']
 
   def __str__(self):
@@ -30,14 +30,11 @@ class CommonBased(object):
             keys = attr_v.keys()
         out.append("%s:\n{%s}" % (attr, self.join_char[1].join(map(lambda x: "%s: %s" % (x, attr_v[x]), keys))))
       else:
-        out.append("%s: %s" % (attr, attr_v))
-    return "%s{%s}" % (self.leader_str, self.join_char[2].join(out))
+        out.append("%s: {%s}" % (attr, attr_v))
+    return "%s{%s}" % (eval(self.leader_str), self.join_char[2].join(out))
 
   def print(self):
-    print(self)
-
-  def update_leader_str(self):
-    pass
+    print(self.__str__())
 
   def set_name(self, name):
     self.name = name.upper()
