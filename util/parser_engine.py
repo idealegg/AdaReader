@@ -9,6 +9,9 @@ from util.perdefined import PreDefined
 from util.csci_mng import CsciMng
 from util.file_mng import FileMng
 import pickle
+import util.myLogging as myLogging
+from util.myLogging import logger as my_log
+from util.myLogging import log
 
 
 class ParseAdaCtx:
@@ -81,12 +84,12 @@ class ParseAdaCtx:
         else:
             return self.files.pop(0)
 
-
+    @log('ParseAdaCtx')
     def parse(self):
         for csci in self.cscis:
             self.files = csci.get_all_spec()
             self.num_in_csci = len(self.files)
-            print("Csci[%s]All files[%s][%s]"% (csci.csci, self.num_in_csci, "\n".join(self.files)))
+            my_log.info("Csci[%s]All files[%s][%s]"% (csci.csci, self.num_in_csci, "\n".join(self.files)))
             self.package_num_1_round = len(self.files)
             while self.files:
                 f = self.files.pop(0)
@@ -100,7 +103,7 @@ class ParseAdaCtx:
                     self.files.append(fm)
                     fm = self.pop_next_fm()
                 if all_withs_solved or self.package_num_1_round == 0:
-                    print("Current walk file: [%s], [%s/%s/%s]" % (fm.f_path, self.package_num_1_round, len(self.files)+1, self.num_in_csci))
+                    my_log.info("Current walk file: [%s], [%s/%s/%s]" % (fm.f_path, self.package_num_1_round, len(self.files)+1, self.num_in_csci))
                     self.cur_fm = fm
                     fm.walk()
                     self.packages.update({fm.package: {'fm': None,'walked': True}})
@@ -142,6 +145,10 @@ class ParseAdaCtx:
             pe.types['IAC_FLIGHT_PLAN_TYPES']['FLIGHT_PLAN_T'].print()
 
 if __name__ == '__main__':
+    myLogging.setup_logging()
     pe = ParseAdaCtx()
+    #i_csci = 'kinematics'
+    #with open(os.path.join('run','%s.dump'%i_csci)) as fd:
+    #    pe = pickle.load(fd)
     pe.test()
 

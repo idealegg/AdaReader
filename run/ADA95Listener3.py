@@ -18,6 +18,8 @@ import common.parse_util as cpu
 from util.file_mng import FileMng
 import pprint
 import re
+from util.myLogging import logger as my_log
+from util.myLogging import log
 
 
 # This class defines a complete listener for a parse tree produced by ADA95Parser.
@@ -79,9 +81,10 @@ class ADA95Listener3(ADA95Listener):
         self.ctx.cur_discrim = []
 
     # Exit a parse tree produced by ADA95Parser#type_definition_clause.
+    @log('ADA95Listener3')
     def exitType_definition_clause(self, ctx: ADA95Parser.Type_definition_clauseContext):
         if isinstance(self.ctx.cur_type, str):
-            print('ignore type: %s' % self.ctx.cur_type)
+            my_log.info('ignore type: %s' % self.ctx.cur_type)
         else:
             #self.ctx.cur_type.print()
             self.ctx.cur_spec.add_type(self.ctx.cur_type)
@@ -126,9 +129,10 @@ class ADA95Listener3(ADA95Listener):
             self.ctx.cur_spec.package,
             self.ctx)
 
+    @log('ADA95Listener3')
     def exitSubtype_declaration(self, ctx):
         if isinstance(self.ctx.cur_type, str):
-            print('ignore type: %s' % self.ctx.cur_type)
+            my_log.info('ignore type: %s' % self.ctx.cur_type)
         else:
             # self.ctx.cur_type.print()
             self.ctx.cur_spec.add_type(self.ctx.cur_type)
@@ -146,6 +150,7 @@ class ADA95Listener3(ADA95Listener):
         elif self.ctx.cur_fm.cur_states[-1] == FileMng.States.FIELD:
             self.ctx.cur_fm.cur_states.append(FileMng.States.FIELD_TYPE)
 
+    @log('ADA95Listener3')
     def exitSubtype_indication(self, ctx):
         #rollback = False
         cur_mark = re.search(self.MARK_PATTERN, cpu.get_texts(ctx.subtype_mark()))
@@ -157,7 +162,7 @@ class ADA95Listener3(ADA95Listener):
                     self.ctx.cur_type.constraint = self.ctx.cur_const
                 self.ctx.cur_type.solve_constraint()
             else:
-                print("Type error [%s:%s, %s:%s] %s" % (ctx.start.line,
+                my_log.error("Type error [%s:%s, %s:%s] %s" % (ctx.start.line,
                                              ctx.start.column,
                                              ctx.stop.line,
                                              ctx.stop.column,
@@ -170,7 +175,7 @@ class ADA95Listener3(ADA95Listener):
                 self.ctx.cur_var.solve_type(self.ctx.cur_var.based)
                 self.ctx.cur_var.solve_constraint()
             else:
-                print("Var error [%s:%s, %s:%s] %s" % (ctx.start.line,
+                my_log.error("Var error [%s:%s, %s:%s] %s" % (ctx.start.line,
                                              ctx.start.column,
                                              ctx.stop.line,
                                              ctx.stop.column,
@@ -234,6 +239,7 @@ class ADA95Listener3(ADA95Listener):
                 self.ctx,
                 cpu.get_texts(ctx.expression()))[0]
 
+    @log('ADA95Listener3')
     def exitRange_state(self, ctx):
         self.ctx.cur_range = {}
         rar = ctx.range_attribute_reference()
@@ -254,7 +260,7 @@ class ADA95Listener3(ADA95Listener):
             self.ctx.cur_const = {'type': 'range',
                                   'range': self.ctx.cur_range}
         else:
-            print("ignore range statement: %s" % ctx.getText())
+            my_log.error("ignore range statement: %s" % ctx.getText())
 
     def exitEnumeration_type_definition(self, ctx):
         pass

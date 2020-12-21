@@ -1,9 +1,12 @@
 #-- *coding: utf8*--
 import re
+from util.myLogging import logger as my_log
+from util.myLogging import log
 
 
 ADA_SYSTEM_DEFINED = 'ADA_SYSTEM_DEFINED'
 
+#@log('parse_util')
 def find_name(name, ctx, itype='var'):
     #print(ctx.types)
     cur_uses = ctx.cur_spec.uses.update(ctx.cur_fm.uses)
@@ -36,6 +39,7 @@ def check_solved(ctx, name, solved):
 def solve_type(ctx, i_type):
     return find_name(i_type, ctx, 'type')
 
+@log('parse_util')
 def solve_expr(ctx, i_expr):
     res = re.findall("[a-zA-Z]\w*(?:[.'][a-zA-Z]\w*)*", i_expr)
     res = set(res)
@@ -65,7 +69,7 @@ def solve_expr(ctx, i_expr):
     try:
         i_expr = str(eval(i_expr))
     except (NameError, SyntaxError) as ne:
-        print('No solved: %s\n[%s] in [%s]' % (ne, i_expr, ctx.cur_fm.f_path))
+        my_log.error('No solved: %s\n[%s] in [%s]' % (ne, i_expr, ctx.cur_fm.f_path))
         return i_expr, False
     return i_expr, True
 

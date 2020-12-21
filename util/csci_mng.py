@@ -1,5 +1,7 @@
 import os
 import re
+from util.myLogging import logger as my_log
+from util.myLogging import log
 
 
 class CsciMng:
@@ -14,6 +16,7 @@ class CsciMng:
         self.check_vars = [CsciMng.SUBDIRS, CsciMng.SOURCES]
         self.stopped = False
 
+    #@log('CsciMng')
     def get_makefile_vars(self, mk, vars):
         out = {}
         pattern = []
@@ -33,20 +36,21 @@ class CsciMng:
                             val = next(fd)
                         out[var] = ' '.join([out[var], val.strip()]).strip()
         except Exception as exc:
-            #print(exc)
+            #my_log.exception(exc)
             out = {}
         return out
 
+    @log('CsciMng')
     def get_spce_list(self, check_dirs, depth=0):
         depth += 1
-        #print('[%s][%s][%s]' % (depth, self.stopped, check_dirs))
+        my_log.debug('[%s][%s][%s]' % (depth, self.stopped, check_dirs))
         if not self.stopped:
             for dir in check_dirs:
                 vars = self.get_makefile_vars(os.path.join(dir, CsciMng.MAKEFILE), self.check_vars)
                 if CsciMng.SUBDIRS in vars and vars[CsciMng.SUBDIRS]:
                     dirs = re.split('\s+', vars[CsciMng.SUBDIRS])
                     dirs = list(map(lambda x: os.path.join(dir, x), dirs))
-                    #print(dirs)
+                    my_log.debug(dirs)
                     if self.stop_dir != dir:
                         for t_dir in dirs:
                             if self.stop_dir and self.stop_dir.startswith("".join([t_dir, os.path.sep])):
@@ -63,7 +67,7 @@ class CsciMng:
                 if files:
                     files = list(filter(
                         lambda x: (x.endswith('.a') or x.endswith('.ads')) and not x.endswith('_b.a'), files))
-                    #print("[%s]%s" %(depth, files))
+                    my_log.debug("[%s]%s" %(depth, files))
                     self.specs.extend(list(map(lambda x: os.path.join(dir, x), files)))
 
                 #if self.stop_dir and self.stop_dir.startswith("".join([dir, os.path.sep])):

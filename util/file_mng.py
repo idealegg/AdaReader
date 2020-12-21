@@ -6,6 +6,8 @@ from run.ADA95Parser import ADA95Parser
 import common.parse_util as cpu
 from common.common_based import CommonBased
 from enum import Enum
+from util.myLogging import logger as my_log
+from util.myLogging import log
 
 
 class FileMng(CommonBased):
@@ -24,6 +26,7 @@ class FileMng(CommonBased):
                    'POS',
                    'POS_FIELD',
                    'ATTR'))
+    @log('FileMng')
     def __init__(self, f_path, ctx=None, listener=None):
         super(FileMng, self).__init__()
         self.f_path = f_path
@@ -68,8 +71,7 @@ class FileMng(CommonBased):
                     pd = lud.package_declaration()
                     if pd:
                         self.package = cpu.get_texts(pd.package_specification().defining_program_unit_name()).upper()
-        print("withs: %s"%self.withs)
-        print("solved_withs: %s" % self.solved_withs)
+        my_log.info("[%s]\nwiths: %s\nsolved_withs: %s"%(self.f_path, self.withs, self.solved_withs))
 
     def add_with(self, w):
         self.withs.update(map(lambda x: x.upper(), w))
