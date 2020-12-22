@@ -190,7 +190,7 @@ basic_declaration:
    | subprogram_declaration | abstract_subprogram_declaration
    | package_declaration | renaming_declaration
    | exception_declaration | generic_declaration
-   | generic_instantiation | pragma_clause;
+   | generic_instantiation | pragma_clause | assignment_statement;
    
 defining_identifier:  Identifier;
 
@@ -266,8 +266,6 @@ defining_character_literal:  Character_literal;
 integer_type_definition:  signed_integer_type_definition | modular_type_definition;
 
 signed_integer_type_definition:  Range simple_expression '..' simple_expression;
-
-modular_type_definition:  Mod expression;
 
 real_type_definition:  
    floating_point_definition | fixed_point_definition;
@@ -467,9 +465,9 @@ array_component_association:
     discrete_choice_list '=>' expression;
     
 expression:  
-     relation (And relation)* | relation (And Then relation)*
-   | relation (Or relation)* | relation (Or Else relation)*
-   | relation (Xor relation)*;
+     relation (And relation)* | relation (And Then relation)+
+   | relation (Or relation)+ | relation (Or Else relation)+
+   | relation (Xor relation)+;
    
 relation:  
      simple_expression (Relational_operator simple_expression)?
@@ -477,24 +475,27 @@ relation:
    | simple_expression Not? In subtype_mark;
    
    
-simple_expression:  (ADD | SUB)? term ((ADD | SUB | CONCAT) term)*;
+simple_expression: (Add | Sub)? term ((Add | Sub | Concat) term)*;
 
-term:  factor (Multiplying_operator factor)*;
+term:  factor ((MUL | DIV | Mod | Rem) factor)*;
 
+mod_clause:  At Mod expression ';';
+
+modular_type_definition:  Mod expression;
  
 /*4.4*/
-factor:  primary ('**' primary)? | Abs primary | Not primary;
+factor:  primary (MUL MUL primary)? | Abs primary | Not primary;
 
 primary:  
    Numeric_literal | Null | String_literal | aggregate
  | name | qualified_expression | allocator | '(' expression ')';
  
 
-Highest_precedence_operator:   '**'  | Abs | Not;
+//Highest_precedence_operator:   '**'  | Abs | Not;
 
 //Binary_adding_operator:   '+'   | '–'  | '&';
 
-Multiplying_operator:   '*'   | '/'   | Mod | Rem;
+//Multiplying_operator:   '*'   | '/'   | Mod | Rem;
 
 //Unary_adding_operator:   '+'   | '–';
 
@@ -861,7 +862,7 @@ library_unit_body:  subprogram_body | package_body;
 
 parent_unit_name:  name;
 
-context_item:  with_clause | use_clause;
+context_item:  with_clause | use_clause | pragma_clause;
 
 with_clause:  With library_unit_name (',' library_unit_name)* ';';
 
@@ -1028,7 +1029,7 @@ delta_constraint:  Delta expression range_constraint?;
 
 at_clause:  For direct_name Use At expression ';' ;
 
-mod_clause:  At Mod expression ';';
+
 
 /*fragment*/
 
@@ -1041,14 +1042,17 @@ fragment Exp: [eE];
 fragment Extended_digit:  Digit | [aA] | [bB] | [cC] | [dD] | [eE] | [fF];
 
 /*char, Digit, str*/
-Character_literal
+/*Character_literal
     :   '\'' SingleCharacter '\''
     |   '\'' EscapeSequence '\''
-    ;
-
+    ;*/
+// no escape in ada
+Character_literal
+    :   '\'' SingleCharacter '\'';
+    
 fragment
 SingleCharacter
-    :   ~['\\]
+    :   ~['] | '\''
     ;
 
 fragment
@@ -1056,15 +1060,15 @@ StringCharacters
     :   StringCharacter+
     ;
 
+// "" means " in ada
 fragment
 StringCharacter
-    :   ~["\\]
-    |   EscapeSequence
+    :   ~["] | '""'
     ;
 
-fragment
+/*fragment
 EscapeSequence
-    :   '\\' [btnfr"'\\];
+    :   '\\' [btnfr"'\\];*/
     
 fragment Letter_or_digit:  Identifier_letter | Digit;
 
@@ -1087,12 +1091,12 @@ fragment Letter_or_digit:  Identifier_letter | Digit;
 //LE              : '<=';
 //GE              : '>=';
 //NOTEQUAL        : '/=';
-CONCAT          : '&';
+Concat          : '&';
 //CHOOSE          : '|';
-ADD             : '+';
-SUB             : '-';
-//MUL             : '*';
-//DIV             : '/';
+Add             : '+';
+Sub             : '-';
+MUL             : '*';
+DIV             : '/';
 //CARET           : '^';
 //
 //CHOICE : '=>';

@@ -5,7 +5,6 @@ from common.ada_type import AdaType
 class AdaRecordField(AdaType):
     def __init__(self, name, record_type, ctx=None):
         super(AdaRecordField, self).__init__(name, AdaType.FIELD_TYPE, None, ctx)
-        self.name = name.upper()
         self.record_type = record_type
         self.field_type = None
         self.default_value = None
@@ -19,7 +18,6 @@ class AdaRecordField(AdaType):
         self.end_bit_solved = False
         self.based = None
         self.constraint= None
-        self.ctx = ctx
         #self.ctx.cur_field = self
         self.to_print = ['field_type', 'default_value', 'pos', 'start_bit', 'end_bit']
         self.leader_str = "'Field [%s]:' % self.name"

@@ -16,4 +16,4 @@ class AdaIntType(AdaType):
         if self.mod:
             self.first = str(0)
             self.last = str(int(self.mod) - 1)
-        self.to_print = ['mod']
+        self.to_print = ['is_based', 'mod']

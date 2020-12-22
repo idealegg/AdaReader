@@ -11,8 +11,10 @@ class AdaType(CommonBased):
     SUBTYPE = "Subtype"
     INT_TYPE = "Integer"
     REAL_TYPE = "Real"
-    FIELD_TYPE = "Field_Type"
+    FIELD_TYPE = "Field"
     VAR_TYPE = "Var"
+    ENUM_ITEM_TYPE = 'Enum_Item'
+    ARRAY_INDEX_TYPE = 'Array_Index'
     def __init__(self, name, ttype, package=None, ctx=None, is_based=False):
         super(AdaType, self).__init__()
         self.name = name.upper() if name else None
@@ -48,6 +50,8 @@ class AdaType(CommonBased):
     def solve_constraint(self):
         const = getattr(self, 'constraint', None)
         if self.const_solved or not const:
+            if hasattr(self, 'is_based'):
+                setattr(self, 'is_based', True)
             return
         if const['type'] == 'range':
             if const['range']['type'] == 'range':

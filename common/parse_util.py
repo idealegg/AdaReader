@@ -4,7 +4,7 @@ from util.myLogging import logger as my_log
 from util.myLogging import log
 
 
-ADA_SYSTEM_DEFINED = 'ADA_SYSTEM_DEFINED'
+ADA_SYSTEM_DEFINED = 'STANDARD'
 
 #@log('parse_util')
 def find_name(name, ctx, itype='var'):
@@ -41,6 +41,7 @@ def solve_type(ctx, i_type):
 
 @log('parse_util')
 def solve_expr(ctx, i_expr):
+    TO_DO = "check enum items"
     res = re.findall("[a-zA-Z]\w*(?:[.'][a-zA-Z]\w*)*", i_expr)
     res = set(res)
     for name in res:

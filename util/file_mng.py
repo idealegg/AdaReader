@@ -19,6 +19,8 @@ class FileMng(CommonBased):
                    'VAR_VALUE',
                    'TYPE',
                    'SUB_DER_TYPE',
+                   'ARRAY_DEFINE',
+                   'ARRAY_ELEM',
                    'DISCRIMINANT',
                    'FIELD',
                    'FIELD_TYPE',
@@ -54,6 +56,7 @@ class FileMng(CommonBased):
         self.to_print = ['f_path', 'cur_states']
         self.leader_str = "'[%s:%s][%s:%s]'%(self.tree.start.line, self.tree.start.column, self.tree.stop.line, self.tree.stop.column)"
         self.listener = listener
+        self.skip_walk = False
 
         culs = self.tree.compilation_unit()
         if len(culs) >= 1:
@@ -64,14 +67,17 @@ class FileMng(CommonBased):
                     for lib_name in cpu.get_texts(wc.library_unit_name()):
                         self.solved_withs.update({lib_name.upper(): self.ctx.check_with(lib_name.upper())})
             self.withs = set(self.solved_withs.keys())
-            li = culs[0].library_item()
-            if li:
-                lud = li.library_unit_declaration()
-                if lud:
-                    pd = lud.package_declaration()
-                    if pd:
-                        self.package = cpu.get_texts(pd.package_specification().defining_program_unit_name()).upper()
-        my_log.info("[%s]\nwiths: %s\nsolved_withs: %s"%(self.f_path, self.withs, self.solved_withs))
+            if getattr(culs[0], 'library_item', None):
+                li = culs[0].library_item()
+                if li:
+                    lud = li.library_unit_declaration()
+                    if lud:
+                        pd = lud.package_declaration()
+                        if pd:
+                            self.package = cpu.get_texts(pd.package_specification().defining_program_unit_name()).upper()
+            else:
+                self.skip_walk = True
+        my_log.info("[%s]\nsolved_withs: %s"%(self.f_path, self.solved_withs))
 
     def add_with(self, w):
         self.withs.update(map(lambda x: x.upper(), w))
@@ -91,11 +97,12 @@ class FileMng(CommonBased):
     def solve_with(self, package):
         self.solved_withs[package] = True
 
+    @log('FileMng')
     def walk(self):
         try:
             walker = ParseTreeWalker()
             walker.walk(self.listener, self.tree)
         except:
-            self.print()
+            my_log.exception(self)
             raise
 

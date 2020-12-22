@@ -7,13 +7,14 @@ from util.myLogging import log
 class CsciMng:
     MAKEFILE = "Makefile"
     SUBDIRS = "SUBDIRS"
-    SOURCES = "AMG_SOURCES"
+    SOURCES1 = "AMG_SOURCES"
+    SOURCES2 = "ADS_SOURCES"
     def __init__(self, root_path, csci=None, stop_dir=None):
         self.csci = csci
         self.root_path = root_path
-        self.stop_dir = stop_dir
+        self.stop_dir = os.path.normpath(os.path.join(self.root_path, stop_dir)) if stop_dir else None
         self.specs = []
-        self.check_vars = [CsciMng.SUBDIRS, CsciMng.SOURCES]
+        self.check_vars = [CsciMng.SUBDIRS, CsciMng.SOURCES1, CsciMng.SOURCES2]
         self.stopped = False
 
     #@log('CsciMng')
@@ -59,9 +60,11 @@ class CsciMng:
                         self.get_spce_list(dirs, depth)
 
                 files = []
-                if CsciMng.SOURCES in vars and vars[CsciMng.SOURCES]:
-                    files = re.split('\s+', vars[CsciMng.SOURCES])
-                else:
+                if CsciMng.SOURCES1 in vars and vars[CsciMng.SOURCES1]:
+                    files = re.split('\s+', vars[CsciMng.SOURCES1])
+                if CsciMng.SOURCES2 in vars and vars[CsciMng.SOURCES2]:
+                    files.extend(re.split('\s+', vars[CsciMng.SOURCES2]))
+                if not files:
                     if os.path.isdir(dir):
                         files = os.listdir(dir)
                 if files:
@@ -69,7 +72,9 @@ class CsciMng:
                         lambda x: (x.endswith('.a') or x.endswith('.ads')) and not x.endswith('_b.a'), files))
                     my_log.debug("[%s]%s" %(depth, files))
                     self.specs.extend(list(map(lambda x: os.path.join(dir, x), files)))
-
+                if self.stop_dir == dir:
+                    self.stopped = True
+                    break
                 #if self.stop_dir and self.stop_dir.startswith("".join([dir, os.path.sep])):
                 #    self.stopped = True
                 #    break
@@ -80,9 +85,9 @@ class CsciMng:
 
 
 if __name__ == "__main__":
-    #cn = CsciMng(r'D:\sourceCode\1_eurocat\btma_ada\common', 'common', r'D:\sourceCode\1_eurocat\btma_ada\common\cdc\cdc')
-    #cn = CsciMng(r'D:\sourceCode\1_eurocat\btma_ada\kinematics\Ada', 'kinematics', r'D:\sourceCode\1_eurocat\btma_ada\kinematics\Ada')
-    cn = CsciMng(r'D:\sourceCode\1_eurocat\btma_ada\ubss_src',  'ubss')
+    cn = CsciMng(r'D:\sourceCode\1_eurocat\btma_ada\common', 'common', r'cdc\cdc')
+    #cn = CsciMng(r'D:\sourceCode\1_eurocat\btma_ada\kinematics\Ada', 'kinematics', r'.')
+    #cn = CsciMng(r'D:\sourceCode\1_eurocat\btma_ada\ubss_src',  'ubss')
     #print(cn.get_makefile_vars(r'C:\works\btma_code\common\cdc\cdc\Makefile', ['SUBDIRS', 'AMG_SOURCES']))
     #print(cn.get_makefile_vars(r'C:\works\btma_code\common\cdc\Makefile', ['SUBDIRS', 'AMG_SOURCES']))
     #cn.get_spce_list([r'C:\works\btma_code\common'])
