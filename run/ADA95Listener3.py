@@ -14,6 +14,7 @@ from common.ada_derived_type import AdaDerivedType
 from common.ada_subtype import AdaSubtype
 from common.ada_type import AdaType
 from common.ada_var import AdaVar
+from common.ada_enum_item import AdaEnumItem
 import common.parse_util as cpu
 from util.file_mng import FileMng
 import pprint
@@ -29,6 +30,20 @@ class ADA95Listener3(ADA95Listener):
         self.MARK_PATTERN = re.compile('[\w.]+')
         #self.cur_mod = None
 
+    def get_cur_submark(self, ctx):
+        cur_mark = re.search(self.MARK_PATTERN, cpu.get_texts(ctx.subtype_mark()))
+        cur_mark = cur_mark.group()
+        return cur_mark
+
+    def check_state(self, state, ctx):
+        is_set = isinstance(state, (list, tuple, set))
+        if is_set and self.ctx.cur_fm.cur_states[-1] not in state or not is_set and self.ctx.cur_fm.cur_states[-1] != state:
+            my_log.error("State error, Current: [%s], Stored: [%s], Rule: [%s]" %
+                         (state, self.ctx.cur_fm.cur_states[-1], ADA95Parser.ruleNames[ctx.getRuleIndex()]))
+
+    def exit_state(self, state, ctx):
+        self.check_state(state, ctx)
+        self.ctx.cur_fm.cur_states.pop()
     # Enter a parse tree produced by ADA95Parser#compilation_unit_lib.
     #def enterCompilation_unit_lib(self, ctx:ADA95Parser.Compilation_unit_libContext):
     #    self.ctx.cur_spec = AdaSpec(
@@ -59,6 +74,7 @@ class ADA95Listener3(ADA95Listener):
         else:
             self.ctx.cur_fm.add_use_types(cpu.get_texts(ctx.subtype_mark()))
 
+    @log('ADA95Listener3')
     def enterPackage_specification(self, ctx):
         self.ctx.cur_fm.cur_states.append(FileMng.States.PACKAGE)
         if self.ctx.cur_spec:
@@ -66,14 +82,25 @@ class ADA95Listener3(ADA95Listener):
         self.ctx.cur_spec = AdaSpec(
                 ctx.parser.getTokenStream().tokenSource.inputStream.fileName,
                 self.ctx)
+        self.ctx.cur_spec.uses.update(map(lambda x: x.package, self.ctx.cur_spec_list))
         self.ctx.cur_spec.package = cpu.get_texts(ctx.defining_program_unit_name()).upper()
+        if self.ctx.cur_spec_list:
+            self.ctx.cur_spec.package = ".".join([self.ctx.cur_spec_list[-1].package, self.ctx.cur_spec.package])
+            self.ctx.cur_spec.withs.add(self.ctx.cur_spec_list[0].package)
+        self.ctx.cur_spec.uses.update(self.ctx.cur_fm.uses)
+        self.ctx.cur_spec.withs.update(self.ctx.cur_fm.withs)
+        self.ctx.cur_spec.use_types.update(self.ctx.cur_fm.use_types)
+        my_log.debug("enterPackage_specification: %s" % self.ctx.cur_spec.package)
+        my_log.debug("withs: %s" % self.ctx.cur_spec.withs)
+        my_log.debug("uses: %s" % self.ctx.cur_spec.uses)
 
     def exitPackage_specification(self, ctx):
         if self.ctx.cur_spec_list:
+            self.ctx.cur_fm.withs.add(self.ctx.cur_spec.package)
             self.ctx.cur_spec = self.ctx.cur_spec_list.pop()
         else:
             self.ctx.cur_spec = None
-        self.ctx.cur_fm.cur_states.pop()
+        self.exit_state(FileMng.States.PACKAGE, ctx)
 
     # Enter a parse tree produced by ADA95Parser#type_definition_clause.
     def enterType_definition_clause(self, ctx: ADA95Parser.Type_definition_clauseContext):
@@ -95,16 +122,15 @@ class ADA95Listener3(ADA95Listener):
                 #pprint.pprint(self.ctx.cur_spec.types)
             self.ctx.cur_type = None
             self.ctx.cur_discrim = None
-            self.ctx.cur_fm.cur_states.pop()
+            self.exit_state(FileMng.States.TYPE, ctx)
 
     def exitDiscriminant_specification(self, ctx):
         if self.ctx.cur_spec is not None:
             if self.ctx.cur_discrim is not None:
                 a_memb = AdaRecordField(self.ctx.cur_idents.pop(), self.ctx.cur_type, self.ctx)
-                a_memb.solve_type(cpu.get_texts(ctx.subtype_mark()))
+                a_memb.solve_field_type(self.get_cur_submark(ctx))
                 def_val = ctx.default_expression()
-                if def_val is not None:
-                    a_memb.solve_default(cpu.get_texts(def_val))
+                a_memb.solve_default(cpu.get_texts(def_val) if def_val else None)
                 self.ctx.cur_discrim.append(a_memb)
                 for ident in self.ctx.cur_idents:
                     self.ctx.cur_discrim.append(a_memb.copy(ident))
@@ -116,11 +142,14 @@ class ADA95Listener3(ADA95Listener):
                 self.ctx.cur_type,
                 self.ctx.cur_spec.package,
                 self.ctx)
-            if self.ctx.cur_discrim:
-                self.ctx.cur_type.add_discrim(self.ctx.cur_discrim)
+            #if self.ctx.cur_discrim:
+            #    self.ctx.cur_type.add_discrim(self.ctx.cur_discrim)
             enums = cpu.get_texts(ctx.enumeration_literal_specification())
             my_log.debug("enterEnumeration_type_definition: %s" % enums)
-            self.ctx.cur_type.add_enum(enums)
+            for e in enums:
+                e_item = AdaEnumItem(e, self.ctx.cur_type, self.ctx)
+                self.ctx.cur_type.add_enum(e_item)
+                self.ctx.cur_spec.add_enum(e_item)
             my_log.debug(self.ctx.cur_type)
             self.ctx.cur_field = None
 
@@ -145,13 +174,14 @@ class ADA95Listener3(ADA95Listener):
             if isinstance(self.ctx.cur_type, str):
                 my_log.info('ignore type: %s' % self.ctx.cur_type)
             else:
-                # self.ctx.cur_type.print()
+                #self.ctx.cur_type.print()
+                self.ctx.cur_type.solve_constraint(self.ctx.cur_const)
                 self.ctx.cur_spec.add_type(self.ctx.cur_type)
-                # print("exitType_definition_clause:")
-                # pprint.pprint(self.ctx.cur_spec.types)
+                #print("exitType_definition_clause:")
+                #pprint.pprint(self.ctx.cur_spec.types)
             self.ctx.cur_type = None
             self.ctx.cur_discrim = None
-            self.ctx.cur_fm.cur_states.pop()
+            self.exit_state(FileMng.States.TYPE, ctx)
 
     def enterSubtype_indication(self, ctx):
         if self.ctx.cur_spec is not None:
@@ -161,23 +191,21 @@ class ADA95Listener3(ADA95Listener):
                 self.ctx.cur_fm.cur_states.append(FileMng.States.SUB_DER_TYPE)
             elif self.ctx.cur_fm.cur_states[-1] == FileMng.States.FIELD:
                 self.ctx.cur_fm.cur_states.append(FileMng.States.FIELD_TYPE)
-            elif self.ctx.cur_fm.cur_states[-1] == FileMng.States.FIELD:
-                self.ctx.cur_fm.cur_states.append(FileMng.States.FIELD_TYPE)
             elif self.ctx.cur_fm.cur_states[-1] == FileMng.States.ARRAY_DEFINE:
                 self.ctx.cur_fm.cur_states.append(FileMng.States.ARRAY_ELEM)
 
     @log('ADA95Listener3')
     def exitSubtype_indication(self, ctx):
         if self.ctx.cur_spec is not None:
-            #rollback = False
-            cur_mark = re.search(self.MARK_PATTERN, cpu.get_texts(ctx.subtype_mark()))
-            cur_mark = cur_mark.group()
+            cur_mark = self.get_cur_submark(ctx)
             if self.ctx.cur_fm.cur_states[-1] == FileMng.States.SUB_DER_TYPE and self.ctx.cur_type:
                 if not isinstance(self.ctx.cur_type, str):
-                    self.ctx.cur_type.based = cur_mark
-                    if self.ctx.cur_const and not self.ctx.cur_type.constraint:
-                        self.ctx.cur_type.constraint = self.ctx.cur_const
-                    self.ctx.cur_type.solve_constraint()
+                    my_log.debug("exitSubtype_indication1: %s" % self.ctx.cur_type)
+                    my_log.debug('cur_const: %s' % self.ctx.cur_const)
+                    self.ctx.cur_type.solve_constraint(self.ctx.cur_const)
+                    my_log.debug("exitSubtype_indication2: %s" % self.ctx.cur_type)
+                    self.ctx.cur_type.solve_based(cur_mark)
+                    my_log.debug("exitSubtype_indication3: %s" % self.ctx.cur_type)
                 else:
                     my_log.error("Type error [%s:%s, %s:%s] %s" % (ctx.start.line,
                                                  ctx.start.column,
@@ -187,10 +215,8 @@ class ADA95Listener3(ADA95Listener):
                                                  ))
             elif self.ctx.cur_fm.cur_states[-1] == FileMng.States.VAR_TYPE and self.ctx.cur_var:
                 if not isinstance(self.ctx.cur_var, str):
-                    self.ctx.cur_var.based = cur_mark
-                    self.ctx.cur_var.constraint = self.ctx.cur_const
-                    self.ctx.cur_var.solve_type(self.ctx.cur_var.based)
-                    self.ctx.cur_var.solve_constraint()
+                    self.ctx.cur_var.solve_data_type(cur_mark)
+                    self.ctx.cur_var.solve_constraint(self.ctx.cur_const)
                 else:
                     my_log.error("Var error [%s:%s, %s:%s] %s" % (ctx.start.line,
                                                  ctx.start.column,
@@ -202,7 +228,7 @@ class ADA95Listener3(ADA95Listener):
                 self.ctx.cur_field = {'based': cur_mark,
                                       'constraint': self.ctx.cur_const}
             elif self.ctx.cur_fm.cur_states[-1] == FileMng.States.ARRAY_ELEM:
-                self.ctx.cur_type.elem = cur_mark
+                self.ctx.cur_type.solve_elem(cur_mark)
             if self.ctx.cur_fm.cur_states[-1] in [FileMng.States.SUB_DER_TYPE,
                                                   FileMng.States.VAR_TYPE,
                                                   FileMng.States.FIELD_TYPE,
@@ -210,7 +236,11 @@ class ADA95Listener3(ADA95Listener):
                                                   ]:
                 self.ctx.cur_const = None
                 self.ctx.cur_range = None
-                self.ctx.cur_fm.cur_states.pop()
+                self.exit_state([FileMng.States.SUB_DER_TYPE,
+                                                  FileMng.States.VAR_TYPE,
+                                                  FileMng.States.FIELD_TYPE,
+                                                  FileMng.States.ARRAY_ELEM,
+                                                  ], ctx)
 
 
 
@@ -240,7 +270,7 @@ class ADA95Listener3(ADA95Listener):
 
     def exitKnown_discriminant_part(self, ctx):
         if self.ctx.cur_spec is not None:
-            self.ctx.cur_fm.cur_states.pop()
+            self.exit_state(FileMng.States.DISCRIMINANT, ctx)
 
     def enterDiscriminant_constraint(self, ctx):
         if self.ctx.cur_spec is not None:
@@ -285,10 +315,14 @@ class ADA95Listener3(ADA95Listener):
                                                 'last': cpu.solve_expr(self.ctx, cpu.get_texts(ctx.simple_expression(1)))[0]
                                                 }
             if self.ctx.cur_const and self.ctx.cur_const['type'] == 'range':
-                self.ctx.cur_const.update({'range': self.ctx.cur_range})
+                self.ctx.cur_const.update({'range': self.ctx.cur_range})  # always here
+                my_log.debug("exitRange_state1: %s" % self.ctx.cur_type)
+                my_log.debug("exitRange_state2: %s" % self.ctx.cur_const)
             elif self.ctx.cur_fm.cur_states[-1] == FileMng.States.SUB_DER_TYPE:
-                self.ctx.cur_type.constraint = {'type': 'range',
-                                                'range': self.ctx.cur_range}
+                self.ctx.cur_const = {'type': 'range',
+                                                    'range': self.ctx.cur_range}
+                my_log.debug("exitRange_state3: %s" % self.ctx.cur_type)
+                my_log.debug("exitRange_state4: %s" % self.ctx.cur_const)
             elif self.ctx.cur_fm.cur_states[-1] in (FileMng.States.FIELD_TYPE, FileMng.States.VAR_TYPE, FileMng.States.ARRAY_DEFINE):
                 self.ctx.cur_const = {'type': 'range',
                                       'range': self.ctx.cur_range}
@@ -325,22 +359,16 @@ class ADA95Listener3(ADA95Listener):
             cur_fields = []
             a_memb = AdaRecordField(self.ctx.cur_idents.pop(), self.ctx.cur_type.name, self.ctx)
             #a_memb.solve_type(cpu.get_texts(ctx.component_definition()))
-            a_memb.based = self.ctx.cur_field['based']
-            a_memb.constraint = self.ctx.cur_field['constraint']
-            a_memb.solve_type(self.ctx.cur_field['based'])
-            a_memb.solve_constraint()
+            a_memb.solve_constraint(self.ctx.cur_field['constraint'])
+            a_memb.solve_field_type(self.ctx.cur_field['based'])
             def_val = ctx.default_expression()
-            if def_val is not None:
-                a_memb.solve_default(cpu.get_texts(def_val))
-            #print("cur_field: %s" % self.ctx.cur_field)
-            #self.ctx.cur_field.print()
-            #a_memb.print()
+            a_memb.solve_default(cpu.get_texts(def_val) if def_val else None)
             cur_fields.append(a_memb)
             for ident in self.ctx.cur_idents:
                 cur_fields.append(a_memb.copy(ident))
             self.ctx.cur_type.add_fields(cur_fields)
             #self.ctx.cur_type.print()
-            self.ctx.cur_fm.cur_states.pop()
+            self.exit_state(FileMng.States.FIELD, ctx)
 
     #def enterComponent_definition(self, ctx):
     #    self.ctx.cur_fm.cur_states.append(FileMng.States.FIELD_TYPE)
@@ -371,25 +399,27 @@ class ADA95Listener3(ADA95Listener):
                 self.ctx.cur_spec.types[self.ctx.cur_type.package][self.ctx.cur_type.name].mod_clause = mod_cls
                 #self.ctx.types[self.ctx.cur_type.package][self.ctx.cur_type.name].mod_clause = mod_cls
 
+    @log('ADA95Listener3')
     def exitComponent_clause(self, ctx):
         if self.ctx.cur_spec is not None:
-            a_memb = {}
-            a_memb['name'] = cpu.get_texts(ctx.component_local_name()).upper()
-            a_memb['pos'] = cpu.get_texts(ctx.position())
-            a_memb['start'] = cpu.get_texts(ctx.first_bit())
-            a_memb['end'] = cpu.get_texts(ctx.last_bit())
-            #self.ctx.cur_type.print()
-            #pprint.pprint(self.ctx.cur_spec.types)
-            self.ctx.cur_spec.types[self.ctx.cur_type.package][
-                self.ctx.cur_type.name].add_pos(a_memb)
-            #self.ctx.types[self.ctx.cur_type.package][self.ctx.cur_type.name].add_pos(a_memb)
+            field_n = cpu.get_texts(ctx.component_local_name()).upper()
+            my_log.debug("exitComponent_clause: %s" % field_n)
+            cur_type = self.ctx.cur_spec.types[self.ctx.cur_type.package][self.ctx.cur_type.name]
+            my_log.debug(self.ctx.cur_type.package)
+            my_log.debug(self.ctx.cur_type.name)
+            cur_type.fields[field_n].solve_pos(cpu.get_texts(ctx.position()))
+            cur_type.fields[field_n].solve_start_bit(cpu.get_texts(ctx.first_bit()))
+            cur_type.fields[field_n].solve_end_bit(cpu.get_texts(ctx.last_bit()))
+            cur_type.add_pos(field_n)
+            my_log.debug(cur_type.fields[field_n])
+            my_log.debug(cur_type.fpos)
+
 
     def exitArray_component_association(self, ctx):
         if self.ctx.cur_spec is not None:
             if self.ctx.cur_type and (not isinstance(self.ctx.cur_type, str)):
                 if self.ctx.cur_type.ttype == AdaType.ENUM_TYPE:
-                    self.ctx.cur_type.add_val(
-                        cpu.get_texts(ctx.discrete_choice_list()),
+                    self.ctx.cur_type.items[(cpu.get_texts(ctx.discrete_choice_list()).upper())].solve_value(
                         cpu.get_texts(ctx.expression())
                     )
 
@@ -404,24 +434,23 @@ class ADA95Listener3(ADA95Listener):
                 if attr.lower() == 'size':
                     self.ctx.cur_spec.types[self.ctx.cur_type.package][
                         self.ctx.cur_type.name].solve_size(cpu.get_texts(ctx.expression()))
-                    #self.ctx.types[self.ctx.cur_type.package][self.ctx.cur_type.name].size = self.ctx.cur_spec.types[self.ctx.cur_type.package][
-                    #    self.ctx.cur_type.name].size
 
     def enterNumber_declaration(self, ctx):
         if self.ctx.cur_spec is not None:
             self.ctx.cur_fm.cur_states.append(FileMng.States.VAR)
 
+    @log('ADA95Listener3')
     def exitNumber_declaration(self, ctx):
         if self.ctx.cur_spec is not None:
             av = AdaVar(self.ctx.cur_idents.pop(),
                         self.ctx.cur_spec.package,
                         self.ctx)
             av.solve_value(cpu.get_texts(ctx.expression()))
-            av.const = True
             self.ctx.cur_spec.add_var(av)
+            my_log.debug("exitNumber_declaration: %s" % av)
             for ident in self.ctx.cur_idents:
                 self.ctx.cur_spec.add_var(av.copy(ident))
-            self.ctx.cur_fm.cur_states.pop()
+            self.exit_state(FileMng.States.VAR, ctx)
 
     def enterUnconstrained_array_definition(self, ctx):
         if self.ctx.cur_spec is not None:
@@ -437,28 +466,26 @@ class ADA95Listener3(ADA95Listener):
 
     def exitUnconstrained_array_definition(self, ctx):
         if self.ctx.cur_spec is not None:
-            if self.ctx.cur_fm.cur_states[-1] == FileMng.States.ARRAY_DEFINE and self.ctx.cur_type:
-                self.ctx.cur_type.solve_elem_type()
-                self.ctx.cur_type.is_solved()
             if self.ctx.cur_fm.cur_states[-1] in (FileMng.States.VAR_TYPE, FileMng.States.ARRAY_DEFINE):
-                self.ctx.cur_fm.cur_states.pop()
+                self.exit_state((FileMng.States.VAR_TYPE, FileMng.States.ARRAY_DEFINE), ctx)
 
     def exitIndex_subtype_definition(self, ctx):
         if self.ctx.cur_spec is not None:
             if self.ctx.cur_fm.cur_states[-1] == FileMng.States.ARRAY_DEFINE and self.ctx.cur_type:
                 a_index = AdaArrayIndex(self.ctx.cur_type,
-                                        cpu.get_texts(ctx.subtype_mark()),
+                                        self.get_cur_submark(ctx),
                                         self.ctx.cur_const
                                         )
-                a_index.solve_based()
                 a_index.solve_constraint()
+                a_index.solve_based()
                 self.ctx.cur_type.add_index(a_index)
+                self.ctx.cur_const = None
 
     def enterConstrained_array_definition(self, ctx):
         if self.ctx.cur_spec is not None:
-            if self.ctx.cur_fm.cur_states[-1] == FileMng.States.Var:
+            if self.ctx.cur_fm.cur_states[-1] == FileMng.States.VAR:
                 self.ctx.cur_fm.cur_states.append(FileMng.States.VAR_TYPE)
-            elif self.ctx.cur_fm.cur_states[-1] == FileMng.States.Type:
+            elif self.ctx.cur_fm.cur_states[-1] == FileMng.States.TYPE:
                 self.ctx.cur_fm.cur_states.append(FileMng.States.ARRAY_DEFINE)
                 if isinstance(self.ctx.cur_type, str):
                     self.ctx.cur_type = AdaArrayType(self.ctx.cur_type,
@@ -468,26 +495,26 @@ class ADA95Listener3(ADA95Listener):
 
     def exitConstrained_array_definition(self, ctx):
         if self.ctx.cur_spec is not None:
-            if self.ctx.cur_fm.cur_states[-1] == FileMng.States.ARRAY_DEFINE and self.ctx.cur_type:
-                self.ctx.cur_type.solve_elem_type()
-                self.ctx.cur_type.is_solved()
             if self.ctx.cur_fm.cur_states[-1] in (FileMng.States.VAR_TYPE, FileMng.States.ARRAY_DEFINE):
-                self.ctx.cur_fm.cur_states.pop()
+                self.exit_state((FileMng.States.VAR_TYPE, FileMng.States.ARRAY_DEFINE), ctx)
 
     def exitDiscrete_subtype_definition(self, ctx):
         if self.ctx.cur_spec is not None:
             if self.ctx.cur_fm.cur_states[-1] == FileMng.States.ARRAY_DEFINE and self.ctx.cur_type:
                 dsi = ctx.discrete_subtype_indication()
                 if dsi:
-                    a_index = AdaArrayIndex(self.ctx.cur_type, cpu.get_texts(dsi), None)
-                    a_index.solve_based()
+                    cur_mark = re.search(self.MARK_PATTERN, cpu.get_texts(dsi))
+                    cur_mark = cur_mark.group()
+                    a_index = AdaArrayIndex(self.ctx.cur_type, cur_mark, None)
                     a_index.solve_constraint()
+                    a_index.solve_based()
                     self.ctx.cur_type.add_index(a_index)
                 else:
                     a_index = AdaArrayIndex(self.ctx.cur_type, None, self.ctx.cur_const)
-                    a_index.solve_based()
                     a_index.solve_constraint()
+                    a_index.solve_based()
                     self.ctx.cur_type.add_index(a_index)
+                    self.ctx.cur_const = None
 
     def exitSigned_integer_type_definition(self, ctx):
         if self.ctx.cur_spec is not None:
@@ -495,12 +522,8 @@ class ADA95Listener3(ADA95Listener):
                                                      self.ctx.cur_spec.package,
                                                      self.ctx,
                                                      )
-            self.ctx.cur_type.first, solved1 = cpu.solve_expr(self.ctx,
-                                                               cpu.get_texts(ctx.simple_expression(0)))
-            self.ctx.cur_type.last, solved2 = cpu.solve_expr(self.ctx,
-                                                               cpu.get_texts(ctx.simple_expression(1)))
-            if solved1 and solved2:
-                self.ctx.cur_type.is_based = True
+            self.ctx.cur_type.solve_first(cpu.get_texts(ctx.simple_expression(0)))
+            self.ctx.cur_type.solve_last(cpu.get_texts(ctx.simple_expression(1)))
 
     def exitModular_type_definition(self, ctx):
         if self.ctx.cur_spec is not None:
@@ -508,11 +531,8 @@ class ADA95Listener3(ADA95Listener):
                                                      self.ctx.cur_spec.package,
                                                      self.ctx,
                                                     )
-            self.ctx.cur_type.mod, solved = cpu.solve_expr(self.ctx,
-                                                               cpu.get_texts(ctx.expression()))
-            self.ctx.cur_type.first = '0'
-            if solved:
-                self.ctx.cur_type.last = str(eval("-".join([self.ctx.cur_type.mod, '1'])))
+            self.ctx.cur_type.solve_mod(cpu.get_texts(ctx.expression()))
+            self.ctx.cur_type.print()
 
     def enterFloating_point_definition(self, ctx):
         if self.ctx.cur_spec is not None:
@@ -522,8 +542,7 @@ class ADA95Listener3(ADA95Listener):
 
     def exitFloating_point_definition(self, ctx):
         if self.ctx.cur_spec is not None:
-            self.ctx.cur_type.digits = cpu.solve_expr(self.ctx,
-                                                               cpu.get_texts(ctx.expression()))[0]
+            self.ctx.cur_type.solve_digits(cpu.get_texts(ctx.expression()))
 
     def enterOrdinary_fixed_point_definition(self, ctx):
         if self.ctx.cur_spec is not None:
@@ -533,8 +552,7 @@ class ADA95Listener3(ADA95Listener):
 
     def exitOrdinary_fixed_point_definition(self, ctx):
         if self.ctx.cur_spec is not None:
-            self.ctx.cur_type.delta = cpu.solve_expr(self.ctx,
-                                                                cpu.get_texts(ctx.expression()))[0]
+            self.ctx.cur_type.solve_delta(cpu.get_texts(ctx.expression()))
 
     def enterDecimal_fixed_point_definition(self, ctx):
         if self.ctx.cur_spec is not None:
@@ -544,18 +562,14 @@ class ADA95Listener3(ADA95Listener):
 
     def exitDecimal_fixed_point_definition(self, ctx):
         if self.ctx.cur_spec is not None:
-            self.ctx.cur_type.delta = cpu.solve_expr(self.ctx,
-                                                                cpu.get_texts(ctx.expression(0)))[0]
-            self.ctx.cur_type.digits = cpu.solve_expr(self.ctx,
-                                                                cpu.get_texts(ctx.expression(1)))[0]
+            self.ctx.cur_type.solve_delta(cpu.get_texts(ctx.expression(0)))
+            self.ctx.cur_type.solve_digits(cpu.get_texts(ctx.expression(1)))
 
     def exitReal_range_specification(self, ctx):
         if self.ctx.cur_spec is not None:
-            self.ctx.cur_type.first = cpu.solve_expr(self.ctx,
-                                                               cpu.get_texts(ctx.simple_expression(0)))[0]
+            self.ctx.cur_type.solve_first(cpu.get_texts(ctx.simple_expression(0)))
 
-            self.ctx.cur_type.last = cpu.solve_expr(self.ctx,
-                                                            cpu.get_texts(ctx.simple_expression(1)))[0]
+            self.ctx.cur_type.solve_last(cpu.get_texts(ctx.simple_expression(1)))
 
     def enterObject_declaration(self, ctx):
         if self.ctx.cur_spec is not None:
@@ -568,13 +582,12 @@ class ADA95Listener3(ADA95Listener):
         if self.ctx.cur_spec is not None:
             self.ctx.cur_var.set_name(self.ctx.cur_idents.pop())
             obj_val = ctx.object_value()
-            if obj_val:
-                self.ctx.cur_var.solve_value(cpu.get_texts(obj_val))
+            self.ctx.cur_var.solve_value(cpu.get_texts(obj_val) if obj_val else None)
             self.ctx.cur_spec.add_var(self.ctx.cur_var)
             for ident in self.ctx.cur_idents:
                 self.ctx.cur_spec.add_var(self.ctx.cur_var.copy(ident))
             self.ctx.cur_var = None
-            self.ctx.cur_fm.cur_states.pop()
+            self.exit_state(FileMng.States.VAR, ctx)
 
     #def exitMod_clause(self, ctx):
     #    if self.ctx.cur_spec is not None:

@@ -8,6 +8,7 @@ class AdaArrayType(AdaType):
         self.index_num = 0
         self.elem = None
         self.elem_solved = False
+        self.must_print = ['size']
         self.to_print = ['is_based', 'index_num', 'index_list', 'elem', 'elem_solved']
 
     def parse_subscript(self):
@@ -20,14 +21,16 @@ class AdaArrayType(AdaType):
         self.index_list.append(index)
         self.inc_index_num()
 
-    def solve_elem_type(self, i_expr=None):
-        self.elem, self.elem_solved = cpu.solve_type(self.ctx, i_expr if i_expr else self.elem)
+    def solve_elem(self, i_expr=None):
+        self.solve_a_type_or_expr('elem', i_expr=i_expr)
 
-    def is_solved(self):
+    def check_solved(self):
+        ret = True
         if not self.elem_solved:
-            return False
+            self.solve_elem()
+            ret = self.elem_solved and ret
         for index in self.index_list:
-            if not index.is_solved():
-                return False
-        self.is_based = True
+            ret = index.check_solved() and ret
+        if ret:
+            self.is_based = True
         return True

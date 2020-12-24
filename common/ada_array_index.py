@@ -4,7 +4,7 @@ from common.ada_type import AdaType
 
 class AdaArrayIndex(AdaType):
     def __init__(self, array_type, based, const):
-        super(AdaArrayIndex, self).__init__("%s_index_%s"%(array_type.name, array_type.index_num),
+        super(AdaArrayIndex, self).__init__(based if based else "%s_index_%s"%(array_type.name, array_type.index_num),
                                             AdaType.ARRAY_INDEX_TYPE,
                                             None,
                                             array_type.ctx)
@@ -13,19 +13,15 @@ class AdaArrayIndex(AdaType):
         self.based = based
         self.based_solved = False
         self.constraint = const
-        self.const_solved = False
+        self.constraint_solved = False
         #self.ctx.cur_field = self
-        self.to_print = ['index', 'based_solved','based', 'range_solved', 'range']
+        self.to_print = ['index', 'based_solved', 'based', 'constraint_solved', 'constraint']
         self.leader_str = "'Array index [%s]:' % self.name"
+        self.to_solve = ['based', 'constraint']
 
     def solve_based(self, i_type=None):
-        if not i_type and not self.based:
-            self.based_solved = True
-        else:
-            self.based, self.based_solved = common.parse_util.solve_type(self.ctx, i_type if i_type else self.based)
+        self.solve_a_type_or_expr('based', i_expr=i_type, mandatory=False)
 
-    def is_solved(self):
-        return self.based_solved and self.const_solved
 
 
 

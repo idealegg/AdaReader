@@ -11,6 +11,7 @@ class AdaSpec(CommonBased):
         self.use_types = set()
         self.vars = {}
         self.types = {}
+        self.enums = {}
         self.ctx = ctx
         #self.ctx.cur_spec = self
         self.to_print = ['f_name', 'package', 'withs', 'uses']
@@ -31,8 +32,7 @@ class AdaSpec(CommonBased):
             self.types[stype.package] = {}
         if stype.package not in self.ctx.types:
             self.ctx.types[stype.package] = {}
-        stype.solve_constraint()
-        stype.solve_type_chain()
+        stype.check_solved()
         self.types[stype.package][stype.name] = stype
         self.ctx.types[stype.package][stype.name] = stype
 
@@ -43,6 +43,16 @@ class AdaSpec(CommonBased):
             self.vars[svar.package] = {}
         if svar.package not in self.ctx.vars:
             self.ctx.vars[svar.package] = {}
-        #svar.solve_constraint()
+        svar.check_solved()
         self.vars[svar.package][svar.name] = svar
         self.ctx.vars[svar.package][svar.name] = svar
+
+    def add_enum(self, senum):
+        if not self.enums:
+            self.enums = {}
+        if senum.package not in self.enums:
+            self.enums[senum.package] = {}
+        if senum.package not in self.ctx.enums:
+            self.ctx.enums[senum.package] = {}
+        self.enums[senum.package][senum.name] = senum
+        self.ctx.enums[senum.package][senum.name] = senum

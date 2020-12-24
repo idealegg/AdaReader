@@ -38,3 +38,7 @@ class CommonBased(object):
 
   def set_name(self, name):
     self.name = name.upper()
+
+  def copy_from_class(self, src, fields):
+    for field in fields:
+      setattr(self, field, getattr(src, field))

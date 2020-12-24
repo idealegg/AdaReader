@@ -19,6 +19,7 @@ class ParseAdaCtx:
     def __init__(self):
         self.vars = {}
         self.types = {}
+        self.enums = {}
         self.unsolved = {}
         self.cscis = []
         self.files = []
@@ -33,7 +34,6 @@ class ParseAdaCtx:
         self.cur_spec_list = []
         self.cur_fm = None
         self.packages = {}
-        self.package_num_1_round = 0
         self.num_in_csci = None
         self.listener = ADA95Listener3(self)
 
@@ -64,18 +64,18 @@ class ParseAdaCtx:
     @log('ParseAdaCtx')
     def pop_next_fm(self):
         unsolved_package_of_files = set([x.package for x in self.files])
-        depend_max = 0
         for fm in self.files:
             unsolved_withs_a_file = set(fm.unsolved_withs())
-            for t_p in unsolved_withs_a_file & unsolved_package_of_files^unsolved_withs_a_file:
+            never_solved_withs = (unsolved_withs_a_file & unsolved_package_of_files)^unsolved_withs_a_file
+            if never_solved_withs:
+                my_log.info("never solved withs in [%s][%s]" % (fm.f_path, never_solved_withs))
+            for t_p in never_solved_withs:
                 fm.solve_with(t_p)
             for t_p in unsolved_withs_a_file & set(self.packages.keys()):
                 fm.solve_with(t_p)
         max_depend_fm = {}
         for fm in self.files:
             unsolved_withs_a_file = set(fm.unsolved_withs())
-            my_log.info("never solved withs in [%s][%s]"%(fm.f_path,
-                                                          (unsolved_withs_a_file & unsolved_package_of_files) ^ unsolved_withs_a_file))
             if not(unsolved_withs_a_file & unsolved_package_of_files):
                 self.files.remove(fm)
                 return fm
@@ -89,33 +89,34 @@ class ParseAdaCtx:
             self.files = csci.get_all_spec()
             self.num_in_csci = len(self.files)
             my_log.info("Csci[%s], All files[%s][%s]"% (csci.csci, self.num_in_csci, "\n".join(self.files)))
-            self.package_num_1_round = len(self.files)
+            tmp_files = []
+            for f in self.files:
+                fm = FileMng(f, self, self.listener)
+                self.packages.update({fm.package: {'fm': fm, 'walked': fm.skip_walk}})
+                if fm.skip_walk:
+                    my_log.info("Skip file: [%s]" % fm.f_path)
+                tmp_files.append(fm)
+
+            self.files = tmp_files
+            files_num_to_walk = len(self.files)
+            package_num_1_round = files_num_to_walk
             while self.files:
-                f = self.files.pop(0)
-                if isinstance(f, str):
-                    fm = FileMng(f, self, self.listener)
-                    self.packages.update({fm.package: {'fm': fm,'walked': fm.skip_walk}})
-                    if fm.skip_walk:
-                        self.package_num_1_round -= 1
-                        my_log.info("Skip file: [%s]" % fm.f_path)
-                        continue
-                else:
-                    fm = f
+                fm = self.files.pop(0)
                 all_withs_solved = fm.check_withs()
-                if not all_withs_solved and self.package_num_1_round == 0:
+                if not all_withs_solved and package_num_1_round == 0:
                     self.files.append(fm)
                     fm = self.pop_next_fm()
-                if all_withs_solved or self.package_num_1_round == 0:
-                    my_log.info("Current walk file: [%s], [%s/%s/%s]" % (fm.f_path, self.package_num_1_round, len(self.files)+1, self.num_in_csci))
+                if all_withs_solved or package_num_1_round == 0:
+                    my_log.info("Current walk file: [%s], [%s/%s/%s]" % (fm.f_path, len(self.files)+1, files_num_to_walk, self.num_in_csci))
                     self.cur_fm = fm
                     fm.walk()
                     self.packages.update({fm.package: {'fm': None,'walked': True}})
                     for ofm in self.files:
                         if not isinstance(ofm, str):
                             ofm.solve_with(fm.package)
-                    self.package_num_1_round = len(self.files)
+                    package_num_1_round = len(self.files)
                 else:
-                    self.package_num_1_round -= 1
+                    package_num_1_round -= 1
                     self.files.append(fm)
                 self.init_cur()
             self.save(csci.csci)
@@ -152,6 +153,21 @@ class ParseAdaCtx:
     def print_fp(self):
         pe.types['IAC_FLIGHT_PLAN_TYPES']['FLIGHT_PLAN_T'].print()
 
+    def check_fp(self):
+        for field in pe.types['IAC_FLIGHT_PLAN_TYPES']['FLIGHT_PLAN_T'].fpos:
+            a_f = pe.types['IAC_FLIGHT_PLAN_TYPES']['FLIGHT_PLAN_T'].fields[field]
+            field_type_solved = not isinstance(a_f.field_type, str)
+            if not field_type_solved or not a_f.field_type.is_based:
+                print('unsolved field [%s]'% a_f)
+            else:
+                print("filed name: [%s], filed type: [%s][%s], based:[%s], pos: [%s], start: [%s[, end; [%s]" %
+                      (a_f.name,
+                       isinstance(a_f.field_type, str),
+                       a_f.field_type.name if field_type_solved else a_f.field_type,
+                       a_f.field_type.type_chain if field_type_solved else '',
+                       a_f.pos, a_f.start_bit, a_f.end_bit))
+
+
 
 if __name__ == '__main__':
     myLogging.setup_logging()
@@ -164,31 +180,40 @@ if __name__ == '__main__':
              'common_util': (r'D:\sourceCode\1_eurocat\btma_ada\common\util', 'common_util'),
              'common_cdc': (r'D:\sourceCode\1_eurocat\btma_ada\common\cdc', 'common_cdc', r'cdc'),
              }
-    if 1:
+    if 0:
         pe = ParseAdaCtx()
         pe.test(True, False, [
-            #cscis['standard95'],
-            #cscis['ubss'],
-            #cscis['kinematics'],
-            #cscis['common'],
-            cscis['test'],
-        ])
-        pe.print_all()
-    else:
-        #i_csci = 'ubss'
-        #i_csci = 'kinematics'
-        i_csci = 'common_util'
-        with open(os.path.join('run','%s.dump'%i_csci), 'rb') as fd:
-            pe = pickle.load(fd)
-        pe.test(False, False, [
-            #cscis['common'],
-            #cscis['common_util'],
-            #cscis['common_cdc'],
-            cscis['test'],
+            cscis['standard95'],
+            cscis['ubss'],
+            cscis['kinematics'],
+            cscis['common_util'],
+            cscis['common_cdc'],
+            #cscis['test'],
         ])
         if 0:
             pe.print_all()
         else:
-            pe.print_fp()
+            #pe.print_fp()
+            pe.check_fp()
+    else:
+        #i_csci = 'ubss'
+        #i_csci = 'kinematics'
+        #i_csci = 'common_util'
+        i_csci = 'common_cdc'
+        with open(os.path.join('run','%s.dump'%i_csci), 'rb') as fd:
+            pe = pickle.load(fd)
+        if 0:
+            pe.test(False, False, [
+                cscis['kinematics'],
+                cscis['common_util'],
+                cscis['common_cdc'],
+                #cscis['test'],
+            ])
+            if 0:
+                pe.print_all()
+            else:
+                pe.print_fp()
+        else:
+            pe.check_fp()
 
 
