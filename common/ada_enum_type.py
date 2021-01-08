@@ -18,11 +18,7 @@ class AdaEnumType(AdaType):
         return index
 
     def get_value(self, enum):
-        try:
-            index = self.enums.index(enum.upper())
-        except ValueError:
-            index = -1
-        return self.values[index]
+        return self.items[enum].value
 
     def add_enum(self, e):
         self.enums.append(e.name)

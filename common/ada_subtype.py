@@ -26,7 +26,7 @@ class AdaSubtype(AdaType):
                         if self.based.is_based:
                             self.is_based = True
                             # print("solve_type_chain1: %s" % self.type_chain)
-                            self.type_chain.append(self.based.name)
+                            self.type_chain.append(self.based)
                             self.type_chain.extend(self.based.type_chain)
                             # print("solve_type_chain2: %s" % self.type_chain)
                             if getattr(self.based, 'based', None):
