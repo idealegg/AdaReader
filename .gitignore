@@ -15,3 +15,4 @@ test/result*
 test/syntax_of_ada
 test/syntax_of_ada2.txt
 test/syntax_of_ada95
+log/*

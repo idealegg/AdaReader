@@ -107,6 +107,8 @@ class UpackRecord:
         for index in arr.index_list:
             if not isinstance(index.based, str):
                 pass
+
+
             
     def walk_a_field(self, field, offset):
         ft = field.field_type
