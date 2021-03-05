@@ -9,6 +9,11 @@ import binascii as bs
 import itertools
 import pprint
 import copy
+from util.myLogging import setup_logging
+from util.myLogging import logger as my_log
+from util.myLogging import log
+import time
+import json
 
 
 flag_map = {'@': {'Byte order': u'本机', 'Size': u'本机', 'Alignment': u'本机,凑够4字节'},
@@ -49,22 +54,23 @@ ada_type_map = {'CHARACTER': {'C': 'char', 'Python': 'string of length 1', 'size
                 'STRING': {'C': 'char[]', 'Python': 'string', 'size': None, 'struct': 's'}}
 
 
-class UpackRecord:
-    def __init__(self, ctx, buf, offset):
-        self.ctx = ctx
-        self.buf = buf
-        self.pos_stack = [offset]
+class GenFmt:
+    def __init__(self, base):
+        self.base = base
+        self.pos_stack = [0]
         self.name_stack = []
-        self.result = {}
+        self.result = {'gen_fmt_enums':{}}
         self.enums = {}
         #self.elem_size_stack = []
 
+    @log('GenFmt')
     def get_pos(self, f_p):
-        print("get_pos: %s" % self.pos_stack)
+        my_log.debug("get_pos: %s" % self.pos_stack)
         return reduce(lambda x, y: x+y, self.pos_stack) + f_p
 
+    @log('GenFmt')
     def get_name(self, f_n):
-        print("get_name: %s" % self.name_stack)
+        my_log.debug("get_name: %s" % self.name_stack)
         #return "%s.%s" % (reduce(lambda x, y: ".".join([x, y]), self.name_stack), f_n) if self.name_stack else f_n
         return f_n
 
@@ -83,8 +89,9 @@ class UpackRecord:
             tmp = tmp[f]
         tmp[name] = value
 
-    def walk_a_base_type(self, field, typ, i_size=None, i_name=None):
-        print("walk_a_base_type: [%s][%s][%s]" % (field, typ, i_size))
+    @log('GenFmt')
+    def walk_a_base_type(self, field, typ, i_size=None, i_name=None, enum_type=None):
+        my_log.debug("walk_a_base_type: [%s][%s][%s]" % (field, typ, i_size))
         num = None
         if typ == 'STRING':
             num = (i_size - 1) // 8 +1
@@ -102,36 +109,38 @@ class UpackRecord:
                 typ = 'SHORT_INTEGER'
             elif size > 32:
                 typ = 'LONG_LONG_INTEGER'
-        struc, leng = UpackRecord.get_struct(typ, num)
+        struc, leng = GenFmt.get_struct(typ, num)
         pos = self.get_pos(int(field.pos))
-        name = self.get_name(i_name or field.name)
-        print("name: [%s], pos: [%s], struct: [%s], length: [%s], buf: [%s]"
-              %(name, pos, struc, leng, bs.hexlify(self.buf[pos: pos + leng])))
-        tmp = struct.unpack(struc, self.buf[pos: pos + leng])
-        val = tmp[0]
-        if isinstance(val,int) and  (getattr(field, 'start_bit', None) is not None) and (
+        name = self.get_name(i_name or getattr(field, 'tmp_name_in_array', None) or field.name)
+        my_log.debug("name: [%s], pos: [%s], struct: [%s], length: [%s]"
+              %(name, pos, struc, leng))
+        tmp = {'pos': pos,
+               'length': leng,
+               'leaf': True,
+               'struct': struc,
+               }
+        if (getattr(field, 'start_bit', None) is not None) and (
                     getattr(field, 'end_bit', None) is not None) and (
                     ((int(field.end_bit) - int(field.start_bit)+1) % 8) in range(1, 8)):
-            val = (val >> int(field.start_bit))
-            val = (val & ( 2 ** (int(field.end_bit) - int(field.start_bit) +1) - 1))
-        print("tmp result: %s" % val)
-        if self.enums:
-            print("enums: %s" % self.enums)
-            self.set_result(self.enums[str(val)], name)
-        else:
-            if typ == 'STRING':
-                self.set_result(val.strip(), name)
-            else:
-                self.set_result(val, name)
+            tmp['start_bit'] = field.start_bit
+            tmp['end_bit'] = field.end_bit
+        if enum_type is not None:
+            tmp['enum_type'] = enum_type
+        self.set_result(tmp, name)
 
 
-    def walk_a_record(self, rec):
-        print("walk_a_record: %s" % rec.name)
+    @log('GenFmt')
+    def walk_a_record(self, rec=None):
+        if rec is None:
+            rec = self.base
+        my_log.debug("walk_a_record: %s" % rec.name)
+        my_log.debug("rec fields: %s" % rec.fpos)
         for field in rec.fpos:
             self.walk_a_field(rec.fields[field])
 
+    @log('GenFmt')
     def walk_an_array(self, arr,  i_size=None):
-        print("walk_an_array: %s, %s" % (i_size, arr))
+        my_log.debug("walk_an_array: %s, %s" % (i_size, arr))
         elem_num =  1
         array_index = []
         try:
@@ -155,30 +164,30 @@ class UpackRecord:
                         last = index.enums.index(index.last)
                         elem_num *= last - start + 1
                         array_index.append(index.enums[start : last +1])
-                        print("hd1: %s" % array_index)
+                        my_log.debug("hd1: %s" % array_index)
                     else:
                         start = int(index.first)
                         last = int(index.last)
                         elem_num *= last - start + 1
                         array_index.append(index.enums[start: last + 1])
-                        print("hd2: %s" % array_index)
+                        my_log.debug("hd2: %s" % array_index)
                 else:
                     start = int(index.first)
                     last = int(index.last)
                     elem_num *= last - start + 1
                     array_index.append(list(map(str, range(start, last+1))))
-                    print("hd3: %s" % array_index)
+                    my_log.debug("hd3: %s" % array_index)
         except TypeError:
             elem_num = int(arr.last) - int(arr.first) + 1
             array_index.append(list(map(str, range(int(arr.first), int(arr.last) + 1))))
-            print("hd4: %s" % array_index)
-        print("hd5: %s" % array_index)
+            my_log.debug("hd4: %s" % array_index)
+        my_log.debug("hd5: %s" % array_index)
         cur_elem_name = arr.elem.name
         #array_index_names = list(map(lambda x: '_'.join(x), zip(*array_index)))
         array_index_names = list(map(lambda x: '_'.join(x), itertools.product(*array_index)))
-        print("array: %s"% arr)
-        print('array index names: %s' % list(array_index_names))
-        print("elem_num: %s" % elem_num)
+        my_log.debug("array: %s"% arr)
+        my_log.debug('array index names: %s' % list(array_index_names))
+        my_log.debug("elem_num: %s" % elem_num)
         for i in range(elem_num):
             for attr in ['size', ]:
                 if getattr(arr.elem, attr, None) is None:
@@ -192,10 +201,11 @@ class UpackRecord:
                 setattr(arr.elem, 'pos', i * arr.elem.size // 8)
             elif i == 0:
                 setattr(arr.elem, 'pos', 0)
-            print("hd test size: %s, %s, %s, %s" % (arr.elem.size, arr.elem.size_solved, i, arr.elem.pos))
+            my_log.debug("hd test size: %s, %s, %s, %s" % (arr.elem.size, arr.elem.size_solved, i, arr.elem.pos))
             #arr.elem.name = "%s_%s" % (cur_elem_name, i)
-            arr.elem.name = array_index_names[i]
+            setattr(arr.elem, 'tmp_name_in_array', array_index_names[i])
             self.walk_a_field(arr.elem, is_field=False)
+            delattr(arr.elem, 'tmp_name_in_array')
         if getattr(arr, 'size', None) is None:
             if getattr(arr.elem, 'size', None) is not None:
                 setattr(arr, 'size', arr.elem.size * elem_num)
@@ -211,19 +221,27 @@ class UpackRecord:
                     setattr(arr, 'size', i_size)
         arr.elem.name = cur_elem_name
 
+    @log('GenFmt')
     def walk_a_field(self, field, is_field=True):
-        print("walk_a_field: %s" % field)
+        my_log.debug("walk_a_field: %s" % field)
         ft = field.field_type if is_field else field
         if ft.ttype in [AdaType.DERIVED_TYPE, AdaType.SUBTYPE]:
-            ft2 = copy.deepcopy(ft.based)
-            for attr in ['first', 'last', 'size', 'pos', 'end_bit', 'start_bit']:
+            ft2 = ft.based
+            for attr in ['first', 'last', 'size']:
+                if getattr(ft2, attr, None) is None:
+                    if hasattr(ft, attr):
+                        setattr(ft2, attr, getattr(ft, attr))
+                    elif hasattr(field, attr):
+                        setattr(ft2, attr, getattr(field, attr))
+            ft2 = copy.deepcopy(ft2)
+            for attr in ['pos', 'end_bit', 'start_bit']:
                 if getattr(ft2, attr, None) is None:
                     if hasattr(ft, attr):
                         setattr(ft2, attr, getattr(ft, attr))
                     elif hasattr(field, attr):
                         setattr(ft2, attr, getattr(field, attr))
             ft = ft2
-        print("ttype: %s" % ft.ttype)
+        my_log.debug("ttype: %s" % ft.ttype)
         if ft.name == 'STRING':
             if is_field:
                 for attr in ['first', 'last', 'size', 'pos', 'end_bit', 'start_bit']:
@@ -234,7 +252,6 @@ class UpackRecord:
                     setattr(field, 'size', (int(field.last) - int(field.first) + 1) * 8)
             self.walk_a_base_type(field, 'STRING',
                                   i_size=field.size or (int(ft.last) - int(ft.first) + 1) * 8)
-
         elif ft.ttype == AdaType.RECORD_TYPE:
             self.pos_stack.append(int(field.pos))
             self.name_stack.append(field.name)
@@ -259,18 +276,23 @@ class UpackRecord:
         elif ft.ttype == AdaType.INT_TYPE:
             self.walk_a_base_type(field, 'INTEGER', field.size)
         elif ft.ttype == AdaType.ENUM_TYPE:
-            self.enums = {}
-            t_val = 0
-            for e in ft.items.keys():
-                self.enums[ft.items[e].value or str(t_val)] = e
-                t_val += 1
-            self.walk_a_base_type(field, 'INTEGER', field.size)
-            self.enums = {}
+            enum_type = '.'.join([ft.package, ft.name])
+            if enum_type not in self.result['gen_fmt_enums']:
+                enums = {}
+                t_val = 0
+                for e in ft.items.keys():
+                    enums[ft.items[e].value or str(t_val)] = e
+                    t_val += 1
+                self.result['gen_fmt_enums'][enum_type] = enums
+            self.walk_a_base_type(field, 'INTEGER', field.size, enum_type=enum_type)
+
 
 
 if __name__ == "__main__":
-    i_csci = 'common_cdc'
-    #i_csci = 'test'
+    start_time = time.time()
+    setup_logging()
+    #i_csci = 'common_cdc'
+    i_csci = 'test'
     with open(os.path.join('run', '%s.dump' % i_csci), 'rb') as fd:
         pe = pickle.load(fd)
     if 0:
@@ -291,12 +313,15 @@ if __name__ == "__main__":
         fd.seek(32)
         buf = fd.read(rec_lg)
     if 0:
-        #print(pe.vars['STANDARD_TYPES']['OCTET'])
+        #my_log.debug(pe.vars['STANDARD_TYPES']['OCTET'])
         pe.types['IAC_FLIGHT_PLAN_TYPES']['FLIGHT_PLAN_T'].fields['TOTAL_DELAY'].print()
     else:
-        ur = UpackRecord(pe, buf, 0)
-        ur.walk_a_record(
-        pe.types[package][typ])
-        #print("Result: %s" % ur.result)
-        #print(json.dumps(ur.result))
+        ur = GenFmt(pe.types[package][typ])
+        ur.walk_a_record()
+        #my_log.debug("Result: %s" % ur.result)
+        #my_log.debug(json.dumps(ur.result))
         pprint.pprint(ur.result)
+        end_time = time.time()
+        with open(os.path.join('run', '.'.join([package, typ, 'json'])), 'w') as f1:
+            json.dump(ur.result, f1)
+        print("Use time: %.02f seconds" % (end_time - start_time))
