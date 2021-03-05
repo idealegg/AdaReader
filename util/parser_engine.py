@@ -214,6 +214,12 @@ if __name__ == '__main__':
             else:
                 pe.print_fp()
         else:
-            pe.check_fp()
+            if 0:
+                pe.check_fp()
+            else:
+                pe.test(False, False, [
+                    cscis['test'],
+                ])
+                pe.types['HD_TEST']['TEST_TYPE'].print()
 
 

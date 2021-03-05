@@ -8,6 +8,7 @@ from util.parser_engine import ParseAdaCtx
 import binascii as bs
 import itertools
 import pprint
+import copy
 
 
 flag_map = {'@': {'Byte order': u'本机', 'Size': u'本机', 'Alignment': u'本机,凑够4字节'},
@@ -84,19 +85,19 @@ class UpackRecord:
             tmp = tmp[f]
         tmp[name] = value
 
-    def walk_a_base_type(self, field, typ, size=None, i_name=None):
-        print("walk_a_base_type: [%s][%s][%s]" % (field, typ, size))
+    def walk_a_base_type(self, field, typ, i_size=None, i_name=None):
+        print("walk_a_base_type: [%s][%s][%s]" % (field, typ, i_size))
         num = None
         if typ == 'STRING':
-            num = int(field.last) - int(field.first) + 1
-            if getattr(field, 'size', None) is None:
-                setattr(field, 'size', 8 *num)
+            num = (i_size - 1) // 8 +1
+            #if getattr(field, 'size', None) is None:
+            #    setattr(field, 'size', 8 *num)
         elif typ == 'FLOAT':
-            size = size or (int(field.end_bit) - int(field.start_bit))
+            size = i_size or (int(field.end_bit) - int(field.start_bit))
             if size  > 32:
                 typ = 'LONG_FLOAT'
         elif typ == 'INTEGER':
-            size = size or (int(field.end_bit) - int(field.start_bit))
+            size = i_size or (int(field.end_bit) - int(field.start_bit))
             if size <= 8:
                 typ = 'SHORT_SHORT_INTEGER'
             elif size <=16:
@@ -120,7 +121,11 @@ class UpackRecord:
             print("enums: %s" % self.enums)
             self.set_result(self.enums[str(val)], name)
         else:
-            self.set_result(val, name)
+            if typ == 'STRING':
+                self.set_result(val.strip(), name)
+            else:
+                self.set_result(val, name)
+
 
     def walk_a_record(self, rec):
         print("walk_a_record: %s" % rec.name)
@@ -128,7 +133,7 @@ class UpackRecord:
             self.walk_a_field(rec.fields[field])
 
     def walk_an_array(self, arr,  i_size=None):
-        print("walk_an_array: %s" % arr)
+        print("walk_an_array: %s, %s" % (i_size, arr))
         elem_num =  1
         array_index = []
         try:
@@ -145,24 +150,24 @@ class UpackRecord:
                     if getattr(index, 'first', None) is None:
                         setattr(index, 'first', 0)
                     if getattr(index, 'last', None) is None:
-                        setattr(index, 'last', len(based.enums))
+                        setattr(index, 'last', len(based.enums)-1)
                     if (isinstance(index.first, str) and not index.first.isdigit()
                      ) and (isinstance(index.last, str) and not index.last.isdigit()):
                         start = index.enums.index(index.first)
                         last = index.enums.index(index.last)
-                        elem_num *= start - last + 1
+                        elem_num *= last - start + 1
                         array_index.append(index.enums[start : last +1])
                         print("hd1: %s" % array_index)
                     else:
                         start = int(index.first)
                         last = int(index.last)
-                        elem_num *= start - last + 1
+                        elem_num *= last - start + 1
                         array_index.append(index.enums[start: last + 1])
                         print("hd2: %s" % array_index)
                 else:
                     start = int(index.first)
                     last = int(index.last)
-                    elem_num *= start - last + 1
+                    elem_num *= last - start + 1
                     array_index.append(list(map(str, range(start, last+1))))
                     print("hd3: %s" % array_index)
         except TypeError:
@@ -175,23 +180,23 @@ class UpackRecord:
         array_index_names = list(map(lambda x: '_'.join(x), itertools.product(*array_index)))
         print("array: %s"% arr)
         print('array index names: %s' % list(array_index_names))
+        print("elem_num: %s" % elem_num)
         for i in range(elem_num):
             for attr in ['size', ]:
                 if getattr(arr.elem, attr, None) is None:
-                    if hasattr(arr.elem.based, attr):
+                    if hasattr(arr.elem, 'based') and hasattr(arr.elem.based, attr):
                         setattr(arr.elem, attr, getattr(arr.elem.based, attr))
             if isinstance(arr.elem.size, str):
                 arr.elem.size = eval(arr.elem.size.replace('STANDARD_TYPES.OCTET', '8').replace('OCTET', '8'))
-            if i == 0:
+            if arr.elem.size is None and i_size:
+                setattr(arr.elem, 'size', i_size // elem_num)
+            if arr.elem.size is not None:
+                setattr(arr.elem, 'pos', i * arr.elem.size // 8)
+            elif i == 0:
                 setattr(arr.elem, 'pos', 0)
-            else:
-                if i_size:
-                    setattr(arr.elem, 'size', i_size / elem_num)
-                if arr.elem.size is not None:
-                    setattr(arr.elem, 'pos', i * arr.elem.size / 8)
             print("hd test size: %s, %s, %s, %s" % (arr.elem.size, arr.elem.size_solved, i, arr.elem.pos))
             #arr.elem.name = "%s_%s" % (cur_elem_name, i)
-            arr.elem.name = "_".join(array_index_names[i])
+            arr.elem.name = array_index_names[i]
             self.walk_a_field(arr.elem, is_field=False)
         if getattr(arr, 'size', None) is None:
             if getattr(arr.elem, 'size', None) is not None:
@@ -212,16 +217,26 @@ class UpackRecord:
         print("walk_a_field: %s" % field)
         ft = field.field_type if is_field else field
         if ft.ttype in [AdaType.DERIVED_TYPE, AdaType.SUBTYPE]:
+            ft2 = copy.deepcopy(ft.based)
             for attr in ['first', 'last', 'size', 'pos', 'end_bit', 'start_bit']:
-                if getattr(ft.based, attr, None) is None:
+                if getattr(ft2, attr, None) is None:
                     if hasattr(ft, attr):
-                        setattr(ft.based, attr, getattr(ft, attr))
+                        setattr(ft2, attr, getattr(ft, attr))
                     elif hasattr(field, attr):
-                        setattr(ft.based, attr, getattr(field, attr))
-            ft = ft.based
+                        setattr(ft2, attr, getattr(field, attr))
+            ft = ft2
         print("ttype: %s" % ft.ttype)
         if ft.name == 'STRING':
-            self.walk_a_base_type(ft, 'STRING', i_name=field.name)
+            if is_field:
+                for attr in ['first', 'last', 'size', 'pos', 'end_bit', 'start_bit']:
+                    if getattr(field, attr, None) is None:
+                        if hasattr(ft, attr):
+                            setattr(field, attr, getattr(ft, attr))
+                if getattr(field, 'size', None) is None:
+                    setattr(field, 'size', (int(field.last) - int(field.first) + 1) * 8)
+            self.walk_a_base_type(field, 'STRING',
+                                  i_size=field.size or (int(ft.last) - int(ft.first) + 1) * 8)
+
         elif ft.ttype == AdaType.RECORD_TYPE:
             self.pos_stack.append(int(field.pos))
             self.name_stack.append(field.name)
@@ -235,7 +250,7 @@ class UpackRecord:
             i_size = getattr(field, 'size', None)
             if not i_size and getattr(field, 'start_bit', None) is not None and getattr(field, 'end_bit', None) is not None:
                 try:
-                    i_size = int(field.end_bit) - int(field.start_bit)
+                    i_size = int(field.end_bit) - int(field.start_bit) + 1
                 except TypeError:
                     i_size = None
             self.walk_an_array(ft, i_size=i_size)
@@ -257,6 +272,7 @@ class UpackRecord:
 
 if __name__ == "__main__":
     i_csci = 'common_cdc'
+    #i_csci = 'test'
     with open(os.path.join('run', '%s.dump' % i_csci), 'rb') as fd:
         pe = pickle.load(fd)
     if 0:
@@ -267,19 +283,18 @@ if __name__ == "__main__":
     else:
         rec_lg = 8392
         rec_file = 'REC_FPL_201029_0345.cupd'
-        package = 'IAC_FLIGHT_PLAN_TYPES'
-        typ = 'FLIGHT_PLAN_T'
+        if 1:
+            package = 'IAC_FLIGHT_PLAN_TYPES'
+            typ = 'FLIGHT_PLAN_T'
+        else:
+            package = 'HD_TEST'
+            typ = 'TEST_TYPE'
     with open(os.path.join('data', rec_file), 'rb') as fd:
         fd.seek(32)
         buf = fd.read(rec_lg)
     if 0:
         #print(pe.vars['STANDARD_TYPES']['OCTET'])
-        print("1: %s" % pe.types['IAC_FLIGHT_PLAN_TYPES']['PARTITION_NAME_T'].size)
-        print("1: %s" % pe.types['IAC_FLIGHT_PLAN_TYPES']['PARTITION_NAME_T'].first)
-        print("1: %s" % pe.types['IAC_FLIGHT_PLAN_TYPES']['PARTITION_NAME_T'].last)
-        print("1: %s" % pe.types['IAC_FLIGHT_PLAN_TYPES']['PARTITION_NAME_T'].based.size)
-        print("1: %s" % pe.types['IAC_FLIGHT_PLAN_TYPES']['PARTITION_NAME_T'].based.first)
-        print("1: %s" % pe.types['IAC_FLIGHT_PLAN_TYPES']['PARTITION_NAME_T'].based.last)
+        pe.types['IAC_FLIGHT_PLAN_TYPES']['FLIGHT_PLAN_T'].fields['TOTAL_DELAY'].print()
     else:
         ur = UpackRecord(pe, buf, 0)
         ur.walk_a_record(
