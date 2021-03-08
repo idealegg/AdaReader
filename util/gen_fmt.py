@@ -14,6 +14,7 @@ from util.myLogging import logger as my_log
 from util.myLogging import log
 import time
 import json
+from util.parse_buf import ParseRec
 
 
 flag_map = {'@': {'Byte order': u'本机', 'Size': u'本机', 'Alignment': u'本机,凑够4字节'},
@@ -226,15 +227,8 @@ class GenFmt:
         my_log.debug("walk_a_field: %s" % field)
         ft = field.field_type if is_field else field
         if ft.ttype in [AdaType.DERIVED_TYPE, AdaType.SUBTYPE]:
-            ft2 = ft.based
-            for attr in ['first', 'last', 'size']:
-                if getattr(ft2, attr, None) is None:
-                    if hasattr(ft, attr):
-                        setattr(ft2, attr, getattr(ft, attr))
-                    elif hasattr(field, attr):
-                        setattr(ft2, attr, getattr(field, attr))
-            ft2 = copy.deepcopy(ft2)
-            for attr in ['pos', 'end_bit', 'start_bit']:
+            ft2 = copy.deepcopy(ft.based)
+            for attr in ['first', 'last', 'size', 'pos', 'end_bit', 'start_bit']:
                 if getattr(ft2, attr, None) is None:
                     if hasattr(ft, attr):
                         setattr(ft2, attr, getattr(ft, attr))
@@ -325,3 +319,5 @@ if __name__ == "__main__":
         with open(os.path.join('run', '.'.join([package, typ, 'json'])), 'w') as f1:
             json.dump(ur.result, f1)
         print("Use time: %.02f seconds" % (end_time - start_time))
+        pb = ParseRec(os.path.join('data', rec_file), os.path.join('run', ".".join([package, typ, 'json'])), rec_lg)
+        pb.parse_rec()
